@@ -28,6 +28,6 @@ st.title("SQL Data Viewer")
     
     
 st.subheader("Table Head")  
-# st.write(df.head())  
+st.write(df.head())  
   
 
