@@ -35,13 +35,11 @@ def run():
            st.subheader("Bar Chart of Item Counts by Category")
            if 'Category_Name' in df.columns:
                industry_counts = df['Category_Name'].value_counts()
-               fig, ax = plt.subplots()
-               sns.barplot(x=industry_counts.index, y=industry_counts.values, ax=ax)
-               ax.set_title("Count of Items by Category")
-               plt.xticks(rotation=45)
-               st.pyplot(fig)
-           else:
-               st.error("Column 'Category_Name' does not exist in the DataFrame.")
+               
+               chart_data = pd.DataFrame(industry_counts.values.T,columns = industry_counts.index.T)
+
+               st.bar_chart(chart_data)
+
 
        elif viz_type == "Bar Chart by Class":
            # Create a bar chart of counts by Class
