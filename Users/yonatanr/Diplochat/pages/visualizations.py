@@ -54,25 +54,6 @@ def run():
             st.pyplot(fig)
         st.error("Column 'Class_Name' does not exist in the DataFrame.")
 
-    # Optional: Add a line chart visualization if desired
-    elif viz_type == "Line Chart of Sales Over Time":
-        # Create a line chart of sales over time
-        st.subheader("Line Chart of Sales Over Time")
-        if 'Sales' in df.columns and 'Date' in df.columns:
-            # Ensure that 'Date' is in datetime format
-            df['Date'] = pd.to_datetime(df['Date'])
-            sales_over_time = df.groupby('Date')['Sales'].sum().reset_index()
-            fig, ax = plt.subplots()
-            sns.lineplot(x='Date', y='Sales', data=sales_over_time, ax=ax)
-            ax.set_title("Sales Over Time")
-            ax.set_xlabel("Date")
-            ax.set_ylabel("Sales")
-            st.pyplot(fig)
-        else:
-            if 'Sales' not in df.columns:
-                st.error("Column 'Sales' does not exist in the DataFrame.")
-            if 'Date' not in df.columns:
-                st.error("Column 'Date' does not exist in the DataFrame.")
 
 if __name__ == "__main__":
     run()
