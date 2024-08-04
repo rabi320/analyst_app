@@ -36,7 +36,7 @@ def run():
            if 'Category_Name' in df.columns:
                industry_counts = df['Category_Name'].value_counts()
                
-               chart_data = pd.DataFrame(industry_counts.values.T,columns = industry_counts.index.T)
+               chart_data = pd.DataFrame(industry_counts.values.reshape(1, -1),columns = industry_counts.index.tolist())
 
                st.bar_chart(chart_data)
 
