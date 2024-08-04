@@ -3,11 +3,6 @@
 from openai import OpenAI
 import streamlit as st
 
-# settings
-file_path = 'Yonatan_Rabinovich.txt'
-
-with open(file_path, 'r') as file:
-    sys_message = file.read()
 
 
 st.title("Diplomat's AI Assistant 🤖")
