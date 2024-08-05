@@ -53,7 +53,7 @@ def run():
     client = AzureOpenAI(
     azure_endpoint = "https://ai-usa.openai.azure.com/", 
     api_key='86bedc710e5e493290cb2b0ce6f16d80',  
-    api_version="2024-02-15-preview"
+    api_version="2024-06-01-preview"
     )
     MODEL="Diplochat"
     if "openai_model" not in st.session_state:
