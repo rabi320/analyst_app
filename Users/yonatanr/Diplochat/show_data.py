@@ -22,5 +22,5 @@ elif page == "Chat":
     chat_page()
 elif page == "Map":
     # Import the map page
-    from pages.map import display_map
+    from pages.map import run as display_map
     display_map()

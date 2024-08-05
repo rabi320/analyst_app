@@ -1,8 +1,9 @@
 import streamlit as st
-import folium
 from streamlit_folium import st_folium
+import folium
 
-def display_map():
+
+def run():
     st.title("Folium Map of Israel")
 
     # Create a Folium map centered around Israel
