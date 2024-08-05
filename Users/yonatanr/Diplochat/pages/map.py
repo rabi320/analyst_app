@@ -1,5 +1,6 @@
 import streamlit as st
 import folium
+from streamlit_folium import st_folium
 
 def display_map():
     st.title("Folium Map of Israel")
@@ -13,4 +14,5 @@ def display_map():
     folium.Marker(location=[29.5581, 34.9666], popup='Eilat').add_to(m)
 
     # Render the map in Streamlit
-    st.write(m._repr_html_(), unsafe_allow_html=True)
+    # st.write(m._repr_html_(), unsafe_allow_html=True)
+    st_folium(m)
