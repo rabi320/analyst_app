@@ -1,7 +1,8 @@
 ## Yonatan GPT App
 
-from openai import OpenAI
 import streamlit as st
+from openai import AzureOpenAI
+# from openai import OpenAI
 
 
 def run():
@@ -48,10 +49,16 @@ def run():
     with st.sidebar:
         openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
 
-    client = OpenAI(api_key=openai_api_key)
-
+    # client = OpenAI(api_key=openai_api_key)
+    client = AzureOpenAI(
+    azure_endpoint = "https://ai-usa.openai.azure.com/", 
+    api_key='86bedc710e5e493290cb2b0ce6f16d80',  
+    api_version="2024-02-15-preview"
+    )
+    MODEL="Diplochat"
     if "openai_model" not in st.session_state:
-        st.session_state["openai_model"] = "gpt-4o-mini"
+        # st.session_state["openai_model"] = "gpt-4o-mini"
+        st.session_state["openai_model"] = MODEL
 
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "system", "content": sys_message}]
