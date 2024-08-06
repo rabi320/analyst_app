@@ -236,29 +236,24 @@ def run():
                         else:  
                             code = comment_out_lines(code, print_drop=True, data_drop=True)  
                         
-                                                # Modify the code to write the answer variable to a file  
- # Create a temporary directory  
-                        with tempfile.TemporaryDirectory() as tmpdirname:  
-                            answer_file_path = os.path.join(tmpdirname, 'answer.txt')  
   
-                            # Modify the code to write the answer variable to the temporary file  
-                            code += f"""  
-                            with open(r'{answer_file_path}', 'w') as f:  
-                                f.write(str(answer))  
-                            """  
+                        # Modify the code to write the answer variable to a file  
+                        code += """  
+                        with open('answer.txt', 'w') as f:  
+                            f.write(str(answer))  
+                        """  
   
-                            # Save the code to a temporary file within the temporary directory  
-                            tmp_file_path = os.path.join(tmpdirname, 'script.py')  
-                            with open(tmp_file_path, 'w') as tmp_file:  
-                                tmp_file.write(code)  
-  
-                            # Run the temporary file as a subprocess  
-                            result = subprocess.run([sys.executable, tmp_file_path], capture_output=True, text=True)  
+                        # Save the code to a temporary file  
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".py") as tmp_file:  
+                            tmp_file.write(code.encode('utf-8'))  
+                            tmp_file_path = tmp_file.name  
                           
-                            # Read the answer from the temporary file  
-                            with open(answer_file_path, 'r') as f:  
-                                answer = f.read()  
-                        # Append to history only if successful  
+                        # Run the temporary file as a subprocess  
+                        result = subprocess.run([sys.executable, tmp_file_path], capture_output=True, text=True)  
+                          
+                        # Read the answer from the file  
+                        with open('answer.txt', 'r') as f:  
+                            answer = f.read()
                         st.session_state.messages.append({'role': 'assistant', 'content': txt})  
     
                         # Simulate streaming by breaking response into smaller parts  
