@@ -237,27 +237,19 @@ def run():
                             code = comment_out_lines(code, print_drop=True, data_drop=True)  
                         
   
-                        # Generate a temporary file path for 'answer.txt'  
-                        temp_dir = tempfile.gettempdir()  
-                        answer_file_path = os.path.join(temp_dir, 'answer.txt')  
-  
-                        # Modify the code to write the answer variable to the temporary file path  
-                        code += f"""  
-                        with open('{answer_file_path}', 'w') as f:  
-                            f.write(str(answer))  
-                        """  
+                        # Modify the code to print the answer variable instead of writing to a file  
+                        code += """  
+print(answer)  
+"""  
   
                         # Save the code to a temporary file  
                         with tempfile.NamedTemporaryFile(delete=False, suffix=".py") as tmp_file:  
                             tmp_file.write(code.encode('utf-8'))  
                             tmp_file_path = tmp_file.name  
   
-                        # Run the temporary file as a subprocess  
+                        # Run the temporary file as a subprocess and capture the output  
                         result = subprocess.run([sys.executable, tmp_file_path], capture_output=True, text=True)  
-  
-                        # Read the answer from the temporary file path  
-                        with open(answer_file_path, 'r') as f:  
-                            answer = f.read()  
+                        answer = result.stdout.strip()  
                         st.session_state.messages.append({'role': 'assistant', 'content': txt})  
     
                         # Simulate streaming by breaking response into smaller parts  
