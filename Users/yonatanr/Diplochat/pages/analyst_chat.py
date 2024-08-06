@@ -279,7 +279,8 @@ def run():
                 """  
     
                 if attempts == max_attempts:  
-                    answer = generate_text(sys_error, prompt, st.session_state.messages)  
+                    # answer = generate_text(sys_error, prompt, st.session_state.messages)  
+                    answer = errors[-1]
                     # Simulate streaming for the final response  
                     response_placeholder = st.empty()  
                     response_text = ""  
