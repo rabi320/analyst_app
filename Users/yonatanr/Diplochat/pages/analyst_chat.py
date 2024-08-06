@@ -8,6 +8,8 @@ import subprocess
 import sys  
 import tempfile  
 import os
+import multiprocessing
+
 # Suppress all warnings  
 warnings.filterwarnings('ignore')  
   
@@ -174,7 +176,18 @@ def comment_out_lines(code, print_drop=False, data_drop=True):
         # Replace any print() statements with #print()  
         code = re.sub(r"^(\s*)print\(", r"\1#print(", code, flags=re.MULTILINE)  
     return code  
-  
+
+answer = ''
+def run_code_in_subprocess(code, queue):  
+    try:  
+        # Execute the code  
+        exec(code, globals())  
+        # Put the answer in the queue  
+        queue.put(answer)  
+    except Exception as e:  
+        queue.put(str(e)) 
+
+
 def run():  
     st.title("Diplomat's AI Analyst 🤖")  
   
@@ -238,20 +251,15 @@ def run():
                             code = comment_out_lines(code, print_drop=True, data_drop=True)  
                         
   
-                        # Modify the code to print the answer variable instead of writing to a file  
-                        code += """  
-print(answer)  
-"""  
+                        # Use multiprocessing to run the code and capture the result  
+                        queue = multiprocessing.Queue()  
+                        p = multiprocessing.Process(target=run_code_in_subprocess, args=(code, queue))  
+                        p.start()  
+                        p.join()  
   
-                        # Save the code to a temporary file  
-                        with tempfile.NamedTemporaryFile(delete=False, suffix=".py") as tmp_file:  
-                            tmp_file.write(code.encode('utf-8'))  
-                            tmp_file_path = tmp_file.name  
+                        # Get the result from the queue  
+                        answer = queue.get()  
   
-                        # Run the temporary file as a subprocess and capture the output  
-                        result = subprocess.run([sys.executable, tmp_file_path], capture_output=True, text=True)  
-                        answer = result.stdout.strip()  
-                         
     
                         # Simulate streaming by breaking response into smaller parts  
                         for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
