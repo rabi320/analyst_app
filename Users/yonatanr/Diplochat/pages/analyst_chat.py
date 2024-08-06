@@ -161,8 +161,8 @@ def stream_text(text, delay=0.01):
     st.write(initial_message)
     time.sleep(2)
     for char in text:
-    st.write(char, end='', flush=True)
-    time.sleep(delay)
+        st.write(char, end='', flush=True)
+        time.sleep(delay)
     st.write() # For final newline
 
 def run():
