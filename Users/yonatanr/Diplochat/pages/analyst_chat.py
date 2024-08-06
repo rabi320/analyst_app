@@ -255,9 +255,14 @@ def run():
                         # Execute the code in a controlled environment  
                         local_vars = {}  
                         exec(code, globals(), local_vars)  
-  
+                        
+                        sys_error = """  
+                        You are an assistant that informs the user when their input is unclear,  
+                        and you ask them to provide more details or rephrase their message in the same language they used.  
+                        """  
+                        
                         # Capture the answer variable  
-                        answer = local_vars.get('answer', 'No answer provided.')  
+                        answer = local_vars.get('answer', generate_text(sys_error, prompt, st.session_state.messages))  
   
                         # Reset stdout  
                         sys.stdout = old_stdout  
@@ -278,20 +283,17 @@ def run():
                         answer = errors[-1]
                     
                      
-                sys_error = """  
-                You are an assistant that informs the user when their input is unclear,  
-                and you ask them to provide more details or rephrase their message in the same language they used.  
-                """  
+
     
-                if attempts == max_attempts:  
-                    # answer = generate_text(sys_error, prompt, st.session_state.messages)  
-                    answer = errors[-1]
-                    # Simulate streaming for the final response  
-                    response_placeholder = st.empty()  
-                    response_text = ""  
-                    for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
-                        chunk = answer[i:i+10]  
-                        response_text += chunk  
-                        response_placeholder.markdown(response_text)  
-                        time.sleep(0.1)  # Adjust delay as needed
+                # if attempts == max_attempts:  
+                #     # answer = generate_text(sys_error, prompt, st.session_state.messages)  
+                #     answer = errors[-1]
+                #     # Simulate streaming for the final response  
+                #     response_placeholder = st.empty()  
+                #     response_text = ""  
+                #     for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
+                #         chunk = answer[i:i+10]  
+                #         response_text += chunk  
+                #         response_placeholder.markdown(response_text)  
+                #         time.sleep(0.1)  # Adjust delay as needed
                 
