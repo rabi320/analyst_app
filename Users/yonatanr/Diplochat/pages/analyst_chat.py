@@ -215,7 +215,8 @@ def run():
             with st.chat_message(message["role"], avatar=user_avatar):  
                 st.markdown(message["content"])  
   
-    if prompt := st.chat_input("Ask me anything"):  
+    if prompt := st.chat_input("Ask me anything"): 
+        response_text = "" 
         st.session_state.messages.append({"role": "user", "content": prompt})  
         with st.chat_message("user", avatar=user_avatar):  
             st.markdown(prompt)  
@@ -250,7 +251,7 @@ print(answer)
                         # Run the temporary file as a subprocess and capture the output  
                         result = subprocess.run([sys.executable, tmp_file_path], capture_output=True, text=True)  
                         answer = result.stdout.strip()  
-                        st.session_state.messages.append({'role': 'assistant', 'content': txt})  
+                         
     
                         # Simulate streaming by breaking response into smaller parts  
                         for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
@@ -258,7 +259,7 @@ print(answer)
                             response_text += chunk  
                             response_placeholder.markdown(response_text)  
                             time.sleep(0.1)  # Adjust delay as needed  
-    
+                        st.session_state.messages.append({'role': 'assistant', 'content': txt}) 
                         break  
                     except Exception as e:  
                         errors.append(f"Attempt {attempts + 1} failed: {e}")  
