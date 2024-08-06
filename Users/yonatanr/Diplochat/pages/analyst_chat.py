@@ -4,7 +4,10 @@ import pandas as pd
 import re  
 import time  
 import warnings  
-  
+ import subprocess  
+import sys  
+import tempfile  
+
 # Suppress all warnings  
 warnings.filterwarnings('ignore')  
   
@@ -233,7 +236,28 @@ def run():
                         else:  
                             code = comment_out_lines(code, print_drop=True, data_drop=True)  
                         
-                        exec(code)  
+                                                # Modify the code to write the answer variable to a file  
+ # Create a temporary directory  
+                        with tempfile.TemporaryDirectory() as tmpdirname:  
+                            answer_file_path = os.path.join(tmpdirname, 'answer.txt')  
+  
+                            # Modify the code to write the answer variable to the temporary file  
+                            code += f"""  
+                            with open(r'{answer_file_path}', 'w') as f:  
+                                f.write(str(answer))  
+                            """  
+  
+                            # Save the code to a temporary file within the temporary directory  
+                            tmp_file_path = os.path.join(tmpdirname, 'script.py')  
+                            with open(tmp_file_path, 'w') as tmp_file:  
+                                tmp_file.write(code)  
+  
+                            # Run the temporary file as a subprocess  
+                            result = subprocess.run([sys.executable, tmp_file_path], capture_output=True, text=True)  
+                          
+                            # Read the answer from the temporary file  
+                            with open(answer_file_path, 'r') as f:  
+                                answer = f.read()  
                         # Append to history only if successful  
                         st.session_state.messages.append({'role': 'assistant', 'content': txt})  
     
