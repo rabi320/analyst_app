@@ -223,44 +223,44 @@ def run():
             answer = ''  
             response_placeholder = st.empty()  
             response_text = ""  
-  
-            while attempts < max_attempts:  
-                try:  
-                    txt = generate_text(prompt, sys_msg, st.session_state.messages)  
-                    code = extract_code(txt)  
-                    if attempts == 0:  
-                        code = comment_out_lines(code, print_drop=True, data_drop=False)  
-                    else:  
-                        code = comment_out_lines(code, print_drop=True, data_drop=True)  
-                      
-                    exec(code)  
-                    # Append to history only if successful  
-                    st.session_state.messages.append({'role': 'assistant', 'content': txt})  
-  
-                    # Simulate streaming by breaking response into smaller parts  
-                    for i in range(0, len(txt), 10):  # Adjust the chunk size as needed  
-                        chunk = txt[i:i+10]  
+            with st.spinner("Thinking..."):
+                while attempts < max_attempts:  
+                    try:  
+                        txt = generate_text(prompt, sys_msg, st.session_state.messages)  
+                        code = extract_code(txt)  
+                        if attempts == 0:  
+                            code = comment_out_lines(code, print_drop=True, data_drop=False)  
+                        else:  
+                            code = comment_out_lines(code, print_drop=True, data_drop=True)  
+                        
+                        exec(code)  
+                        # Append to history only if successful  
+                        st.session_state.messages.append({'role': 'assistant', 'content': txt})  
+    
+                        # Simulate streaming by breaking response into smaller parts  
+                        for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
+                            chunk = answer[i:i+10]  
+                            response_text += chunk  
+                            response_placeholder.markdown(response_text)  
+                            time.sleep(0.1)  # Adjust delay as needed  
+    
+                        break  
+                    except Exception as e:  
+                        errors.append(f"Attempt {attempts + 1} failed: {e}")  
+                        attempts += 1  
+    
+                sys_error = """  
+                You are an assistant that informs the user when their input is unclear,  
+                and you ask them to provide more details or rephrase their message in the same language they used.  
+                """  
+    
+                if attempts == max_attempts:  
+                    answer = generate_text(sys_error, prompt, st.session_state.messages)  
+                    # Simulate streaming for the final response  
+                    response_placeholder = st.empty()  
+                    response_text = ""  
+                    for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
+                        chunk = answer[i:i+10]  
                         response_text += chunk  
                         response_placeholder.markdown(response_text)  
-                        time.sleep(0.1)  # Adjust delay as needed  
-  
-                    break  
-                except Exception as e:  
-                    errors.append(f"Attempt {attempts + 1} failed: {e}")  
-                    attempts += 1  
-  
-            sys_error = """  
-            You are an assistant that informs the user when their input is unclear,  
-            and you ask them to provide more details or rephrase their message in the same language they used.  
-            """  
-  
-            if attempts == max_attempts:  
-                answer = generate_text(sys_error, prompt, st.session_state.messages)  
-                 # Simulate streaming for the final response  
-                response_placeholder = st.empty()  
-                response_text = ""  
-                for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
-                    chunk = answer[i:i+10]  
-                    response_text += chunk  
-                    response_placeholder.markdown(response_text)  
-                    time.sleep(0.1)  # Adjust delay as needed 
+                        time.sleep(0.1)  # Adjust delay as needed 
