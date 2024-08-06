@@ -259,7 +259,7 @@ print(answer)
                             response_text += chunk  
                             response_placeholder.markdown(response_text)  
                             time.sleep(0.1)  # Adjust delay as needed  
-                        st.session_state.messages.append({'role': 'assistant', 'content': txt}) 
+                        st.session_state.messages.append({'role': 'assistant', 'content': answer}) 
                         break  
                     except Exception as e:  
                         errors.append(f"Attempt {attempts + 1} failed: {e}")  
