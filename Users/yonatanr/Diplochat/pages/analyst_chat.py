@@ -267,12 +267,14 @@ def run():
                             response_text += chunk  
                             response_placeholder.markdown(response_text)  
                             time.sleep(0.1)  # Adjust delay as needed  
-                        st.session_state.messages.append({'role': 'assistant', 'content': answer}) 
+                        
                         break  
                     except Exception as e:  
                         errors.append(f"Attempt {attempts + 1} failed: {e}")  
                         attempts += 1  
-    
+                        answer = errors[-1]
+                    
+                     
                 sys_error = """  
                 You are an assistant that informs the user when their input is unclear,  
                 and you ask them to provide more details or rephrase their message in the same language they used.  
@@ -288,4 +290,5 @@ def run():
                         chunk = answer[i:i+10]  
                         response_text += chunk  
                         response_placeholder.markdown(response_text)  
-                        time.sleep(0.1)  # Adjust delay as needed 
+                        time.sleep(0.1)  # Adjust delay as needed
+                st.session_state.messages.append({'role': 'assistant', 'content': answer})
