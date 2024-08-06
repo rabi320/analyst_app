@@ -3,12 +3,9 @@ from openai import AzureOpenAI
 import pandas as pd  
 import re  
 import time  
-import warnings  
-import subprocess  
+import warnings    
 import sys  
-import tempfile  
-import os
-import multiprocessing
+import io
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')  
@@ -251,14 +248,20 @@ def run():
                             code = comment_out_lines(code, print_drop=True, data_drop=True)  
                         
   
-                        # Use multiprocessing to run the code and capture the result  
-                        queue = multiprocessing.Queue()  
-                        p = multiprocessing.Process(target=run_code_in_subprocess, args=(code, queue))  
-                        p.start()  
-                        p.join()  
+                        # Redirect stdout to capture print statements  
+                        old_stdout = sys.stdout  
+                        redirected_output = sys.stdout = io.StringIO()  
   
-                        # Get the result from the queue  
-                        answer = queue.get()  
+                        # Execute the code in a controlled environment  
+                        local_vars = {}  
+                        exec(code, globals(), local_vars)  
+  
+                        # Capture the answer variable  
+                        answer = local_vars.get('answer', 'No answer provided.')  
+  
+                        # Reset stdout  
+                        sys.stdout = old_stdout  
+  
   
     
                         # Simulate streaming by breaking response into smaller parts  
@@ -267,7 +270,7 @@ def run():
                             response_text += chunk  
                             response_placeholder.markdown(response_text)  
                             time.sleep(0.1)  # Adjust delay as needed  
-                        
+                        st.session_state.messages.append({'role': 'assistant', 'content': answer})
                         break  
                     except Exception as e:  
                         errors.append(f"Attempt {attempts + 1} failed: {e}")  
@@ -291,4 +294,4 @@ def run():
                         response_text += chunk  
                         response_placeholder.markdown(response_text)  
                         time.sleep(0.1)  # Adjust delay as needed
-                st.session_state.messages.append({'role': 'assistant', 'content': answer})
+                
