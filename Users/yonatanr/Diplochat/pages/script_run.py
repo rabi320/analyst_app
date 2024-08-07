@@ -2,7 +2,7 @@ import streamlit as st
 import pyodbc  
 import pandas as pd  
 from datetime import datetime  
-  
+
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data():  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
@@ -45,7 +45,9 @@ def load_data():
   
     conn.close()  
     return dataframes  
-  
+
+
+
 def run():  
     st.title("Dynamic Python Script Execution")  
   
