@@ -15,22 +15,30 @@ def run():
 
 
         # Define tables and queries
+        # tables = {
+        #     'DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': """
+        #         SELECT Day, Barcode, Format_Name, Sales_NIS, Sales_Units, Price_Per_Unit
+        #         FROM [dbo].[DW_FACT_STORENEXT_BY_INDUSTRIES_SALES]
+        #         WHERE Day BETWEEN '2024-03-01' AND '2024-05-31'
+        #     """,
+        #     'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': """
+        #         SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
+        #         FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
+        #         WHERE Category_Name = N'חטיפים'
+        #     """,
+        #     'DW_CHP': """
+        #         SELECT ITEM_DESCRIPION, BARCODE, CHAIN_CODE, STORE_CODE, CHAIN, STORE, ADDRESS, CITY, SELLOUT_DESCRIPTION, STORENEXT_CATEGORY, SUPPLIER, FILE_DATE, PRICE, SELLOUT_PRICE, SALE_ID
+        #         FROM [dbo].[DW_CHP]
+        #         WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-03-01' AND '2024-05-31'
+        #     """
+        # }
         tables = {
-            'DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': """
-                SELECT Day, Barcode, Format_Name, Sales_NIS, Sales_Units, Price_Per_Unit
-                FROM [dbo].[DW_FACT_STORENEXT_BY_INDUSTRIES_SALES]
-                WHERE Day BETWEEN '2024-03-01' AND '2024-05-31'
-            """,
             'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': """
                 SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
                 FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
                 WHERE Category_Name = N'חטיפים'
             """,
-            'DW_CHP': """
-                SELECT ITEM_DESCRIPION, BARCODE, CHAIN_CODE, STORE_CODE, CHAIN, STORE, ADDRESS, CITY, SELLOUT_DESCRIPTION, STORENEXT_CATEGORY, SUPPLIER, FILE_DATE, PRICE, SELLOUT_PRICE, SALE_ID
-                FROM [dbo].[DW_CHP]
-                WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-03-01' AND '2024-05-31'
-            """
+
         }
             
         # Load data into dataframes
@@ -42,9 +50,9 @@ def run():
         conn.close()
 
         # Assigning dataframes to variables
-        stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
+        # stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
         stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
-        chp = dataframes['DW_CHP']
+        # chp = dataframes['DW_CHP']
       
   
     # Input area for the user to enter their code  
