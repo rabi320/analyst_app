@@ -64,14 +64,14 @@ def run():
         conn.close()  
     
     
-
+        st.success("Data loading complete!")
         # Assigning dataframes to variables
         # stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
         # stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
         chp = dataframes['DW_CHP']
       
-    st.success("Data loading complete!")
-    
+        
+
     # Input area for the user to enter their code  
     script = st.text_area("Enter your Python code:", height=200,   
                            value='answer = "Hello, this is the answer!"')  # Default example code  
