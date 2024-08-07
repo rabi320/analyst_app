@@ -3,7 +3,7 @@ import pyodbc
 import pandas as pd  
 from datetime import datetime  
   
-@st.cache_data 
+@st.cache_data("Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data():  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                           server='diplomat-analytics-server.database.windows.net',  
@@ -14,7 +14,7 @@ def load_data():
         'DW_CHP': """  
             SELECT ITEM_DESCRIPION, BARCODE, CHAIN_CODE, STORE_CODE, CHAIN, STORE, ADDRESS, CITY, SELLOUT_DESCRIPTION, STORENEXT_CATEGORY, SUPPLIER, FILE_DATE, PRICE, SELLOUT_PRICE, SALE_ID  
             FROM [dbo].[DW_CHP]  
-            WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-05-30' AND '2024-05-31'  
+            WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-05-01' AND '2024-05-31'  
         """  
     }  
   
@@ -37,11 +37,9 @@ def load_data():
 def run():  
     st.title("Dynamic Python Script Execution")  
   
-    with st.spinner("Loading data.. this can take a few minutes, feel free to grab a coffee ☕"):  
-        dataframes = load_data()  
-        chp = dataframes['DW_CHP']  
-        st.success("Data loading complete!")  
-  
+    dataframes = load_data()  
+    chp = dataframes['DW_CHP']  
+    
     script = st.text_area("Enter your Python code:", height=200,  
                           value='answer = "Hello, this is the answer!"')  
   
