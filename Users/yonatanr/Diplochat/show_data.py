@@ -5,7 +5,7 @@ st.title("Diplomat Distributors LTD Analytics Dashboard")
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat",'Analyst Chat',"Map"])
+page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat","Map"])
 
 # Load the corresponding page
 if page == "Home":
@@ -20,9 +20,9 @@ elif page == "Visualizations":
 elif page == "Chat":
     from pages.chat import run as chat_page
     chat_page()
-elif page == "Analyst Chat":
-    from pages.analyst_chat import run as analyst_chat_page
-    analyst_chat_page()
+# elif page == "Analyst Chat":
+#     from pages.analyst_chat import run as analyst_chat_page
+#     analyst_chat_page()
 elif page == "Map":
     # Import the map page
     from pages.map import run as display_map

@@ -25,24 +25,8 @@ def run():
 
     st.title("Diplomat's AI Assistant 🤖")
 
-    # Disclaimer
-    disclaimer = """
-    **Disclaimer:**
-
-    The information provided by this AI assistant is generated based on available data and patterns, and it may not always be accurate or up-to-date. 
-    Users are advised to independently verify any critical information and exercise their judgment when relying on the assistant's responses. 
-    The developers and creators of this AI assistant are not liable for any inaccuracies, errors, or consequences resulting from the use of the provided information.
-    """
-
-    # Display the disclaimer
-    st.markdown(disclaimer)
-
-    uploaded_file = st.file_uploader("Choose an Avatar for yourself: 📷🧑", type=["jpg", "jpeg", "png"])
-    if uploaded_file is not None:
-        image= uploaded_file.read()
-        user_avatar = image
-    else:
-        user_avatar = '🧑'
+    st.markdown("![](https://www.diplomat-global.com/wp-content/uploads/2018/06/logo.png)")
+    user_avatar = '🧑'
 
 
 
@@ -79,14 +63,15 @@ def run():
             st.markdown(prompt)
 
         with st.chat_message("assistant", avatar='🤖'):
-            stream = client.chat.completions.create(
-                model=st.session_state["openai_model"],
-                messages=[
-                    {"role": m["role"], "content": m["content"]}
-                    for m in st.session_state.messages
-                ],
-                max_tokens=500,
-                stream=True,
-            )
-            response = st.write_stream(stream)
+            with st.spinner("Thinking..."):
+                stream = client.chat.completions.create(
+                    model=st.session_state["openai_model"],
+                    messages=[
+                        {"role": m["role"], "content": m["content"]}
+                        for m in st.session_state.messages
+                    ],
+                    max_tokens=500,
+                    stream=True,
+                )
+                response = st.write_stream(stream)
         st.session_state.messages.append({"role": "assistant", "content": response})
