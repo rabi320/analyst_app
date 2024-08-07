@@ -42,25 +42,36 @@ def run():
         }
  
 
-        dataframes = {}
-        for table, query in tables.items():
-            # Fetch data in chunks 
-            chunks = [] 
+        dataframes = {}  
+        for table, query in tables.items():  
+            # Fetch data in chunks  
+            chunks = []  
             chunk_size = 10000  # Adjust based on available memory and performance considerations  
-            for i,chunk in enumerate(pd.read_sql_query(query, conn, chunksize=chunk_size)):
-                # Concatenate all chunks into a single DataFrame
-                chunks.append(chunk)   
+            total_rows = pd.read_sql_query(f"SELECT COUNT(*) FROM ({query}) AS count_query", conn).iloc[0, 0]  
+            total_chunks = (total_rows // chunk_size) + 1  
+            
+            chunk_progress_bar = st.progress(0)  
+            
+            for i, chunk in enumerate(pd.read_sql_query(query, conn, chunksize=chunk_size)):  
+                # Concatenate all chunks into a single DataFrame  
+                chunks.append(chunk)  
+                progress = (i + 1) / total_chunks  
+                chunk_progress_bar.progress(progress)  
+            
             df = pd.concat(chunks, ignore_index=True)  
-            dataframes[table] = df
-
-        conn.close()
+            dataframes[table] = df  
+    
+        conn.close()  
+    
+    
 
         # Assigning dataframes to variables
         # stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
         # stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
         chp = dataframes['DW_CHP']
       
-  
+    st.success("Data loading complete!")
+    
     # Input area for the user to enter their code  
     script = st.text_area("Enter your Python code:", height=200,   
                            value='answer = "Hello, this is the answer!"')  # Default example code  
