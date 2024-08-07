@@ -187,16 +187,7 @@ def run_code_in_subprocess(code, queue):
 
 def run():  
     st.title("Diplomat's AI Analyst 🤖")  
-  
-    # Disclaimer  
-    disclaimer = """  
-    Disclaimer:  
-    The information provided by this AI assistant is generated based on available data and patterns, and it may not always be accurate or up-to-date.  
-    Users are advised to independently verify any critical information and exercise their judgment when relying on the assistant's responses.  
-    The developers and creators of this AI assistant are not liable for any inaccuracies, errors, or consequences resulting from the use of the provided information.  
-    """  
-    st.markdown(disclaimer)  
-  
+    st.markdown("![](https://www.globrands.co.il/main/wp-content/uploads/2024/01/diplomat_logo.png)")
     uploaded_file = st.file_uploader("Choose an Avatar for yourself: 📷🧑", type=["jpg", "jpeg", "png"])  
     if uploaded_file is not None:  
         image = uploaded_file.read()  
