@@ -2,7 +2,14 @@ import streamlit as st
 import pyodbc  
 import pandas as pd 
 from datetime import datetime
-  
+
+# Connect to SQL Server
+conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',
+                        server='diplomat-analytics-server.database.windows.net',
+                        database='NBO-DB',
+                        uid='analyticsadmin', pwd='Analytics12345')
+
+
 def run():  
     st.title("Dynamic Python Script Execution")  
   
