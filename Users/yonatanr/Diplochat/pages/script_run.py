@@ -68,7 +68,8 @@ def run():
         try:  
             exec(script.strip(), {}, local_context)  
             answer = local_context.get('answer', "No answer found.")  
-            st.success(f"The answer is: {answer}")  
+            st.markdown(answer)
+              
         except Exception as e:  
             st.error(f"Error: {e}")  
   
