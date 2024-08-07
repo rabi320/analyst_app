@@ -61,7 +61,7 @@ def run():
   
     if st.button("Run Code"):  
         # Create a local context for exec  
-        local_context = {}  
+        local_context = {'stnx_items': stnx_items} 
   
         try:  
             # Execute the user's script  
