@@ -33,26 +33,32 @@ def run():
         #     """
         # }
         tables = {
-            'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': """
-                SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
-                FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-                WHERE Category_Name = N'חטיפים'
+      'DW_CHP': """
+                SELECT ITEM_DESCRIPION, BARCODE, CHAIN_CODE, STORE_CODE, CHAIN, STORE, ADDRESS, CITY, SELLOUT_DESCRIPTION, STORENEXT_CATEGORY, SUPPLIER, FILE_DATE, PRICE, SELLOUT_PRICE, SALE_ID
+                FROM [dbo].[DW_CHP]
+                WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-03-01' AND '2024-05-31'
             """,
 
         }
-            
-        # Load data into dataframes
+ 
+
         dataframes = {}
         for table, query in tables.items():
-            df = pd.read_sql_query(query, conn)
+            # Fetch data in chunks 
+            chunks = [] 
+            chunk_size = 10000  # Adjust based on available memory and performance considerations  
+            for i,chunk in enumerate(pd.read_sql_query(query, conn, chunksize=chunk_size)):
+                # Concatenate all chunks into a single DataFrame
+                chunks.append(chunk)   
+            df = pd.concat(chunks, ignore_index=True)  
             dataframes[table] = df
 
         conn.close()
 
         # Assigning dataframes to variables
         # stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
-        stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
-        # chp = dataframes['DW_CHP']
+        # stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
+        chp = dataframes['DW_CHP']
       
   
     # Input area for the user to enter their code  
@@ -61,7 +67,7 @@ def run():
   
     if st.button("Run Code"):  
         # Create a local context for exec  
-        local_context = {'stnx_items': stnx_items} 
+        local_context = {'chp': chp} 
   
         try:  
             # Execute the user's script  
