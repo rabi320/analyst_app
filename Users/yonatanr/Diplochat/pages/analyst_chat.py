@@ -303,7 +303,7 @@ def run():
                         code = comment_out_lines(code, print_drop=True, data_drop=True)
                         local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
                         exec(code, {}, local_context)
-                        st.text(code)
+                        # st.text(code)
                         answer = local_context.get('answer', "No answer found.")    
                         # Simulate streaming by breaking response into smaller parts  
                         for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
@@ -311,7 +311,7 @@ def run():
                             response_text += chunk  
                             response_placeholder.markdown(response_text)  
                             time.sleep(0.1)  # Adjust delay as needed  
-                        st.session_state.messages.append({'role': 'assistant', 'content': answer})
+                        st.session_state.messages.append({'role': 'assistant', 'content': code})
                         break  
                     except Exception as e:  
                         errors.append(f"Attempt {attempts + 1} failed: {e}")  
