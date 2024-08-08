@@ -5,7 +5,7 @@ st.title("Diplomat Distributors LTD Analytics Dashboard")
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat","Map",'Inner Code'])
+page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat",'Analyst Chat',"Map",'Inner Code'])
 
 # Load the corresponding page
 if page == "Home":
