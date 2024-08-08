@@ -318,14 +318,20 @@ def run():
                 stream=False,
             )
             txt_content = txt.choices[0].message.content
-            pattern = r'python(.*?)'  
+            # Regex pattern to extract the Python code  
+ 
+  
+
+            pattern = r'```python(.*?)```'   
             all_code = re.findall(pattern, txt_content, re.DOTALL)
             if len(all_code) == 1:  
-                code = all_code[0]  
+                code = all_code[0]
+                  
             else:  
                 code = '\n'.join(all_code)              
-
-            st.text(txt_content) 
+            st.text(code)
+            st.text(type(code))
+            st.text(txt_content)
             # code = extract_code(txt_content)
              
             code = comment_out_lines(code, print_drop=True, data_drop=True)
