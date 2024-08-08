@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime  
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
+
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data():  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
