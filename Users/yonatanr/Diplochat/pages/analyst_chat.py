@@ -304,7 +304,7 @@ def run():
                 local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
                 exec(code, {}, local_context)
                 answer = local_context.get('answer', "No answer found.") 
-                response = st.write_stream(answer)
+                response = st.text(answer)
                 st.session_state.messages.append({"role": "assistant", "content": answer})
                 
     # if prompt := st.chat_input("Ask me anything"): 
