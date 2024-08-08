@@ -2,6 +2,7 @@ import streamlit as st
 import pyodbc  
 import pandas as pd  
 from datetime import datetime  
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data():  
@@ -63,7 +64,7 @@ def run():
                           value='answer = "Hello, this is the answer!"')  
   
     if st.button("Run Code"):  
-        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd}  
+        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}  
   
         try:  
             exec(script.strip(), {}, local_context)  
