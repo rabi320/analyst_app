@@ -147,18 +147,18 @@ client = AzureOpenAI(
 )  
 MODEL = "GPT_O"  
   
-def generate_text(prompt, sys_msg, examples=[]):  
-    response = client.chat.completions.create(  
-        model="GPT_O",  # model = "deployment_name"  
-        messages=[{"role": "system", "content": sys_msg}] + examples + [{"role": "user", "content": prompt}],  
-        temperature=0.7,  
-        max_tokens=2000,  
-        top_p=0.95,  
-        frequency_penalty=0,  
-        presence_penalty=0,  
-        stop=None  
-    )  
-    return response.choices[0].message.content.strip()  
+# def generate_text(prompt, sys_msg, examples=[]):  
+#     response = client.chat.completions.create(  
+#         model="GPT_O",  # model = "deployment_name"  
+#         messages=[{"role": "system", "content": sys_msg}] + examples + [{"role": "user", "content": prompt}],  
+#         temperature=0.7,  
+#         max_tokens=2000,  
+#         top_p=0.95,  
+#         frequency_penalty=0,  
+#         presence_penalty=0,  
+#         stop=None  
+#     )  
+#     return response.choices[0].message.content.strip()  
   
 def extract_code(txt):  
     pattern = r'python(.*?)'  
@@ -282,55 +282,79 @@ def run():
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
                 st.markdown(message["content"])  
+    
+    if prompt := st.chat_input("Ask me anything"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user", avatar=user_avatar):
+            st.markdown(prompt)
 
-    if prompt := st.chat_input("Ask me anything"): 
-        response_text = "" 
-        st.session_state.messages.append({"role": "user", "content": prompt})  
-        with st.chat_message("user", avatar=user_avatar):  
-            st.markdown(prompt)  
-        with st.chat_message("assistant", avatar='🤖'):  
-            max_attempts = 5  
-            errors = []  
-            attempts = 0  
-            answer = ''  
-            response_placeholder = st.empty()  
-            response_text = ""  
+        with st.chat_message("assistant", avatar='🤖'):
             with st.spinner("Thinking..."):
-                while attempts < max_attempts:  
-                    try:  
-                        txt = generate_text(prompt, sys_msg, st.session_state.messages)  
-                        code = extract_code(txt)  
-                        code = comment_out_lines(code, print_drop=True, data_drop=True)
-                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
-                        exec(code, {}, local_context)
-                        # st.text(code)
-                        # answer = local_context.get('answer', "No answer found.")    
-                        # Simulate streaming by breaking response into smaller parts  
-                        for i in range(0, len(code), 10):  # Adjust the chunk size as needed  
-                            chunk = code[i:i+10]  
-                            response_text += chunk  
-                            response_placeholder.markdown(response_text)  
-                            time.sleep(0.1)  # Adjust delay as needed  
-                        st.session_state.messages.append({'role': 'assistant', 'content': code})
-                        break  
-                    except Exception as e:  
-                        errors.append(f"Attempt {attempts + 1} failed: {e}")  
-                        attempts += 1  
-                        answer = errors[-1]
+                stream = client.chat.completions.create(
+                    model=st.session_state["openai_model"],
+                    messages=[
+                        {"role": m["role"], "content": m["content"]}
+                        for m in st.session_state.messages
+                    ],
+                    max_tokens=500,
+                    stream=True,
+                )
+                code = extract_code(stream)  
+                code = comment_out_lines(code, print_drop=True, data_drop=True)
+                local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
+                exec(code, {}, local_context)
+                answer = local_context.get('answer', "No answer found.") 
+                response = st.write_stream(answer)
+                st.session_state.messages.append({"role": "assistant", "content": answer})
+                
+    # if prompt := st.chat_input("Ask me anything"): 
+    #     response_text = "" 
+    #     st.session_state.messages.append({"role": "user", "content": prompt})  
+    #     with st.chat_message("user", avatar=user_avatar):  
+    #         st.markdown(prompt)  
+    #     with st.chat_message("assistant", avatar='🤖'):  
+    #         max_attempts = 5  
+    #         errors = []  
+    #         attempts = 0  
+    #         answer = ''  
+    #         response_placeholder = st.empty()  
+    #         response_text = ""  
+    #         with st.spinner("Thinking..."):
+    #             while attempts < max_attempts:  
+    #                 try:  
+    #                     txt = generate_text(prompt, sys_msg, st.session_state.messages)  
+    #                     code = extract_code(txt)  
+    #                     code = comment_out_lines(code, print_drop=True, data_drop=True)
+    #                     local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
+    #                     exec(code, {}, local_context)
+    #                     # st.text(code)
+    #                     # answer = local_context.get('answer', "No answer found.")    
+    #                     # Simulate streaming by breaking response into smaller parts  
+    #                     for i in range(0, len(code), 10):  # Adjust the chunk size as needed  
+    #                         chunk = code[i:i+10]  
+    #                         response_text += chunk  
+    #                         response_placeholder.markdown(response_text)  
+    #                         time.sleep(0.1)  # Adjust delay as needed  
+    #                     st.session_state.messages.append({'role': 'assistant', 'content': code})
+    #                     break  
+    #                 except Exception as e:  
+    #                     errors.append(f"Attempt {attempts + 1} failed: {e}")  
+    #                     attempts += 1  
+    #                     answer = errors[-1]
 
     
-                if attempts == max_attempts:  
+    #             if attempts == max_attempts:  
                     
-                    answer = generate_text(sys_error, prompt, st.session_state.messages)  
-                    # answer = errors[-1]
-                    # Simulate streaming for the final response  
-                    response_placeholder = st.empty()  
-                    response_text = ""  
-                    for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
-                        chunk = answer[i:i+10]  
-                        response_text += chunk  
-                        response_placeholder.markdown(response_text)  
-                        time.sleep(0.1)  # Adjust delay as needed
+    #                 answer = generate_text(sys_error, prompt, st.session_state.messages)  
+    #                 # answer = errors[-1]
+    #                 # Simulate streaming for the final response  
+    #                 response_placeholder = st.empty()  
+    #                 response_text = ""  
+    #                 for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
+    #                     chunk = answer[i:i+10]  
+    #                     response_text += chunk  
+    #                     response_placeholder.markdown(response_text)  
+    #                     time.sleep(0.1)  # Adjust delay as needed
                 
                 
 
