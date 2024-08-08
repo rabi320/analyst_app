@@ -160,14 +160,7 @@ MODEL = "GPT_O"
 #     )  
 #     return response.choices[0].message.content.strip()  
   
-def extract_code(txt):  
-    pattern = r'python(.*?)'  
-    all_code = re.findall(pattern, txt, re.DOTALL)  
-    if len(all_code) == 1:  
-        final_code = all_code[0]  
-    else:  
-        final_code = '\n'.join(all_code)  
-    return final_code  
+  
   
 def comment_out_lines(code,print_drop = True,data_drop = True):  
     
@@ -246,7 +239,17 @@ def load_data():
     conn.close()  
     return dataframes  
 
-def run():  
+def run():
+
+    def extract_code(txt):  
+        pattern = r'python(.*?)'  
+        all_code = re.findall(pattern, txt, re.DOTALL)  
+        if len(all_code) == 1:  
+            final_code = all_code[0]  
+        else:  
+            final_code = '\n'.join(all_code)  
+        return final_code
+    
     st.title("Dynamic Python Script Execution")  
   
     dataframes = load_data()  
