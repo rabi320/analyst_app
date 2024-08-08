@@ -59,7 +59,10 @@ def run():
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
     chp = dataframes['DW_CHP']
 
-    
+    # Convert date columns to datetime
+    stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
+    chp['FILE_DATE'] = pd.to_datetime(chp['FILE_DATE'])
+  
     script = st.text_area("Enter your Python code:", height=200,  
                           value='answer = "Hello, this is the answer!"')  
   
