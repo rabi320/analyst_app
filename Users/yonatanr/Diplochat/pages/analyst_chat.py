@@ -299,8 +299,9 @@ def run():
                 max_tokens=500,
                 stream=False,
             )
-            st.text(txt.choices[0].message.content)
-            code = extract_code(txt.choices[0].message.content)  
+            txt_content = txt.choices[0].message.content
+            st.text(type(txt_content))
+            code = extract_code(txt_content)  
             code = comment_out_lines(code, print_drop=True, data_drop=True)
             local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
             exec(code, {}, local_context)
