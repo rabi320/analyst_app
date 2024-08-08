@@ -63,7 +63,7 @@ def run():
                           value='answer = "Hello, this is the answer!"')  
   
     if st.button("Run Code"):  
-        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd}  
+        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd}  
   
         try:  
             exec(script.strip(), {}, local_context)  
