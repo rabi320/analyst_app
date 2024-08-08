@@ -250,8 +250,23 @@ def run():
             final_code = '\n'.join(all_code)  
         return final_code
     
+
+
     st.title("Dynamic Python Script Execution")  
-  
+
+    txt_content = "Here is some text with the word python followed by some interesting content. python123 more text."  
+    
+    # Simplified pattern to catch text following "python" up to the next space  
+    pattern = r'python(\S*)'  
+    
+    all_code = re.findall(pattern, txt_content)  
+    if len(all_code) == 1:  
+        code = all_code[0]  
+    else:  
+        code = '\n'.join(all_code)            
+
+    st.text(code)
+       
     dataframes = load_data()  
     
     # Assigning dataframes to variables
@@ -299,7 +314,7 @@ def run():
                     {"role": m["role"], "content": m["content"]}
                     for m in st.session_state.messages
                 ],
-                max_tokens=1000,
+                max_tokens=2000,
                 stream=False,
             )
             txt_content = txt.choices[0].message.content
