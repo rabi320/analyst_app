@@ -299,6 +299,7 @@ def run():
                 max_tokens=500,
                 stream=False,
             )
+            st.text(txt)
             code = extract_code(txt.choices[0].message.content)  
             code = comment_out_lines(code, print_drop=True, data_drop=True)
             local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
