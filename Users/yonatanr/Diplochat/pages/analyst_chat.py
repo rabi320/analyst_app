@@ -303,6 +303,7 @@ def run():
                         code = comment_out_lines(code, print_drop=True, data_drop=True)
                         local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
                         exec(code, {}, local_context)
+                        st.text(code)
                         answer = local_context.get('answer', "No answer found.")    
                         # Simulate streaming by breaking response into smaller parts  
                         for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
