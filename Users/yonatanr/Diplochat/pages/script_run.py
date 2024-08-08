@@ -56,7 +56,7 @@ def run():
     # Assigning dataframes to variables
     stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
-    # chp = dataframes['DW_CHP']
+    chp = dataframes['DW_CHP']
 
     
     script = st.text_area("Enter your Python code:", height=200,  
