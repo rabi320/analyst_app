@@ -266,7 +266,7 @@ def run():
         code = '\n'.join(all_code)            
 
     st.text(code)
-       
+
     dataframes = load_data()  
     
     # Assigning dataframes to variables
@@ -325,7 +325,7 @@ def run():
             else:  
                 code = '\n'.join(all_code)              
 
-            st.text(code) 
+            st.text(txt_content) 
             # code = extract_code(txt_content)
              
             code = comment_out_lines(code, print_drop=True, data_drop=True)
