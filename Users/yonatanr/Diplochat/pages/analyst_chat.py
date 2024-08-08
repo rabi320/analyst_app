@@ -288,23 +288,25 @@ def run():
         with st.chat_message("user", avatar=user_avatar):
             st.markdown(prompt)
 
-        with st.chat_message("assistant", avatar='🤖'):
-            with st.spinner("Thinking..."):
-                stream = client.chat.completions.create(
-                    model=st.session_state["openai_model"],
-                    messages=[
-                        {"role": m["role"], "content": m["content"]}
-                        for m in st.session_state.messages
-                    ],
-                    max_tokens=500,
-                    stream=False,
-                )
-                code = extract_code(stream.choices[0].message.content)  
-                code = comment_out_lines(code, print_drop=True, data_drop=True)
-                local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
-                exec(code, {}, local_context)
-                answer = local_context.get('answer', "No answer found.") 
-                response = st.text(answer)
+        
+        with st.spinner("Thinking..."):
+            txt = client.chat.completions.create(
+                model=st.session_state["openai_model"],
+                messages=[
+                    {"role": m["role"], "content": m["content"]}
+                    for m in st.session_state.messages
+                ],
+                max_tokens=500,
+                stream=False,
+            )
+            code = extract_code(txt.choices[0].message.content)  
+            code = comment_out_lines(code, print_drop=True, data_drop=True)
+            local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
+            exec(code, {}, local_context)
+            answer = local_context.get('answer', "No answer found.") 
+
+            with st.chat_message("assistant", avatar='🤖'):
+                st.text(answer)
                 st.session_state.messages.append({"role": "assistant", "content": answer})
                 
     # if prompt := st.chat_input("Ask me anything"): 
