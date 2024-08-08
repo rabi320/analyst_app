@@ -303,9 +303,9 @@ def run():
                 stream=False,
             )
             txt_content = txt.choices[0].message.content
-            
+            st.text(txt_content[:10]) 
             code = extract_code(txt_content)
-            st.text(code)  
+             
             code = comment_out_lines(code, print_drop=True, data_drop=True)
             local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
             exec(code, {}, local_context)
