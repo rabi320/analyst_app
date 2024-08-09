@@ -356,6 +356,8 @@ def run():
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
                     
+                    if answer == "No answer found.":  
+                        raise ValueError("No answer found.")  
 
                     with st.chat_message("assistant", avatar='🤖'):
                         # Create a placeholder for streaming output  
@@ -368,7 +370,7 @@ def run():
                             placeholder.markdown(streamed_text)  
                             time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
                     break
-                    
+
                 except Exception as e:  
                     errors.append(f"Attempt {attempts + 1} failed: {e}")  
                     attempts += 1
