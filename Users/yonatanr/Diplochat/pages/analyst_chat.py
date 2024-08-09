@@ -351,13 +351,15 @@ def run():
                     code = comment_out_lines(code, print_drop=True, data_drop=True)
 
                     # st.text(code)
-                    st.session_state.messages.append({"role": "assistant", "content": answer})
+                    
                     local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
                     
                     if answer == "No answer found.":  
                         raise ValueError("No answer found.")  
+                    
+                    st.session_state.messages.append({"role": "assistant", "content": txt_content})
 
                     with st.chat_message("assistant", avatar='🤖'):
                         # Create a placeholder for streaming output  
