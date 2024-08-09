@@ -326,34 +326,34 @@ def run():
                     
         
                     # st.text(txt_content)
-                    
-                    # Regex pattern to extract the Python code
-                    pattern = r'```python(.*?)```'   
-                    all_code = re.findall(pattern, txt_content, re.DOTALL)
-                    if len(all_code) == 1:  
-                        code = all_code[0]
+                    with st.status("Analyzing Database.."):
+                        # Regex pattern to extract the Python code
+                        pattern = r'```python(.*?)```'   
+                        all_code = re.findall(pattern, txt_content, re.DOTALL)
+                        if len(all_code) == 1:  
+                            code = all_code[0]
+                            
+                        else:  
+                            code = '\n'.join(all_code)              
                         
-                    else:  
-                        code = '\n'.join(all_code)              
-                    
-                    
-                    # st.text(code)
-                    # st.text(type(code))
-                    
-                    # code = extract_code(txt_content)
-                    
-                    code = comment_out_lines(code, print_drop=True)
+                        
+                        # st.text(code)
+                        # st.text(type(code))
+                        
+                        # code = extract_code(txt_content)
+                        
+                        code = comment_out_lines(code, print_drop=True)
 
-                    # st.text(code)
-                    
-                    local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
-                    exec(code, {}, local_context)
-                    answer = local_context.get('answer', "No answer found.") 
-                    
-                    if answer == "No answer found.":  
-                        raise ValueError("No answer found.")  
-                    
-                    st.session_state.messages.append({"role": "assistant", "content": txt_content})
+                        # st.text(code)
+                        
+                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
+                        exec(code, {}, local_context)
+                        answer = local_context.get('answer', "No answer found.") 
+                        
+                        if answer == "No answer found.":  
+                            raise ValueError("No answer found.")  
+                        
+                        st.session_state.messages.append({"role": "assistant", "content": txt_content})
 
                     with st.chat_message("assistant", avatar='🤖'):
                         # Create a placeholder for streaming output  
