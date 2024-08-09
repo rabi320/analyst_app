@@ -246,7 +246,7 @@ def run():
     
 
 
-    st.title("Diplochat AI")  
+    st.title("Diplochat AI 🤖")  
 
     dataframes = load_data()  
     
