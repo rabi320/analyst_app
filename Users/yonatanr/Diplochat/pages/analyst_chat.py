@@ -246,20 +246,7 @@ def run():
     
 
 
-    st.title("Dynamic Python Script Execution")  
-
-    txt_content = "Here is some text with the word python followed by some interesting content. python123 more text."  
-    
-    # Simplified pattern to catch text following "python" up to the next space  
-    pattern = r'python(\S*)'  
-    
-    all_code = re.findall(pattern, txt_content)  
-    if len(all_code) == 1:  
-        code = all_code[0]  
-    else:  
-        code = '\n'.join(all_code)            
-
-    st.text(code)
+    st.title("Diplochat AI")  
 
     dataframes = load_data()  
     
