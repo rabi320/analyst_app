@@ -149,7 +149,7 @@ MODEL = "Diplochat"
   
 def generate_text(prompt, sys_msg, examples=[]):  
     response = client.chat.completions.create(  
-        model="GPT_O",  # model = "deployment_name"  
+        model=MODEL,  # model = "deployment_name"  
         messages=[{"role": "system", "content": sys_msg}] + examples + [{"role": "user", "content": prompt}],  
         temperature=0.7,  
         max_tokens=2000,  
@@ -377,7 +377,7 @@ def run():
             if attempts == max_attempts:
                 # replace with ai generated text
                 # answer = 'לא מצאתי תשובה, נסה לנסח מחדש בבקשה'
-                answer = generate_text(message["content"], sys_msg)
+                answer = generate_text(prompt, sys_error)
                 with st.chat_message("assistant", avatar='🤖'):
                     # Create a placeholder for streaming output  
                     placeholder = st.empty()  
