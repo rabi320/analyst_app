@@ -145,7 +145,7 @@ client = AzureOpenAI(
     api_key='86bedc710e5e493290cb2b0ce6f16d80',  
     api_version="2024-02-15-preview"  
 )  
-MODEL = "GPT_O"  
+MODEL = "Diplochat"  
   
 # def generate_text(prompt, sys_msg, examples=[]):  
 #     response = client.chat.completions.create(  
@@ -162,19 +162,13 @@ MODEL = "GPT_O"
   
   
   
-def comment_out_lines(code,print_drop = True,data_drop = True):  
+def comment_out_lines(code,print_drop = True):  
     
     
     # Define the patterns and replacements  
     lines_to_comment = [  
         "stnx_sales, stnx_items, chp = load_data()"
     ]  
-
-    if data_drop:  
-        # Comment out the specific lines  
-        for line in lines_to_comment:  
-            pattern = re.compile(r"^(\s*)" + line, re.MULTILINE)  
-            code = pattern.sub(r"\1# " + line, code)  
         
     if print_drop:
     # Replace any print() statements with #print()  
@@ -348,7 +342,7 @@ def run():
                     
                     # code = extract_code(txt_content)
                     
-                    code = comment_out_lines(code, print_drop=True, data_drop=True)
+                    code = comment_out_lines(code, print_drop=True)
 
                     # st.text(code)
                     
