@@ -147,18 +147,18 @@ client = AzureOpenAI(
 )  
 MODEL = "Diplochat"  
   
-# def generate_text(prompt, sys_msg, examples=[]):  
-#     response = client.chat.completions.create(  
-#         model="GPT_O",  # model = "deployment_name"  
-#         messages=[{"role": "system", "content": sys_msg}] + examples + [{"role": "user", "content": prompt}],  
-#         temperature=0.7,  
-#         max_tokens=2000,  
-#         top_p=0.95,  
-#         frequency_penalty=0,  
-#         presence_penalty=0,  
-#         stop=None  
-#     )  
-#     return response.choices[0].message.content.strip()  
+def generate_text(prompt, sys_msg, examples=[]):  
+    response = client.chat.completions.create(  
+        model="GPT_O",  # model = "deployment_name"  
+        messages=[{"role": "system", "content": sys_msg}] + examples + [{"role": "user", "content": prompt}],  
+        temperature=0.7,  
+        max_tokens=2000,  
+        top_p=0.95,  
+        frequency_penalty=0,  
+        presence_penalty=0,  
+        stop=None  
+    )  
+    return response.choices[0].message.content.strip()  
   
   
   
@@ -376,7 +376,8 @@ def run():
                                 # generate anwer for failures
             if attempts == max_attempts:
                 # replace with ai generated text
-                answer = 'לא מצאתי תשובה, נסה לנסח מחדש בבקשה'
+                # answer = 'לא מצאתי תשובה, נסה לנסח מחדש בבקשה'
+                answer = generate_text(message["content"], sys_msg)
                 with st.chat_message("assistant", avatar='🤖'):
                     # Create a placeholder for streaming output  
                     placeholder = st.empty()  
