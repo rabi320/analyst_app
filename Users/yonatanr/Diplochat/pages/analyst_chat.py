@@ -320,7 +320,7 @@ def run():
             txt_content = txt.choices[0].message.content
             # Regex pattern to extract the Python code  
  
-  
+            st.text(txt_content)
 
             pattern = r'```python(.*?)```'   
             all_code = re.findall(pattern, txt_content, re.DOTALL)
@@ -329,10 +329,12 @@ def run():
                   
             else:  
                 code = '\n'.join(all_code)              
+            
+            
             st.text(code)
-            st.text(type(code))
-            st.text(txt_content)
-            # code = extract_code(txt_content)
+            # st.text(type(code))
+            
+            code = extract_code(txt_content)
              
             code = comment_out_lines(code, print_drop=True, data_drop=True)
             local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
@@ -340,7 +342,11 @@ def run():
             answer = local_context.get('answer', "No answer found.") 
 
             with st.chat_message("assistant", avatar='🤖'):
-                st.text(answer)
+                # Stream the answer output  
+                for char in answer:  
+                    st.write(char, end="")  
+                    time.sleep(0.05)  # Adjust the sleep time to control the streaming speed  
+                st.write("")  # Ensure the final output is flushed  
                 st.session_state.messages.append({"role": "assistant", "content": answer})
                 
     # if prompt := st.chat_input("Ask me anything"): 
