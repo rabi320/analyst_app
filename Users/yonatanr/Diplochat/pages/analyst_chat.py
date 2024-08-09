@@ -290,7 +290,9 @@ def run():
     for message in st.session_state.messages:  
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
-                st.markdown(message["content"])  
+                ai_msg = message["content"]
+                ai_msg = ai_msg.split('\nAnswer for user:')[1]
+                st.markdown(ai_msg)  
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
                 st.markdown(message["content"])  
@@ -326,34 +328,34 @@ def run():
                     
         
                     # st.text(txt_content)
-                    with st.status("Analyzing Database.."):
-                        # Regex pattern to extract the Python code
-                        pattern = r'```python(.*?)```'   
-                        all_code = re.findall(pattern, txt_content, re.DOTALL)
-                        if len(all_code) == 1:  
-                            code = all_code[0]
-                            
-                        else:  
-                            code = '\n'.join(all_code)              
+                
+                    # Regex pattern to extract the Python code
+                    pattern = r'```python(.*?)```'   
+                    all_code = re.findall(pattern, txt_content, re.DOTALL)
+                    if len(all_code) == 1:  
+                        code = all_code[0]
                         
-                        
-                        # st.text(code)
-                        # st.text(type(code))
-                        
-                        # code = extract_code(txt_content)
-                        
-                        code = comment_out_lines(code, print_drop=True)
+                    else:  
+                        code = '\n'.join(all_code)              
+                    
+                    
+                    # st.text(code)
+                    # st.text(type(code))
+                    
+                    # code = extract_code(txt_content)
+                    
+                    code = comment_out_lines(code, print_drop=True)
 
-                        # st.text(code)
-                        
-                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
-                        exec(code, {}, local_context)
-                        answer = local_context.get('answer', "No answer found.") 
-                        
-                        if answer == "No answer found.":  
-                            raise ValueError("No answer found.")  
-                        
-                        st.session_state.messages.append({"role": "assistant", "content": txt_content})
+                    # st.text(code)
+                    
+                    local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
+                    exec(code, {}, local_context)
+                    answer = local_context.get('answer', "No answer found.") 
+                    
+                    if answer == "No answer found.":  
+                        raise ValueError("No answer found.")  
+                    
+                    st.session_state.messages.append({"role": "assistant", "content": '\nAnswer for user:'.join([txt_content,answer])})
 
                     with st.chat_message("assistant", avatar='🤖'):
                         # Create a placeholder for streaming output  
