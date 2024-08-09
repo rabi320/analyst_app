@@ -308,56 +308,85 @@ def run():
 
         
         with st.spinner("Thinking..."):
-            txt = client.chat.completions.create(
-                model=st.session_state["openai_model"],
-                messages=[
-                    {"role": m["role"], "content": m["content"]}
-                    for m in st.session_state.messages
-                ],
-                max_tokens=2000,
-                stream=False,
-            )
-            txt_content = txt.choices[0].message.content
             
-              
- 
-            # st.text(txt_content)
+            answer = ''
+            txt = ''
             
-            # Regex pattern to extract the Python code
-            pattern = r'```python(.*?)```'   
-            all_code = re.findall(pattern, txt_content, re.DOTALL)
-            if len(all_code) == 1:  
-                code = all_code[0]
-                  
-            else:  
-                code = '\n'.join(all_code)              
-            
-            
-            st.text(code)
-            # st.text(type(code))
-            
-            # code = extract_code(txt_content)
-             
-            code = comment_out_lines(code, print_drop=True, data_drop=True)
+            max_attempts = 5
+            errors = []
+            attempts = 0
+            while attempts < max_attempts:
+                try:
 
-            # st.text(code)
+                    txt = client.chat.completions.create(
+                        model=st.session_state["openai_model"],
+                        messages=[
+                            {"role": m["role"], "content": m["content"]}
+                            for m in st.session_state.messages
+                        ],
+                        max_tokens=2000,
+                        stream=False,
+                    )
+                    txt_content = txt.choices[0].message.content
+                    
+                    
+        
+                    # st.text(txt_content)
+                    
+                    # Regex pattern to extract the Python code
+                    pattern = r'```python(.*?)```'   
+                    all_code = re.findall(pattern, txt_content, re.DOTALL)
+                    if len(all_code) == 1:  
+                        code = all_code[0]
+                        
+                    else:  
+                        code = '\n'.join(all_code)              
+                    
+                    
+                    # st.text(code)
+                    # st.text(type(code))
+                    
+                    # code = extract_code(txt_content)
+                    
+                    code = comment_out_lines(code, print_drop=True, data_drop=True)
 
-            local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
-            exec(code, {}, local_context)
-            answer = local_context.get('answer', "No answer found.") 
+                    # st.text(code)
+                    st.session_state.messages.append({"role": "assistant", "content": answer})
+                    local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
+                    exec(code, {}, local_context)
+                    answer = local_context.get('answer', "No answer found.") 
 
-            with st.chat_message("assistant", avatar='🤖'):
-                # Create a placeholder for streaming output  
-                placeholder = st.empty()  
-                streamed_text = ""  
-                  
-                # Stream the answer output  
-                for char in answer:  
-                    streamed_text += char  
-                    placeholder.markdown(streamed_text)  
-                    time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
-                st.session_state.messages.append({"role": "assistant", "content": answer})
-                
+                    with st.chat_message("assistant", avatar='🤖'):
+                        # Create a placeholder for streaming output  
+                        placeholder = st.empty()  
+                        streamed_text = ""  
+                        
+                        # Stream the answer output  
+                        for char in answer:  
+                            streamed_text += char  
+                            placeholder.markdown(streamed_text)  
+                            time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
+                        
+                except Exception as e:  
+                    errors.append(f"Attempt {attempts + 1} failed: {e}")  
+                    attempts += 1
+                    
+                                # generate anwer for failures
+            if attempts == max_attempts:
+                # replace with ai generated text
+                answer = 'לא מצאתי תשובה, נסה לנסח מחדש בבקשה'
+                with st.chat_message("assistant", avatar='🤖'):
+                    # Create a placeholder for streaming output  
+                    placeholder = st.empty()  
+                    streamed_text = ""  
+                    
+                    # Stream the answer output  
+                    for char in answer:  
+                        streamed_text += char  
+                        placeholder.markdown(streamed_text)  
+                        time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
+                    
+                         
     # if prompt := st.chat_input("Ask me anything"): 
     #     response_text = "" 
     #     st.session_state.messages.append({"role": "user", "content": prompt})  
