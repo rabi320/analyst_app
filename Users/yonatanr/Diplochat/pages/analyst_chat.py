@@ -10,9 +10,6 @@ import re
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')  
-
-# Suppress all warnings  
-warnings.filterwarnings('ignore')  
   
 sys_msg = """  
 You are an AI Data Analyst assistant For DIPLOMAT DISTRIBUTORS (1968) LTD,
