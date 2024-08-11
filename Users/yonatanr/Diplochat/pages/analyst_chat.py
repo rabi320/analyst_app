@@ -276,8 +276,8 @@ def run():
     for message in st.session_state.messages:  
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
-
-                st.markdown(answer)  
+                st.markdown(answer)
+                  
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
                 st.markdown(message["content"])  
@@ -340,7 +340,7 @@ def run():
                     if answer == "No answer found.":  
                         raise ValueError("No answer found.")  
                     
-                    st.session_state.messages.append({"role": "assistant", "content": '\nAnswer for user:'.join([txt_content,answer])})
+                    st.session_state.messages.append({"role": "assistant", "content": txt_content})
 
                     with st.chat_message("assistant", avatar='🤖'):
                         # Create a placeholder for streaming output  
