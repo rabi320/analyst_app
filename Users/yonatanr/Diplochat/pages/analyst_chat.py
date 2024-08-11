@@ -265,18 +265,20 @@ def run():
         api_version="2024-02-15-preview"  
     )  
     MODEL = "Diplochat"  
-  
+    
+    base_history = [{"role": "system", "content": sys_msg}]
+
     if "openai_model" not in st.session_state:  
         st.session_state["openai_model"] = MODEL  
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
-
+        
     answer = ''
     # Display chat messages from history on app rerun  
     for message in st.session_state.messages:  
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
-                st.markdown(answer)
+                st.markdown(message["content"])
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
@@ -284,13 +286,14 @@ def run():
     
     if prompt := st.chat_input("Ask me anything"):
         st.session_state.messages.append({"role": "user", "content": prompt})
+        base_history.append({"role": "user", "content": prompt})
         with st.chat_message("user", avatar=user_avatar):
             st.markdown(prompt)
 
         
         with st.spinner("Thinking..."):
             
-            # answer = ''
+            answer = ''
             txt = ''
             
             max_attempts = 5
@@ -303,7 +306,7 @@ def run():
                         model=st.session_state["openai_model"],
                         messages=[
                             {"role": m["role"], "content": m["content"]}
-                            for m in st.session_state.messages
+                            for m in base_history
                         ],
                         max_tokens=2000,
                         stream=False,
@@ -340,7 +343,7 @@ def run():
                     if answer == "No answer found.":  
                         raise ValueError("No answer found.")  
                     
-                    st.session_state.messages.append({"role": "assistant", "content": txt_content})
+                    
 
                     with st.chat_message("assistant", avatar='🤖'):
                         # Create a placeholder for streaming output  
@@ -352,6 +355,7 @@ def run():
                             streamed_text += char  
                             placeholder.markdown(streamed_text)  
                             time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
+                    base_history.append({"role": "assistant", "content": answer})
                     break
 
                 except Exception as e:  
@@ -372,8 +376,12 @@ def run():
                     for char in answer:  
                         streamed_text += char  
                         placeholder.markdown(streamed_text)  
-                        time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
-                    
+                        time.sleep(0.01)  # Adjust the sleep time to control the streaming speed
+                
+                # delete the last question from base_history
+                base_history = base_history[:-1]
+            
+            st.session_state.messages.append({"role": "assistant", "content": answer})
                          
     # if prompt := st.chat_input("Ask me anything"): 
     #     response_text = "" 
