@@ -277,7 +277,7 @@ def run():
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
                 st.markdown(answer)
-                  
+
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
                 st.markdown(message["content"])  
@@ -290,7 +290,7 @@ def run():
         
         with st.spinner("Thinking..."):
             
-            answer = ''
+            # answer = ''
             txt = ''
             
             max_attempts = 5
