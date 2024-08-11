@@ -356,7 +356,10 @@ def run():
                     
                     # code = extract_code(txt_content)
                     
-                    code = comment_out_lines(code, print_drop=True)
+                    # Use re.sub to comment out any print statement  
+                    code = re.sub(r"^(\s*)print\(", r"\1#print(", code, flags=re.MULTILINE)
+                    # Use re.sub to comment out any import statement  
+                    code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
 
                     # st.text(code)
                     
