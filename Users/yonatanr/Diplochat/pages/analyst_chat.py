@@ -271,13 +271,13 @@ def run():
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
 
+    answer = ''
     # Display chat messages from history on app rerun  
     for message in st.session_state.messages:  
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
-                ai_msg = message["content"]
-                ai_msg = ai_msg.split('\nAnswer for user:')[1]
-                st.markdown(ai_msg)  
+
+                st.markdown(answer)  
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
                 st.markdown(message["content"])  
