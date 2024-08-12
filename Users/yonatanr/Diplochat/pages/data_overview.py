@@ -38,7 +38,7 @@ def run():
 
 
 
-    st.subheader("My TTS model")
+    st.subheader("Diplochat Future Voice🤖🔊")
 
     # Text to convert to speech  
     txt = 'מודל טקסט לדיבור שתומך בעברית'  
