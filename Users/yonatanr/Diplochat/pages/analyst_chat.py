@@ -321,7 +321,7 @@ def run():
             answer = ''
             txt = ''
             
-            max_attempts = 5
+            max_attempts = 10
             errors = []
             attempts = 0
             while attempts < max_attempts:
@@ -371,7 +371,7 @@ def run():
                     if answer == "No answer found.":  
                         raise ValueError("No answer found.")  
                     
-                    
+                    history_msg = f"```python{code}```"
 
                     with st.chat_message("assistant", avatar='🤖'):
                         # Create a placeholder for streaming output  
@@ -383,7 +383,8 @@ def run():
                             streamed_text += char  
                             placeholder.markdown(streamed_text)  
                             time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
-                    base_history.append({"role": "assistant", "content": answer})
+
+                    base_history.append({"role": "assistant", "content": history_msg})
                     break
 
                 except Exception as e:  
