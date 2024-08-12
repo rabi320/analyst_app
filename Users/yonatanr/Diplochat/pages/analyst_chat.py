@@ -377,7 +377,7 @@ def run():
                     while preserving the original numbers and facts, ensuring that the output resembles that of a language model.
                     """
 
-                    answer = generate_text(answer, sys_error)
+                    answer = generate_text(answer, sys_decorator)
 
 
                     history_msg = f"```python{code}```"
