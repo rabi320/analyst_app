@@ -43,27 +43,37 @@ def run():
     # Text to convert to speech  
     txt = 'מודל טקסט לדיבור שתומך בעברית'  
     
-    # Preparing endpoint, headers and request payload  
-    endpoint = 'https://ai-yonatanrai933120347560.openai.azure.com/openai/deployments/tts-hd/audio/speech?api-version=2024-05-01-preview'  
-    headers = {  
-        "Content-Type": "application/json",  
-        "api-key": "d2f7b5bf3799443e8217de45ea5ad734",  
-    }  
-    data = {  
-        "model": "tts-hd",  
-        "voice": "nova",  
-        "input": txt  
-    }  
+    def text_to_speech(txt):  
+        # Preparing endpoint, headers, and request payload  
+        endpoint = 'https://ai-yonatanrai933120347560.openai.azure.com/openai/deployments/tts-hd/audio/speech?api-version=2024-05-01-preview'  
+        headers = {  
+            "Content-Type": "application/json",  
+            "api-key": "d2f7b5bf3799443e8217de45ea5ad734",  
+        }  
+        data = {  
+            "model": "tts-hd",  
+            "voice": "nova",  
+            "input": txt  
+        }  
     
-    # Calling Azure OpenAI endpoint via REST API  
-    response = requests.post(url=endpoint, headers=headers, json=data)  
+        # Calling Azure OpenAI endpoint via REST API  
+        response = requests.post(url=endpoint, headers=headers, json=data)  
     
-    # Checking the response  
-    if response.status_code == 200:  
-        # Getting the audio content  
-        audio_content = response.content  
+        # Checking the response  
+        if response.status_code == 200:  
+            # Getting the audio content  
+            audio_content = response.content  
+            return audio_content  
+        else:  
+            st.error("Error fetching audio: " + str(response.status_code))  
+            return None
+        
+    # Input text from the user  
+    user_input = st.text_area("Enter text to convert to speech:")  
     
-        # Play audio directly from bytes  
-        st.audio(audio_content, format='audio/mp3')  
-    else:  
-        st.error("Error fetching audio: " + str(response.status_code))
+    if st.button("Convert to Speech"):  
+        if user_input:  
+            audio_content = text_to_speech(user_input)  
+            if audio_content:  
+                # Play audio directly from bytes  
+                st.audio(audio_content, format='audio/mp3')  
