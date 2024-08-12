@@ -371,6 +371,15 @@ def run():
                     if answer == "No answer found.":  
                         raise ValueError("No answer found.")  
                     
+                    sys_decorator = """
+                    You are an AI assistant created to enhance the aesthetic quality of LLM responses. 
+                    Your task is to take the generated response and find ways to make it more articulate and visually appealing, 
+                    while preserving the original numbers and facts, ensuring that the output resembles that of a language model.
+                    """
+
+                    answer = generate_text(answer, sys_error)
+
+
                     history_msg = f"```python{code}```"
 
                     with st.chat_message("assistant", avatar='🤖'):
