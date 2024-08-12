@@ -76,4 +76,4 @@ def run():
             audio_content = text_to_speech(user_input)  
             if audio_content:  
                 # Play audio directly from bytes  
-                st.audio(audio_content, format='audio/mp3')  
+                st.audio(audio_content, format='audio/mp3', autoplay=True)  
