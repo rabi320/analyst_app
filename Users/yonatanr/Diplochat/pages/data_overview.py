@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd  
 import pyodbc  
 import requests
+from audio_recorder_streamlit import audio_recorder
 
 @st.cache_data
 def load_data():
@@ -67,7 +68,13 @@ def run():
         else:  
             st.error("Error fetching audio: " + str(response.status_code))  
             return None
-        
+    
+    if st.button("Convert to Speech"): 
+    
+        audio_bytes = audio_recorder()
+        if audio_bytes:
+            st.audio(audio_bytes, format="audio/wav")
+
     # Input text from the user  
     user_input = st.text_area("Enter text to convert to speech:")  
     
