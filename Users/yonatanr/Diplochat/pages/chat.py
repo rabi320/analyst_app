@@ -139,9 +139,12 @@ def run():
                 st.markdown(message["content"])
 
     if prompt := st.chat_input("Ask me anything"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
+        audio_bytes = audio_recorder(icon_size="3x")
+        transcribed_txt = transcribe_audio(audio_bytes)
+
+        st.session_state.messages.append({"role": "user", "content": transcribed_txt})
         with st.chat_message("user", avatar=user_avatar):
-            st.markdown(prompt)
+            st.markdown(transcribed_txt)
 
 
         with st.chat_message("assistant", avatar='🤖'):
@@ -156,4 +159,8 @@ def run():
                     stream=True,
                 )
                 response = st.write_stream(stream)
+                audio_content = text_to_speech(response)
+                st.audio(audio_content, format='audio/mp3', autoplay=True)
+
+                
                 st.session_state.messages.append({"role": "assistant", "content": response})
