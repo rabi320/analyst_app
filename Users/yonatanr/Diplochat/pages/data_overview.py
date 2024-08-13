@@ -3,6 +3,8 @@ import pandas as pd
 import pyodbc  
 import requests
 from audio_recorder_streamlit import audio_recorder
+import re
+import io
 
 @st.cache_data
 def load_data():
@@ -38,11 +40,64 @@ def run():
     st.write(df.columns.tolist())
 
     st.subheader("Diplochat Future Ear 🤖🎙")
+    def transcribe_audio(audio_content: bytes) -> str:  
+        """  
+        Transcribe audio content using the Whisper API.  
+        
+        Parameters:  
+        - audio_content (bytes): The audio file content as bytes.  
+        - language (str): The language code for transcription (default is 'he' for Hebrew).  
+        
+        Returns:  
+        - str: The transcription result.  
+        """  
+        
+        # Define your endpoint and headers  
+        endpoint = 'https://ai-yonatanrai434014214400.openai.azure.com/openai/deployments/whisper/audio/translations?api-version=2024-06-01'  
+        headers = {  
+            "api-key": "0fc7b0a3400c46f3974efed73c38e89c",  
+        }  
     
+        # Create a BytesIO object from the audio content  
+        audio_stream = io.BytesIO(audio_content)  
+    
+        # Prepare the files parameter with the binary stream  
+        files = {  
+            'file': ('audio_file.wav', audio_stream, 'audio/wav')  # Use the correct MIME type for your audio  
+        }  
+    
+    
+        # Calling Azure OpenAI endpoint via REST API  
+        response = requests.post(  
+            url=endpoint,  
+            headers=headers,  
+            files=files  
+        )  
+    
+        # Checking the response  
+        if response.status_code == 200:  
+            # Getting the transcription content 
+            resp_txt = response.content.decode('utf-8') # Decode the response to a string  
+            # Regex pattern to extract the text  
+            pattern = r'"text": "(.*?)"'  
+            
+            # Using re.search to find the text  
+            match = re.search(pattern, resp_txt)  
+            
+            if match:  
+                # Extracting the text part  
+                extracted_text = match.group(1)
+            return extracted_text   
+        else:  
+            raise Exception(f"Error: {response.status_code} - {response.text}")      
     
     audio_bytes = audio_recorder()
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
+    
+
+        transcribed_txt = transcribe_audio(audio_bytes)
+        st.write(transcribed_txt)
 
     st.subheader("Diplochat Future Voice🤖🔊")
 
