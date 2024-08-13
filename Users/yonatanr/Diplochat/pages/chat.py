@@ -142,7 +142,10 @@ def run():
     if "audio_recorded" not in st.session_state:  
         st.session_state.audio_recorded = False  
     
-    if audio_bytes := audio_recorder(icon_size="3x"):  
+    # Create a unique key for the audio recorder  
+    audio_recorder_key = "audio_recorder"  
+    
+    if audio_bytes := audio_recorder(key=audio_recorder_key, icon_size="3x"):  
         st.session_state.audio_recorded = True  
         transcribed_txt = transcribe_audio(audio_bytes)  
         st.session_state.messages.append({"role": "user", "content": transcribed_txt})  
@@ -165,7 +168,7 @@ def run():
     
     # Always show the audio recorder if it's not been recorded yet  
     if not st.session_state.audio_recorded:  
-        audio_recorder(icon_size="3x")  
+        audio_recorder(key=audio_recorder_key, icon_size="3x")  
 
 
     # # if prompt := st.chat_input("Ask me anything"):
