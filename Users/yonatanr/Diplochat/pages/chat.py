@@ -167,9 +167,10 @@ def run():
                     stream=True,
                 )
                 response = st.write_stream(stream)
-                audio_content = text_to_speech(stream)
+                assistant_txt = stream.choices[0].message.content
+                audio_content = text_to_speech(assistant_txt)
                 st.audio(audio_content, format='audio/mp3', autoplay=True)
 
                 
-                st.session_state.messages.append({"role": "assistant", "content": response})
+                st.session_state.messages.append({"role": "assistant", "content": assistant_txt})
                 
