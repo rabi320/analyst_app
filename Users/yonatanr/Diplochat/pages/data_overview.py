@@ -37,7 +37,12 @@ def run():
     st.subheader("DataFrame Columns")
     st.write(df.columns.tolist())
 
-
+    st.subheader("Diplochat Future Ear 🤖🎙")
+    
+    
+    audio_bytes = audio_recorder()
+    if audio_bytes:
+        st.audio(audio_bytes, format="audio/wav")
 
     st.subheader("Diplochat Future Voice🤖🔊")
 
@@ -69,11 +74,7 @@ def run():
             st.error("Error fetching audio: " + str(response.status_code))  
             return None
     
-    if st.button("Convert to Speech"): 
-    
-        audio_bytes = audio_recorder()
-        if audio_bytes:
-            st.audio(audio_bytes, format="audio/wav")
+
 
     # Input text from the user  
     user_input = st.text_area("Enter text to convert to speech:")  
