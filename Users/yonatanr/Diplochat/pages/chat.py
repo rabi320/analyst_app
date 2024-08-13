@@ -164,9 +164,10 @@ def run():
                         for m in st.session_state.messages
                     ],
                     max_tokens=500,
-                    stream=True,
+                    stream=False,
                 )
-                response = st.write_stream(stream)
+                # response = st.write_stream(stream)
+                response = st.write(stream)
                 assistant_txt = stream.choices[0].message.content
                 audio_content = text_to_speech(assistant_txt)
                 st.audio(audio_content, format='audio/mp3', autoplay=True)
