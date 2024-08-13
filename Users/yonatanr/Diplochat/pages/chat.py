@@ -141,9 +141,10 @@ def run():
 
 
 
+
+    # if prompt := st.chat_input("Ask me anything"):
     # Audio recorder  
     audio_bytes = audio_recorder(icon_size="3x")  
-    # if prompt := st.chat_input("Ask me anything"):
     if audio_bytes:
     
         # audio_bytes = audio_recorder(icon_size="3x")
@@ -166,7 +167,7 @@ def run():
                     stream=True,
                 )
                 response = st.write_stream(stream)
-                audio_content = text_to_speech(response)
+                audio_content = text_to_speech(stream)
                 st.audio(audio_content, format='audio/mp3', autoplay=True)
 
                 
