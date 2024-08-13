@@ -4,6 +4,7 @@ import streamlit as st
 from openai import AzureOpenAI
 # from openai import OpenAI
 from audio_recorder_streamlit import audio_recorder
+import requests
 import re
 import io
 
