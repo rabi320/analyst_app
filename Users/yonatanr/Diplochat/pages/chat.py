@@ -139,8 +139,8 @@ def run():
             with st.chat_message(message["role"], avatar=user_avatar):
                 st.markdown(message["content"])
 
-    if prompt := st.chat_input("Ask me anything"):
-        audio_bytes = audio_recorder(icon_size="3x")
+    # if prompt := st.chat_input("Ask me anything"):
+    if audio_bytes := audio_recorder(icon_size="3x"):
         transcribed_txt = transcribe_audio(audio_bytes)
 
         st.session_state.messages.append({"role": "user", "content": transcribed_txt})
