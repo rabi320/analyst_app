@@ -144,8 +144,7 @@ def run():
 
     # if prompt := st.chat_input("Ask me anything"):
     # Audio recorder  
-    audio_bytes = audio_recorder(icon_size="3x")  
-    if audio_bytes:
+    if audio_bytes := audio_recorder(icon_size="3x"):
     
         # audio_bytes = audio_recorder(icon_size="3x")
         transcribed_txt = transcribe_audio(audio_bytes)
@@ -167,11 +166,15 @@ def run():
                     stream=False,
                 )
                 # response = st.write_stream(stream)
-                response = st.write(stream)
+                
                 assistant_txt = stream.choices[0].message.content
+                response = st.write(assistant_txt)
+                
+                st.session_state.messages.append({"role": "assistant", "content": assistant_txt})
+                
                 audio_content = text_to_speech(assistant_txt)
                 st.audio(audio_content, format='audio/mp3', autoplay=True)
 
                 
-                st.session_state.messages.append({"role": "assistant", "content": assistant_txt})
+                
                 
