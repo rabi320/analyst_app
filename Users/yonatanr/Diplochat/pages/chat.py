@@ -139,61 +139,36 @@ def run():
             with st.chat_message(message["role"], avatar=user_avatar):
                 st.markdown(message["content"])
 
-    if "audio_recorded" not in st.session_state:  
-        st.session_state.audio_recorded = False  
+
+
+    # Audio recorder  
+    audio_bytes = audio_recorder(icon_size="3x")  
+    # if prompt := st.chat_input("Ask me anything"):
+    if audio_bytes:
     
-    # Create a unique key for the audio recorder  
-    audio_recorder_key = "audio_recorder"  
-    
-    if audio_bytes := audio_recorder(key=audio_recorder_key, icon_size="3x"):  
-        st.session_state.audio_recorded = True  
-        transcribed_txt = transcribe_audio(audio_bytes)  
-        st.session_state.messages.append({"role": "user", "content": transcribed_txt})  
-        with st.chat_message("user", avatar=user_avatar):  
-            st.markdown(transcribed_txt)  
-        
-        # Process response from the assistant  
-        with st.chat_message("assistant", avatar='🤖'):  
-            with st.spinner("Thinking..."):  
-                stream = client.chat.completions.create(  
-                    model=st.session_state["openai_model"],  
-                    messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],  
-                    max_tokens=500,  
-                    stream=True,  
-                )  
-                response = st.write_stream(stream)  
-                audio_content = text_to_speech(response)  
-                st.audio(audio_content, format='audio/mp3', autoplay=True)  
-                st.session_state.messages.append({"role": "assistant", "content": response})  
-    
-    # Always show the audio recorder if it's not been recorded yet  
-    if not st.session_state.audio_recorded:  
-        audio_recorder(key=audio_recorder_key, icon_size="3x")  
+        # audio_bytes = audio_recorder(icon_size="3x")
+        transcribed_txt = transcribe_audio(audio_bytes)
+
+        st.session_state.messages.append({"role": "user", "content": transcribed_txt})
+        with st.chat_message("user", avatar=user_avatar):
+            st.markdown(transcribed_txt)
 
 
-    # # if prompt := st.chat_input("Ask me anything"):
-    # if audio_bytes := audio_recorder(icon_size="3x"):
-    #     transcribed_txt = transcribe_audio(audio_bytes)
-
-    #     st.session_state.messages.append({"role": "user", "content": transcribed_txt})
-    #     with st.chat_message("user", avatar=user_avatar):
-    #         st.markdown(transcribed_txt)
-
-
-    #     with st.chat_message("assistant", avatar='🤖'):
-    #         with st.spinner("Thinking..."):
-    #             stream = client.chat.completions.create(
-    #                 model=st.session_state["openai_model"],
-    #                 messages=[
-    #                     {"role": m["role"], "content": m["content"]}
-    #                     for m in st.session_state.messages
-    #                 ],
-    #                 max_tokens=500,
-    #                 stream=True,
-    #             )
-    #             response = st.write_stream(stream)
-    #             audio_content = text_to_speech(response)
-    #             st.audio(audio_content, format='audio/mp3', autoplay=True)
+        with st.chat_message("assistant", avatar='🤖'):
+            with st.spinner("Thinking..."):
+                stream = client.chat.completions.create(
+                    model=st.session_state["openai_model"],
+                    messages=[
+                        {"role": m["role"], "content": m["content"]}
+                        for m in st.session_state.messages
+                    ],
+                    max_tokens=500,
+                    stream=True,
+                )
+                response = st.write_stream(stream)
+                audio_content = text_to_speech(response)
+                st.audio(audio_content, format='audio/mp3', autoplay=True)
 
                 
-    #             st.session_state.messages.append({"role": "assistant", "content": response})
+                st.session_state.messages.append({"role": "assistant", "content": response})
+                
