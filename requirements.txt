@@ -6,4 +6,4 @@ folium==0.16.0
 streamlit-folium==0.19.0 
 statsmodels==0.14.1
 requests==2.31.0
-audio_recorder_streamlit=0.0.10
+audio_recorder_streamlit==0.0.10
