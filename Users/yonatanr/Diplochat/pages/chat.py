@@ -171,9 +171,9 @@ def run():
                 response = st.write(assistant_txt)
                 
                 st.session_state.messages.append({"role": "assistant", "content": assistant_txt})
-                
-                audio_content = text_to_speech(assistant_txt)
-                st.audio(audio_content, format='audio/mp3', autoplay=True)
+
+        audio_content = text_to_speech(assistant_txt)
+        st.audio(audio_content, format='audio/mp3', autoplay=True)
 
                 
                 
