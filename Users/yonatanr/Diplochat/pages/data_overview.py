@@ -91,7 +91,7 @@ def run():
         else:  
             raise Exception(f"Error: {response.status_code} - {response.text}")      
     
-    audio_bytes = audio_recorder()
+    audio_bytes = audio_recorder(icon_size="3x")
     if audio_bytes:
         st.audio(audio_bytes, format="audio/wav")
     
