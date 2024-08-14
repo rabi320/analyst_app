@@ -146,12 +146,12 @@ def run():
     # Audio recorder  
 
     # Placeholder for audio recorder  
-    audio_placeholder = st.empty()  
+    # audio_placeholder = st.empty()  
     
     # Audio recording logic  
-    audio_bytes = audio_recorder(icon_size="3x", placeholder=audio_placeholder) 
-    # if audio_bytes:=audio_recorder(icon_size="3x"):
-    if audio_bytes:#=audio_recorder(icon_size="3x"):
+    # audio_bytes = audio_recorder(icon_size="3x", placeholder=audio_placeholder) 
+    if audio_bytes:=audio_recorder(icon_size="3x"):
+    # if audio_bytes:#=audio_recorder(icon_size="3x"):
     
         # audio_bytes = audio_recorder(icon_size="3x")
         transcribed_txt = transcribe_audio(audio_bytes)
