@@ -156,7 +156,7 @@ def run():
     # if audio_bytes:=audio_recorder(icon_size="3x"):
     # Audio recording logic  
     with st.expander("Audio Recorder", expanded=True):  
-        audio_bytes = audio_recorder(icon_size="3x",auto_start=True)  
+        audio_bytes = audio_recorder(icon_size="3x")  
     
         if audio_bytes:  
     
