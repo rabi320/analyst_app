@@ -150,37 +150,44 @@ def run():
     
     # Audio recording logic  
     # audio_bytes = audio_recorder(icon_size="3x", placeholder=audio_placeholder) 
-    if audio_bytes:=audio_recorder(icon_size="3x"):
+    
+    # if audio_bytes:=audio_recorder(icon_size="3x"):
+    # Audio recording logic  
+    with st.expander("Audio Recorder", expanded=True):  
+        audio_bytes = audio_recorder(icon_size="3x")  
+    
+        if audio_bytes:  
+    
     # if audio_bytes:#=audio_recorder(icon_size="3x"):
     
-        # audio_bytes = audio_recorder(icon_size="3x")
-        transcribed_txt = transcribe_audio(audio_bytes)
+            # audio_bytes = audio_recorder(icon_size="3x")
+            transcribed_txt = transcribe_audio(audio_bytes)
 
-        st.session_state.messages.append({"role": "user", "content": transcribed_txt})
-        with st.chat_message("user", avatar=user_avatar):
-            st.markdown(transcribed_txt)
+            st.session_state.messages.append({"role": "user", "content": transcribed_txt})
+            with st.chat_message("user", avatar=user_avatar):
+                st.markdown(transcribed_txt)
 
 
-        with st.chat_message("assistant", avatar='🤖'):
-            with st.spinner("Thinking..."):
-                stream = client.chat.completions.create(
-                    model=st.session_state["openai_model"],
-                    messages=[
-                        {"role": m["role"], "content": m["content"]}
-                        for m in st.session_state.messages
-                    ],
-                    max_tokens=500,
-                    stream=False,
-                )
-                # response = st.write_stream(stream)
-                
-                assistant_txt = stream.choices[0].message.content
-                response = st.write(assistant_txt)
-                
-            st.session_state.messages.append({"role": "assistant", "content": assistant_txt})
+            with st.chat_message("assistant", avatar='🤖'):
+                with st.spinner("Thinking..."):
+                    stream = client.chat.completions.create(
+                        model=st.session_state["openai_model"],
+                        messages=[
+                            {"role": m["role"], "content": m["content"]}
+                            for m in st.session_state.messages
+                        ],
+                        max_tokens=500,
+                        stream=False,
+                    )
+                    # response = st.write_stream(stream)
+                    
+                    assistant_txt = stream.choices[0].message.content
+                    response = st.write(assistant_txt)
+                    
+                st.session_state.messages.append({"role": "assistant", "content": assistant_txt})
 
-            audio_content = text_to_speech(assistant_txt)
-            st.audio(audio_content, format='audio/mp3', autoplay=True)
+                audio_content = text_to_speech(assistant_txt)
+                st.audio(audio_content, format='audio/mp3', autoplay=True)
 
                 
                 
