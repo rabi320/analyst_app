@@ -144,8 +144,14 @@ def run():
 
     # if prompt := st.chat_input("Ask me anything"):
     # Audio recorder  
-    audio_bytes = audio_recorder(icon_size="3x")
-    if audio_bytes:
+
+    # Placeholder for audio recorder  
+    audio_placeholder = st.empty()  
+    
+    # Audio recording logic  
+    audio_bytes = audio_recorder(icon_size="3x", placeholder=audio_placeholder) 
+    # if audio_bytes:=audio_recorder(icon_size="3x"):
+    if audio_bytes:#=audio_recorder(icon_size="3x"):
     
         # audio_bytes = audio_recorder(icon_size="3x")
         transcribed_txt = transcribe_audio(audio_bytes)
