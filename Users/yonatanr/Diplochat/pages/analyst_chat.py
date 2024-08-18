@@ -422,7 +422,7 @@ def run():
                     
                     # append regex formatted code with python markdown content to the list
                     code_lst.append(history_msg)
-
+                    attempts += 1
                     break
 
                 except Exception as e:  
@@ -453,6 +453,8 @@ def run():
 
             elapsed_time = time.time() - start_time
             
+            
+
             # append rest of the data from the session
             log_session.append(prompt)
             log_session.append(txt_content_lst)
