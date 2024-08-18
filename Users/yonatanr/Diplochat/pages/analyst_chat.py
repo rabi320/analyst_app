@@ -293,6 +293,10 @@ def run():
     
     base_history = [{"role": "system", "content": sys_msg}]+examples
 
+    # Initialize log_dfs 
+    if 'log_dfs' not in st.session_state:  
+        st.session_state.log_dfs = []  
+    
     if "openai_model" not in st.session_state:  
         st.session_state["openai_model"] = MODEL  
     if "messages" not in st.session_state:  
@@ -460,8 +464,11 @@ def run():
             log_session.append(elapsed_time)
         log_data.append(log_session)
         tmp_df = pd.DataFrame(log_data,columns=log_cols)
-        log_dfs.append(tmp_df)
-        log_df = pd.concat(log_dfs,axis=0).reset_index(drop = True)
+        # log_dfs.append(tmp_df)
+        st.session_state.log_dfs.append(tmp_df)
+        
+        # log_df = pd.concat(log_dfs,axis=0).reset_index(drop = True)
+        log_df = pd.concat(st.session_state.log_dfs, axis=0).reset_index(drop=True)
 
         # Create an expander  
         with st.expander("Show Log DataFrame"):  
