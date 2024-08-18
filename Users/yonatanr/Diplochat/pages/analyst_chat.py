@@ -269,7 +269,7 @@ def run():
     
 
 
-    st.title("Diplochat AI 🤖")  
+    st.title("Diplochat AI Analyst 🤖")  
 
     dataframes = load_data()  
     
@@ -313,15 +313,14 @@ def run():
     # data in each session: prompt,txt_content,code_lst,
     log_session = []
 
-    
+    log_cols = ['User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time']
+    log_dfs = []
+
     if prompt := st.chat_input("Ask me anything"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         base_history.append({"role": "user", "content": prompt})
         with st.chat_message("user", avatar=user_avatar):
             st.markdown(prompt)
-        
-            # record user prompt to session
-            log_session.append(prompt)
 
             start_time = time.time()
         
@@ -451,6 +450,7 @@ def run():
             elapsed_time = time.time() - start_time
             
             # append rest of the data from the session
+            log_session.append(prompt)
             log_session.append(txt_content_lst)
             log_session.append(code_lst)
             log_session.append(answer)
@@ -459,6 +459,15 @@ def run():
             log_session.append(errors)
             log_session.append(elapsed_time)
         log_data.append(log_session)
+        tmp_df = pd.DataFrame(log_data,columns=log_cols)
+        log_dfs.append(tmp_df)
+        log_df = pd.concat(log_dfs,axis=0).reset_index(drop = True)
+
+        # Create an expander  
+        with st.expander("Show Log DataFrame"):  
+            # Your code inside the expander  
+            st.table(log_df)
+        
             
 
 
