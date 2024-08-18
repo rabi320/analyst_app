@@ -457,12 +457,12 @@ def run():
 
             # append rest of the data from the session
             log_session.append(prompt)
-            log_session.append(txt_content_lst)
-            log_session.append(code_lst)
+            log_session.append(str(txt_content_lst))
+            log_session.append(str(code_lst))
             log_session.append(answer)
             log_session.append(attempts)
             log_session.append(n_llm_api_call)
-            log_session.append(errors)
+            log_session.append(str(errors))
             log_session.append(elapsed_time)
         log_data.append(log_session)
         tmp_df = pd.DataFrame(log_data,columns=log_cols)
