@@ -309,13 +309,23 @@ def run():
             with st.chat_message(message["role"], avatar=user_avatar):  
                 st.markdown(message["content"])  
     
+    log_data = []
+    # data in each session: prompt,txt_content,code_lst,
+    log_session = []
+
+    
     if prompt := st.chat_input("Ask me anything"):
         st.session_state.messages.append({"role": "user", "content": prompt})
         base_history.append({"role": "user", "content": prompt})
         with st.chat_message("user", avatar=user_avatar):
             st.markdown(prompt)
-
         
+            # record user prompt to session
+            log_session.append(prompt)
+
+            start_time = time.time()
+        
+
         with st.spinner("Thinking..."):
             
             answer = ''
@@ -324,7 +334,13 @@ def run():
             max_attempts = 10
             errors = []
             attempts = 0
+            txt_content_lst = []
+            code_lst = []
+            n_llm_api_call = 0
+
+
             while attempts < max_attempts:
+                
                 try:
 
                     txt = client.chat.completions.create(
@@ -338,7 +354,10 @@ def run():
                     )
                     txt_content = txt.choices[0].message.content
                     
-                    
+                    n_llm_api_call+=1
+                    # append original gen ai content to the list
+                    txt_content_lst.append(txt_content)
+
         
                     # st.text(txt_content)
                 
@@ -364,6 +383,9 @@ def run():
 
                     # st.text(code)
                     
+
+
+                    
                     local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
@@ -378,7 +400,7 @@ def run():
                     """
 
                     answer = generate_text(answer, sys_decorator)
-
+                    n_llm_api_call+=1
 
                     history_msg = f"```python{code}```"
 
@@ -394,6 +416,10 @@ def run():
                             time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
 
                     base_history.append({"role": "assistant", "content": history_msg})
+                    
+                    # append regex formatted code with python markdown content to the list
+                    code_lst.append(history_msg)
+
                     break
 
                 except Exception as e:  
@@ -405,6 +431,7 @@ def run():
                 # replace with ai generated text
                 # answer = 'לא מצאתי תשובה, נסה לנסח מחדש בבקשה'
                 answer = generate_text(prompt, sys_error)
+                n_llm_api_call+=1
                 with st.chat_message("assistant", avatar='🤖'):
                     # Create a placeholder for streaming output  
                     placeholder = st.empty()  
@@ -420,6 +447,27 @@ def run():
                 base_history = base_history[:-1]
             
             st.session_state.messages.append({"role": "assistant", "content": answer})
+
+            elapsed_time = time.time() - start_time
+            
+            # append rest of the data from the session
+            log_session.append(txt_content_lst)
+            log_session.append(code_lst)
+            log_session.append(answer)
+            log_session.append(attempts)
+            log_session.append(n_llm_api_call)
+            log_session.append(errors)
+            log_session.append(elapsed_time)
+        log_data.append(log_session)
+            
+
+
+
+
+            
+
+            
+            
                          
     # if prompt := st.chat_input("Ask me anything"): 
     #     response_text = "" 
