@@ -470,12 +470,12 @@ def run():
         # log_df = pd.concat(log_dfs,axis=0).reset_index(drop = True)
         log_df = pd.concat(st.session_state.log_dfs, axis=0).reset_index(drop=True)
         
-        st.table(log_df)
+        # st.table(log_df)
 
         # Create an expander  
-        # with st.expander("Show Log DataFrame"):  
+        with st.expander("Show Log DataFrame"):  
             # Your code inside the expander  
-            # st.table(log_df)
+            st.dataframe(log_df)
         
             
 
