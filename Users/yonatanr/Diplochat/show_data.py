@@ -17,9 +17,9 @@ names = ['Yonatan Rabinovich', 'Avi Tuval']  # Add user display names
   
 # Create an authenticator object using values from the YAML file  
 authenticator = stauth.Authenticate(  
-    names,  
-    usernames,  
-    passwords,  
+    usernames=usernames,  
+    names=names,  
+    passwords=passwords,  
     cookie_name=cookie_name,  
     signature_key=signature_key,  
     cookie_expiry_days=30  
