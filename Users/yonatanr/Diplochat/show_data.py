@@ -13,7 +13,9 @@ authenticator = stauth.Authenticate(
     config['cookie']['expiry_days'],
     config['pre-authorized']
 )
-  
+
+st.title('Diplomat LTD Analytics')
+
 # Login widget  
 authentication_status = authenticator.login()  
   
@@ -21,7 +23,7 @@ authentication_status = authenticator.login()
 if st.session_state['authentication_status']:  
     authenticator.logout()  # Add logout functionality  
     st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
-    st.title('Some content')  # Replace with your actual content  
+    st.title('Diplomat AI')  # Replace with your actual content  
   
     # Sidebar for navigation  
     st.sidebar.title("Navigation")  
