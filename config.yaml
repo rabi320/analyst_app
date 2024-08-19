@@ -18,6 +18,6 @@ credentials:
       name: Avi Tuval  
       password: "$2b$12$iWlVOac3uujRvTrXDi6wructXftKmo/GyQd6SMu5FmyX306kH.yFO"  # Hash of the password  
   
-re-authorized:  
+pre-authorized:  
   emails:  
-    - melsby@gmail.com  
+    - ryonatan6@gmail.com  
