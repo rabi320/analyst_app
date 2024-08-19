@@ -1,3 +1,23 @@
-auth:  
-  cookie_name: "auth_cookie"  
-  signature_key: "3e9b8e4a2a7e4e1c9d5e4f3c1b2d5f4e7a6e3b8f5d1e4c7b9f5e8a9c2d5e6a7b"  
+cookie:  
+  expiry_days: 30  
+  key: "some_signature_key"  # Replace with your actual signature key  
+  name: "auth_cookie"        # Replace with your desired cookie name  
+  
+credentials:  
+  usernames:  
+    yonatanr:  
+      email: yonatanr@diplomat-global.com  
+      failed_login_attempts: 0  
+      logged_in: false  
+      name: Yonatan Rabinovich  
+      password: "$2b$12$E9/bCaN/r8sN/FV2l8NpgOgspUBAp7UAVU6BgsXJzp/pW8gQWCprC"  # Hash of the password  
+    avit:  
+      email: avit@diplomat-global.com  
+      failed_login_attempts: 0  
+      logged_in: false  
+      name: Avi Tuval  
+      password: "$2b$12$iWlVOac3uujRvTrXDi6wructXftKmo/GyQd6SMu5FmyX306kH.yFO"  # Hash of the password  
+  
+re-authorized:  
+  emails:  
+    - melsby@gmail.com  

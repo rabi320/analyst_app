@@ -1,36 +1,28 @@
 import streamlit as st  
 import streamlit_authenticator as stauth  
-import yaml  
+import yaml
+from yaml.loader import SafeLoader
   
-# Load the configuration from the YAML file  
-with open('config.yaml') as file:  
-    config = yaml.safe_load(file)  
-  
-# Retrieve cookie name and signature key from the config  
-cookie_name = config['auth']['cookie_name']  
-signature_key = config['auth']['signature_key']  
-  
-# Define your user credentials here  
-usernames = ['yonatanr@diplomat-global.com', 'avit@diplomat-global.com']  # Add your usernames  
-passwords = ['Yonirabi8!', 'avit12345678!']  # Add your corresponding passwords  
-names = ['Yonatan Rabinovich', 'Avi Tuval']  # Add user display names  
-  
-# Create an authenticator object using values from the YAML file  
-authenticator = stauth.Authenticate(  
-    usernames=usernames,  
-    names=names,  
-    passwords=passwords,  
-    cookie_name=cookie_name,  
-    signature_key=signature_key,  
-    cookie_expiry_days=30  
-)  
+with open('../config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['pre-authorized']
+)
   
 # Login widget  
-name, authentication_status = authenticator.login('Login', 'main')  
+authentication_status = authenticator.login()  
   
-if authentication_status:  
-    st.title("Diplomat Distributors LTD Analytics Dashboard")  
-      
+# Adjusted authentication status handling  
+if st.session_state['authentication_status']:  
+    authenticator.logout()  # Add logout functionality  
+    st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
+    st.title('Some content')  # Replace with your actual content  
+  
     # Sidebar for navigation  
     st.sidebar.title("Navigation")  
     page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map", 'Inner Code'])  
@@ -58,8 +50,7 @@ if authentication_status:
         from pages.script_run import run as script_run  
         script_run()  
   
-elif authentication_status is False:  
+elif st.session_state['authentication_status'] is False:  
     st.error('Username/password is incorrect')  
-  
-elif authentication_status is None:  
+elif st.session_state['authentication_status'] is None:  
     st.warning('Please enter your username and password')  
