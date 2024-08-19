@@ -10,13 +10,13 @@ credentials:
       failed_login_attempts: 0  
       logged_in: false  
       name: Yonatan Rabinovich  
-      password: "$2b$12$E9/bCaN/r8sN/FV2l8NpgOgspUBAp7UAVU6BgsXJzp/pW8gQWCprC"  # Hash of the password  
+      password: "$2b$12$YqibkUQNnd4n7mYKJC7lLOqnDLWq8dsOx3hqburynTY6NURuFmt4y"  # Hash of the password  
     avit:  
       email: avit@diplomat-global.com  
       failed_login_attempts: 0  
       logged_in: false  
       name: Avi Tuval  
-      password: "$2b$12$iWlVOac3uujRvTrXDi6wructXftKmo/GyQd6SMu5FmyX306kH.yFO"  # Hash of the password  
+      password: "$2b$12$gi7BLBNq9fRBoFCwiGkO9eDG4O4tMEZc8CEp9Ui0yPwxS7IbCT7H."  # Hash of the password  
   
 pre-authorized:  
   emails:  
