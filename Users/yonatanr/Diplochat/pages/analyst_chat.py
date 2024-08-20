@@ -58,7 +58,7 @@ The following datasets are already loaded in your Python IDE:
      - `PRICE`: Base price.  
      - `SELLOUT_PRICE`: Promotional price.  
      - `SALE_ID`: Identifier for a promotion.  
-   - **Note**: Filter the category to snacks ('חטיפים') and the date range between 2024-05-01 and 2024-05-31 and the city to tel-aviv ('תל אביב').  
+   - **Note**: Filter the category to snacks ('חטיפים') and the date range between 2024-03-01 and 2024-05-31 and only Sundays. and non-null sellout prices.  
 
 this is the code that already loaded the data to the IDE:
 
@@ -85,7 +85,7 @@ def load_data():
         'DW_CHP': \"\"\"
             SELECT ITEM_DESCRIPION, BARCODE, CHAIN_CODE, STORE_CODE, CHAIN, STORE, ADDRESS, CITY, SELLOUT_DESCRIPTION, STORENEXT_CATEGORY, SUPPLIER, FILE_DATE, PRICE, SELLOUT_PRICE, SALE_ID
             FROM [dbo].[DW_CHP]
-            WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-05-01' AND '2024-05-31' AND CITY = N'תל אביב'
+            WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-05-01' AND '2024-05-31' AND SELLOUT_PRICE IS NOT NULL AND DATENAME(WEEKDAY, FILE_DATE) = 'Sunday'
         \"\"\"
     }
 
@@ -274,7 +274,7 @@ def load_data():
         'DW_CHP': """
             SELECT ITEM_DESCRIPION, BARCODE, CHAIN_CODE, STORE_CODE, CHAIN, STORE, ADDRESS, CITY, SELLOUT_DESCRIPTION, STORENEXT_CATEGORY, SUPPLIER, FILE_DATE, PRICE, SELLOUT_PRICE, SALE_ID
             FROM [dbo].[DW_CHP]
-            WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-05-01' AND '2024-05-31' AND CITY = N'תל אביב'
+            WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-03-01' AND '2024-05-31' AND SELLOUT_PRICE IS NOT NULL AND DATENAME(WEEKDAY, FILE_DATE) = 'Sunday'
         """
     }
 
