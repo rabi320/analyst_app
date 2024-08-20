@@ -26,7 +26,7 @@ The following datasets are already loaded in your Python IDE:
      - `Sales_NIS`: Sales amount in NIS.  
      - `Sales_Units`: Quantity sold.  
      - `Price_Per_Unit`: Daily price per unit.  
-   - **Note**: Filter the data for the date range between 2024-05-01 and 2024-05-31.  
+   - **Note**: Filter the data for the date range between 2024-03-01 and 2024-05-31.  
   
 2. **DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS** (`stnx_items`)  
    - **Description**: This is a dimension table containing attributes of items.  
@@ -75,7 +75,7 @@ def load_data():
         'DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': \"\"\"
             SELECT Day, Barcode, Format_Name, Sales_NIS, Sales_Units, Price_Per_Unit
             FROM [dbo].[DW_FACT_STORENEXT_BY_INDUSTRIES_SALES]
-            WHERE Day BETWEEN '2024-05-01' AND '2024-05-31'
+            WHERE Day BETWEEN '2024-03-01' AND '2024-05-31'
         \"\"\",
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': \"\"\"
             SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
@@ -264,7 +264,7 @@ def load_data():
         'DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': """
             SELECT Day, Barcode, Format_Name, Sales_NIS, Sales_Units, Price_Per_Unit
             FROM [dbo].[DW_FACT_STORENEXT_BY_INDUSTRIES_SALES]
-            WHERE Day BETWEEN '2024-05-01' AND '2024-05-31'
+            WHERE Day BETWEEN '2024-03-01' AND '2024-05-31'
         """,
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': """
             SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
