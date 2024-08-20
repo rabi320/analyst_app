@@ -318,7 +318,7 @@ def run():
     # data in each session: prompt,txt_content,code_lst,
     log_session = []
 
-    log_cols = ['User_Name','Timestamp','User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time']
+    log_cols = ['Timestamp','User_Name','User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time']
     log_dfs = []
 
     israel_tz = pytz.timezone("Asia/Jerusalem")
@@ -460,8 +460,8 @@ def run():
             
 
             # append rest of the data from the session
-            log_session.append(user_name)
             log_session.append(prompt_timestamp)
+            log_session.append(user_name)
             log_session.append(prompt)
             log_session.append(str(txt_content_lst))
             log_session.append(str(code_lst))
