@@ -212,7 +212,43 @@ def comment_out_lines(code,print_drop = True):
     else:  
         code = code     
     return code 
-
+def insert_log_data(conn, log_session):  
+    # Create the table if it does not exist  
+    create_table_query = """  
+    IF NOT EXISTS (  
+        SELECT *   
+        FROM INFORMATION_SCHEMA.TABLES   
+        WHERE TABLE_NAME = 'AI_LOG'  
+    )  
+    BEGIN  
+        CREATE TABLE AI_LOG (  
+            ID INT IDENTITY(1,1) PRIMARY KEY,  
+            Timestamp DATETIME,  
+            User_Name NVARCHAR(100),  
+            User_Prompt NVARCHAR(MAX),  
+            LLM_Responses NVARCHAR(MAX),  
+            Code_Extractions NVARCHAR(MAX),  
+            Final_Answer NVARCHAR(MAX),  
+            Num_Attempts INT,  
+            Num_LLM_Calls INT,  
+            Errors NVARCHAR(MAX),  
+            Total_Time FLOAT  
+        )  
+    END  
+    """  
+      
+    cursor = conn.cursor()  
+    cursor.execute(create_table_query)  
+      
+    # Insert log data into the AI_LOG table  
+    insert_query = """  
+    INSERT INTO AI_LOG (Timestamp, User_Name, User_Prompt, LLM_Responses, Code_Extractions, Final_Answer, Num_Attempts, Num_LLM_Calls, Errors, Total_Time)  
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  
+    """  
+      
+    cursor.execute(insert_query, log_session)  
+    conn.commit()  
+    cursor.close()
 
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data():  
@@ -471,6 +507,15 @@ def run():
             log_session.append(str(errors))
             log_session.append(elapsed_time)
         log_data.append(log_session)
+        
+        # Insert log data into SQL table  
+        conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
+                              server='diplomat-analytics-server.database.windows.net',  
+                              database='NBO-DB',  
+                              uid='analyticsadmin', pwd='Analytics12345')  
+        insert_log_data(conn, log_session)  
+        conn.close()  
+        
         tmp_df = pd.DataFrame(log_data,columns=log_cols)
         # log_dfs.append(tmp_df)
         st.session_state.log_dfs.append(tmp_df)
