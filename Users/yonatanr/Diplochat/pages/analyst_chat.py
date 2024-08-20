@@ -8,6 +8,7 @@ import warnings
 import time 
 import re
 from datetime import datetime
+import pytz
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')   
@@ -320,8 +321,10 @@ def run():
     log_cols = ['User_Name','Timestamp','User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time']
     log_dfs = []
 
+    israel_tz = pytz.timezone("Asia/Jerusalem")
+
     if prompt := st.chat_input("Ask me anything"):
-        prompt_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        prompt_timestamp = datetime.now(israel_tz).strftime("%Y-%m-%d %H:%M:%S") 
         st.session_state.messages.append({"role": "user", "content": prompt})
         base_history.append({"role": "user", "content": prompt})
         with st.chat_message("user", avatar=user_avatar):
