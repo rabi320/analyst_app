@@ -307,6 +307,7 @@ def run():
     
 
     user_name = st.session_state.get("name", "Guest")  # Default to "Guest" if not set
+
     st.title(f"Diplochat AI Analyst 🤖 - {user_name}")  
 
     dataframes = load_data()  
@@ -365,7 +366,10 @@ def run():
     ts_id = ''.join(i for i in now if i.isdigit())
 
     conv_id = f'{name_id}_{ts_id}'
-    
+    # Initialize the conversation ID in session state if it doesn't exist  
+    if 'conv_id' not in st.session_state:  
+        st.session_state.conv_id = f'{name_id}_{ts_id}'
+        
 
     if prompt := st.chat_input("Ask me anything"):
         prompt_timestamp = datetime.now(israel_tz).strftime("%Y-%m-%d %H:%M:%S") 
@@ -505,7 +509,7 @@ def run():
 
             # append rest of the data from the session
             
-            log_session.append(conv_id)
+            log_session.append(st.session_state.conv_id)
             log_session.append(prompt_timestamp)
             log_session.append(user_name)
             log_session.append(prompt)
