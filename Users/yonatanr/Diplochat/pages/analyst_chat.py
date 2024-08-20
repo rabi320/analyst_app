@@ -222,7 +222,8 @@ def insert_log_data(conn, log_session):
     )  
     BEGIN  
         CREATE TABLE AI_LOG (  
-            ID INT IDENTITY(1,1) PRIMARY KEY,  
+            ID INT IDENTITY(1,1) PRIMARY KEY,
+            Conversation_ID NVARCHAR(100), 
             Timestamp DATETIME,  
             User_Name NVARCHAR(100),  
             User_Prompt NVARCHAR(MAX),  
@@ -242,8 +243,8 @@ def insert_log_data(conn, log_session):
       
     # Insert log data into the AI_LOG table  
     insert_query = """  
-    INSERT INTO AI_LOG (Timestamp, User_Name, User_Prompt, LLM_Responses, Code_Extractions, Final_Answer, Num_Attempts, Num_LLM_Calls, Errors, Total_Time)  
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  
+    INSERT INTO AI_LOG (Conversation_ID, Timestamp, User_Name, User_Prompt, LLM_Responses, Code_Extractions, Final_Answer, Num_Attempts, Num_LLM_Calls, Errors, Total_Time)  
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  
     """  
       
     cursor.execute(insert_query, log_session)  
@@ -354,10 +355,17 @@ def run():
     # data in each session: prompt,txt_content,code_lst,
     log_session = []
 
-    log_cols = ['Timestamp','User_Name','User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time']
+    log_cols = ['Conversation_ID','Timestamp','User_Name','User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time']
     log_dfs = []
 
     israel_tz = pytz.timezone("Asia/Jerusalem")
+    
+    now = datetime.now(israel_tz).strftime("%Y-%m-%d %H:%M:%S") 
+    name_id = ''.join(i for i in user_name if i==i.upper()).replace(' ','')
+    ts_id = ''.join(i for i in now if i.isdigit())
+
+    conv_id = f'{name_id}_{ts_id}'
+    
 
     if prompt := st.chat_input("Ask me anything"):
         prompt_timestamp = datetime.now(israel_tz).strftime("%Y-%m-%d %H:%M:%S") 
@@ -496,6 +504,8 @@ def run():
             
 
             # append rest of the data from the session
+            
+            log_session.append(conv_id)
             log_session.append(prompt_timestamp)
             log_session.append(user_name)
             log_session.append(prompt)
@@ -518,6 +528,7 @@ def run():
         
         tmp_df = pd.DataFrame(log_data,columns=log_cols)
         # log_dfs.append(tmp_df)
+
         st.session_state.log_dfs.append(tmp_df)
         
         # log_df = pd.concat(log_dfs,axis=0).reset_index(drop = True)
