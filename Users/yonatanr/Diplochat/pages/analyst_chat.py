@@ -269,7 +269,7 @@ def run():
     
 
     user_name = st.session_state.get("name", "Guest")  # Default to "Guest" if not set
-    st.title("Diplochat AI Analyst 🤖 - {user_name}")  
+    st.title(f"Diplochat AI Analyst 🤖 - {user_name}")  
 
     dataframes = load_data()  
     
