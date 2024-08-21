@@ -558,27 +558,27 @@ def run():
         
 
         
-        with st.expander("Rate me!"): 
-            # selected = st.feedback("stars")
-            # if selected is not None:
-            #     st.session_state.user_feedback = selected
+        # with st.expander("Rate me!"): 
+        #     # selected = st.feedback("stars")
+        #     # if selected is not None:
+        #     #     st.session_state.user_feedback = selected
         
 
         
         
 
-            if 'clicked' not in st.session_state:
-                st.session_state.clicked = False
+        #     if 'clicked' not in st.session_state:
+        #         st.session_state.clicked = False
 
-            def click_button():
-                st.session_state.clicked = True
+        #     def click_button():
+        #         st.session_state.clicked = True
 
-            st.button('Rate me', on_click=click_button)
+        #     st.button('Rate me', on_click=click_button)
 
-            if st.session_state.clicked:
-                # The message and nested widget will remain on the page
-                st.write('Rate ⭐')
-                st.session_state.user_feedback = st.slider('Select a value',value = (1, 5))
+        #     if st.session_state.clicked:
+        #         # The message and nested widget will remain on the page
+        #         st.write('Rate ⭐')
+        #         st.session_state.user_feedback = st.slider('Select a value',value = (1, 5))
 
             
 
