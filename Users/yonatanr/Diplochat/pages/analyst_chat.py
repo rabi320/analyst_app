@@ -558,7 +558,7 @@ def run():
             # sentiment_mapping = ["one", "two", "three", "four", "five"]
             # feedback = st.feedback("stars")
 
-            def update_feedback(*, feedback):  
+            def update_feedback():  
                 if feedback is not None:  
                     st.session_state.user_feedback = feedback  
                     log_df.loc[len(log_df)-1, 'Final_Answer'] = st.session_state.user_feedback   
