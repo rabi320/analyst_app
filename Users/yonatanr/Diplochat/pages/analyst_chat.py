@@ -548,18 +548,21 @@ def run():
         log_df = pd.concat(st.session_state.log_dfs, axis=0).reset_index(drop=True)
         
         # st.table(log_df)
-
+        if len(log_df)>1:
+            log_df.loc[len(log_df)-2, 'Final_Answer'] = f'{st.session_state.user_feedback}'
 
         # Create an expander  
         with st.expander("Show Log DataFrame"):  
             # Your code inside the expander  
             st.dataframe(log_df)
         
+
+        
         with st.expander("Rate me!"): 
             st.session_state.user_feedback = st.feedback("stars")
         
 
-        log_df.loc[len(log_df)-1, 'Final_Answer'] = f'{st.session_state.user_feedback}'
+        
         
 
 
