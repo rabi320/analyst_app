@@ -559,7 +559,8 @@ def run():
         if feedback is not None:
             st.session_state.user_feedback = feedback
 
-            st.markdown(f"You selected {sentiment_mapping[st.session_state.user_feedback]} star(s).")               
+            # st.markdown(f"You selected {sentiment_mapping[st.session_state.user_feedback]} star(s).")
+            log_df.loc[len(log_df)-1,'Final_Answer'] = st.session_state.user_feedback               
 
 
 
