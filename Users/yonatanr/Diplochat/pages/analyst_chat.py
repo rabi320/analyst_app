@@ -560,24 +560,24 @@ def run():
             st.dataframe(log_df)
         
         # Feedback mechanism
-        
-        st.write("### Was this response helpful?")
-        feedback_options = ["Very Helpful", "Somewhat Helpful", "Not Helpful", "Irrelevant"]
-        user_feedback = st.radio("Please select your feedback:", feedback_options)
 
-        # Save the feedback in session state
-        if user_feedback:
-            st.session_state.feedback.append({
-                "timestamp": prompt_timestamp,
-                "prompt": prompt,
-                "answer": answer,
-                "feedback": user_feedback
-            })
-            st.success("Thank you for your feedback!")
+        # st.write("### Was this response helpful?")
+        # feedback_options = ["Very Helpful", "Somewhat Helpful", "Not Helpful", "Irrelevant"]
+        # user_feedback = st.radio("Please select your feedback:", feedback_options)
 
-        # Display the feedback history if needed
-        st.write("### Feedback History")
-        st.write(st.session_state.feedback)
+        # # Save the feedback in session state
+        # if user_feedback:
+        #     st.session_state.feedback.append({
+        #         "timestamp": prompt_timestamp,
+        #         "prompt": prompt,
+        #         "answer": answer,
+        #         "feedback": user_feedback
+        #     })
+        #     st.success("Thank you for your feedback!")
+
+        # # Display the feedback history if needed
+        # st.write("### Feedback History")
+        # st.write(st.session_state.feedback)
         
         # with st.expander("Rate me!"): 
         #     feedback = streamlit_feedback(feedback_type="thumbs")
