@@ -547,19 +547,19 @@ def run():
         log_df = pd.concat(st.session_state.log_dfs, axis=0).reset_index(drop=True)
         
         # st.table(log_df)
-        sentiment_mapping = ["one", "two", "three", "four", "five"]
-        feedback = st.feedback("stars") 
-        if feedback is not None:
-            st.session_state.user_feedback = feedback
 
-            st.markdown(f"You selected {sentiment_mapping[st.session_state.user_feedback]} star(s).")   
 
         # Create an expander  
         with st.expander("Show Log DataFrame"):  
             # Your code inside the expander  
             st.dataframe(log_df)
         
-            
+        sentiment_mapping = ["one", "two", "three", "four", "five"]
+        feedback = st.feedback("stars") 
+        if feedback is not None:
+            st.session_state.user_feedback = feedback
+
+            st.markdown(f"You selected {sentiment_mapping[st.session_state.user_feedback]} star(s).")               
 
 
 
