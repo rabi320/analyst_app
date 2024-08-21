@@ -559,7 +559,9 @@ def run():
 
         
         with st.expander("Rate me!"): 
-            st.session_state.user_feedback = st.feedback("stars")
+            selected = st.feedback("stars")
+            if selected is not None:
+                st.session_state.user_feedback = selected
         
 
         
