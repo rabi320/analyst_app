@@ -554,13 +554,14 @@ def run():
             # Your code inside the expander  
             st.dataframe(log_df)
         
-        sentiment_mapping = ["one", "two", "three", "four", "five"]
-        feedback = st.feedback("stars", key="user_feedback") 
-        if feedback is not None:
-            st.session_state.user_feedback = feedback
+        with st.expander("Rate me!"): 
+            sentiment_mapping = ["one", "two", "three", "four", "five"]
+            feedback = st.feedback("stars") 
+            if feedback is not None:
+                st.session_state.user_feedback = feedback
 
-            # st.markdown(f"You selected {sentiment_mapping[st.session_state.user_feedback]} star(s).")
-            log_df.loc[len(log_df)-1,'Final_Answer'] = st.session_state.user_feedback               
+                # st.markdown(f"You selected {sentiment_mapping[st.session_state.user_feedback]} star(s).")
+                log_df.loc[len(log_df)-1,'Final_Answer'] = st.session_state.user_feedback               
 
 
 
