@@ -555,7 +555,7 @@ def run():
             st.dataframe(log_df)
         
         sentiment_mapping = ["one", "two", "three", "four", "five"]
-        feedback = st.feedback("stars") 
+        feedback = st.feedback("stars", key="user_feedback") 
         if feedback is not None:
             st.session_state.user_feedback = feedback
 
