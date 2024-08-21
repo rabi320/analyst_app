@@ -543,6 +543,7 @@ def run():
 
         st.session_state.log_dfs.append(tmp_df)
         
+        
         # log_df = pd.concat(log_dfs,axis=0).reset_index(drop = True)
         log_df = pd.concat(st.session_state.log_dfs, axis=0).reset_index(drop=True)
         
@@ -560,11 +561,13 @@ def run():
 
             def update_feedback():  
                 if feedback is not None:  
-                    st.session_state.user_feedback = feedback  
-                    log_df.loc[len(log_df)-1, 'Final_Answer'] = st.session_state.user_feedback   
+                    st.session_state.user_feedback = feedback
+                      
+                       
             
             feedback = st.feedback("stars", key="user_feedback", on_change=update_feedback)
 
+        log_df.loc[len(log_df)-1, 'Final_Answer'] = f'{st.session_state.user_feedback}'
                         # if feedback is not None:
                 
             #     st.session_state.user_feedback = feedback
