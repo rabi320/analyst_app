@@ -340,7 +340,11 @@ def run():
         st.session_state.log_dfs = []  
     
     if "openai_model" not in st.session_state:  
-        st.session_state["openai_model"] = MODEL  
+        st.session_state["openai_model"] = MODEL 
+    
+    if 'user_feedback' not in st.session_state:  
+        st.session_state.user_feedback = 'not rated' 
+
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
         
@@ -372,7 +376,8 @@ def run():
     # Initialize the conversation ID in session state if it doesn't exist  
     if 'conv_id' not in st.session_state:  
         st.session_state.conv_id = f'{name_id}_{ts_id}'
-        
+
+
 
     if prompt := st.chat_input("Ask me anything"):
         prompt_timestamp = datetime.now(israel_tz).strftime("%Y-%m-%d %H:%M:%S") 
@@ -542,6 +547,12 @@ def run():
         log_df = pd.concat(st.session_state.log_dfs, axis=0).reset_index(drop=True)
         
         # st.table(log_df)
+        sentiment_mapping = ["one", "two", "three", "four", "five"]
+        feedback = st.feedback("stars") 
+        if feedback is not None:
+            st.session_state.user_feedback = feedback
+
+            st.markdown(f"You selected {sentiment_mapping[st.session_state.user_feedback]} star(s).")   
 
         # Create an expander  
         with st.expander("Show Log DataFrame"):  
