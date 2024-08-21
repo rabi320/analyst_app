@@ -9,7 +9,6 @@ import time
 import re
 from datetime import datetime
 import pytz
-from streamlit_feedback import streamlit_feedback
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')   
@@ -346,6 +345,9 @@ def run():
     if 'user_feedback' not in st.session_state:  
         st.session_state.user_feedback = 'not rated' 
 
+    if 'feedback' not in st.session_state:
+        st.session_state.feedback = []
+
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
         
@@ -549,19 +551,37 @@ def run():
         log_df = pd.concat(st.session_state.log_dfs, axis=0).reset_index(drop=True)
         
         # st.table(log_df)
-        if len(log_df)>1:
-            log_df.loc[len(log_df)-2, 'Final_Answer'] = f'{st.session_state.user_feedback}'
+        # if len(log_df)>1:
+        #     log_df.loc[len(log_df)-2, 'Final_Answer'] = f'{st.session_state.user_feedback}'
 
         # Create an expander  
         with st.expander("Show Log DataFrame"):  
             # Your code inside the expander  
             st.dataframe(log_df)
         
-
+        # Feedback mechanism
         
-        with st.expander("Rate me!"): 
-            feedback = streamlit_feedback(feedback_type="thumbs")
-            st.markdown(str(feedback))
+        st.write("### Was this response helpful?")
+        feedback_options = ["Very Helpful", "Somewhat Helpful", "Not Helpful", "Irrelevant"]
+        user_feedback = st.radio("Please select your feedback:", feedback_options)
+
+        # Save the feedback in session state
+        if user_feedback:
+            st.session_state.feedback.append({
+                "timestamp": prompt_timestamp,
+                "prompt": prompt,
+                "answer": answer,
+                "feedback": user_feedback
+            })
+            st.success("Thank you for your feedback!")
+
+        # Display the feedback history if needed
+        st.write("### Feedback History")
+        st.write(st.session_state.feedback)
+        
+        # with st.expander("Rate me!"): 
+        #     feedback = streamlit_feedback(feedback_type="thumbs")
+        #     st.markdown(str(feedback))
         #     # selected = st.feedback("stars")
         #     # if selected is not None:
         #     #     st.session_state.user_feedback = selected
