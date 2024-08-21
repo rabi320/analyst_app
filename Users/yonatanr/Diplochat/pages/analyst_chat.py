@@ -9,6 +9,7 @@ import time
 import re
 from datetime import datetime
 import pytz
+from streamlit_feedback import streamlit_feedback
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')   
@@ -558,7 +559,9 @@ def run():
         
 
         
-        # with st.expander("Rate me!"): 
+        with st.expander("Rate me!"): 
+            feedback = streamlit_feedback(feedback_type="thumbs")
+            st.markdown(str(feedback))
         #     # selected = st.feedback("stars")
         #     # if selected is not None:
         #     #     st.session_state.user_feedback = selected
