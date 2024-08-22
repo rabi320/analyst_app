@@ -337,7 +337,7 @@ def run():
             final_code = '\n'.join(all_code)  
         return final_code
     
-
+    admin_list = ['Yonatan Rabinovich']
     user_name = st.session_state.get("name", "Guest")  # Default to "Guest" if not set
 
     st.title(f"Diplochat AI Analyst 🤖 - {user_name}")  
@@ -589,11 +589,12 @@ def run():
         log_df = pd.concat(st.session_state.log_dfs, axis=0).reset_index(drop=True)
         
 
-        # Create an expander  
-        with st.expander("Show Log DataFrame"):  
-            # Your code inside the expander  
-            st.dataframe(log_df)
-        
+        if user_name in admin_list:
+            # Create an expander  
+            with st.expander("Show Log DataFrame"):  
+                # Your code inside the expander  
+                st.dataframe(log_df)
+            
         # Feedback mechanism
 
         with st.form('form'):
