@@ -9,6 +9,7 @@ import time
 import re
 from datetime import datetime
 import pytz
+from streamlit_feedback import streamlit_feedback
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')   
@@ -343,10 +344,16 @@ def run():
         st.session_state["openai_model"] = MODEL 
     
     if 'user_feedback' not in st.session_state:  
-        st.session_state.user_feedback = 'not rated' 
+        st.session_state.user_feedback = 'not rated'
+
+    
 
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
+        
+    def handle_feedback():  
+        st.write(st.session_state.user_feedback)
+        st.toast("✔️ Feedback received!")
         
     answer = ''
     # Display chat messages from history on app rerun  
@@ -359,10 +366,10 @@ def run():
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
-                display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback}" 
-                # st.markdown(message["content"])  
-                st.markdown(display_txt)
-                
+                # display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback}" 
+                st.markdown(message["content"])  
+                # st.markdown(display_txt)
+
     log_data = []
     # data in each session: prompt,txt_content,code_lst,
     log_session = []
@@ -542,3 +549,10 @@ def run():
             st.dataframe(log_df)
         
         # Feedback mechanism
+
+        with st.form('form'):
+            streamlit_feedback(feedback_type="thumbs",
+                                optional_text_label="Enter your feedback here", 
+                                align="flex-start", 
+                                key='user_feedback')
+            st.form_submit_button('Save feedback', on_click=handle_feedback)
