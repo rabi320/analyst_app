@@ -233,7 +233,8 @@ def insert_log_data(conn, log_session):
             Num_Attempts INT,  
             Num_LLM_Calls INT,  
             Errors NVARCHAR(MAX),  
-            Total_Time FLOAT  
+            Total_Time FLOAT,
+            User_Ratings NVARCHAR(MAX)
         )  
     END  
     """  
@@ -243,8 +244,8 @@ def insert_log_data(conn, log_session):
       
     # Insert log data into the AI_LOG table  
     insert_query = """  
-    INSERT INTO AI_LOG (Conversation_ID, Timestamp, User_Name, User_Prompt, LLM_Responses, Code_Extractions, Final_Answer, Num_Attempts, Num_LLM_Calls, Errors, Total_Time)  
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  
+    INSERT INTO AI_LOG (Conversation_ID, Timestamp, User_Name, User_Prompt, LLM_Responses, Code_Extractions, Final_Answer, Num_Attempts, Num_LLM_Calls, Errors, Total_Time, User_Ratings)  
+    VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  
     """  
       
     cursor.execute(insert_query, log_session)  
@@ -357,7 +358,7 @@ def run():
         st.session_state.user_feedback_lst.append(st.session_state.user_feedback)
         st.session_state.log_dfs = st.session_state.log_dfs[:-1]
         
-        tmp_df.loc[0,'Final_Answer'] = str(st.session_state.user_feedback)
+        tmp_df.loc[0,'User_Ratings'] = str(st.session_state.user_feedback)
         st.session_state.log_dfs.append(tmp_df)
 
         
@@ -380,7 +381,7 @@ def run():
     # data in each session: prompt,txt_content,code_lst,
     log_session = []
 
-    log_cols = ['Conversation_ID','Timestamp','User_Name','User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time']
+    log_cols = ['Conversation_ID','Timestamp','User_Name','User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time','User_Ratings']
     log_dfs = []
 
     israel_tz = pytz.timezone("Asia/Jerusalem")
@@ -517,7 +518,8 @@ def run():
             elapsed_time = time.time() - start_time
 
             # append rest of the data from the session
-            
+            empty_rating = ''
+
             log_session.append(st.session_state.conv_id)
             log_session.append(prompt_timestamp)
             log_session.append(user_name)
@@ -529,6 +531,8 @@ def run():
             log_session.append(n_llm_api_call)
             log_session.append(str(errors))
             log_session.append(elapsed_time)
+            log_session.append(empty_rating)
+            
         log_data.append(log_session)
         
         # Insert log data into SQL table  
