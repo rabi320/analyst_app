@@ -346,7 +346,8 @@ def run():
     if 'user_feedback' not in st.session_state:  
         st.session_state.user_feedback = 'not rated'
 
-    
+    if 'user_feedback_lst' not in st.session_state:
+        st.session_state.user_feedback_lst = []
 
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
@@ -354,13 +355,14 @@ def run():
     def handle_feedback():  
         st.write(st.session_state.user_feedback)
         st.toast("✔️ Feedback received!")
+        st.session_state.user_feedback_lst.append(st.session_state.user_feedback)
         
     answer = ''
     # Display chat messages from history on app rerun  
     for message in st.session_state.messages:  
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
-                display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback}" 
+                display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback} last feedbacks {st.session_state.user_feedback_lst}" 
                 # st.markdown(message["content"])
                 st.markdown(display_txt)
 
