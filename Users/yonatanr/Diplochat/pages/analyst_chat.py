@@ -380,7 +380,11 @@ def run():
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
         
-    def handle_feedback():  
+    def handle_feedback():
+        conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
+                        server='diplomat-analytics-server.database.windows.net',  
+                        database='NBO-DB',  
+                        uid='analyticsadmin', pwd='Analytics12345')    
         
         st.session_state.user_feedback_lst.append(st.session_state.user_feedback)
         st.session_state.log_dfs = st.session_state.log_dfs[:-1]
