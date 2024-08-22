@@ -252,6 +252,33 @@ def insert_log_data(conn, log_session):
     conn.commit()  
     cursor.close()
 
+def alter_log_data(conn, prompt_timestamp, user_feedback):  
+    try:  
+        cursor = conn.cursor()  
+  
+        # Define the SQL update command using parameterized query  
+        sql_update_query = """  
+        UPDATE [dbo].[AI_LOG]  
+        SET [User_Ratings] = ?  
+        WHERE [Timestamp] = ?;  
+        """  
+  
+        # Execute the update command with parameters  
+        cursor.execute(sql_update_query, (user_feedback, prompt_timestamp))  
+  
+        # Commit the transaction  
+        conn.commit()  
+  
+        # print("User rating updated successfully.")  
+  
+    except Exception as e:  
+        print("Error occurred:", e)  
+  
+    finally:  
+        # Close the cursor  
+        cursor.close()     
+
+
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data():  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
@@ -345,7 +372,7 @@ def run():
         st.session_state["openai_model"] = MODEL 
     
     if 'user_feedback' not in st.session_state:  
-        st.session_state.user_feedback = 'not rated'
+        st.session_state.user_feedback = ''
 
     if 'user_feedback_lst' not in st.session_state:
         st.session_state.user_feedback_lst = []
@@ -354,13 +381,19 @@ def run():
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
         
     def handle_feedback():  
-        st.toast("✔️ Feedback received!")
+        
         st.session_state.user_feedback_lst.append(st.session_state.user_feedback)
         st.session_state.log_dfs = st.session_state.log_dfs[:-1]
-        
+        # add to log frame
         tmp_df.loc[0,'User_Ratings'] = str(st.session_state.user_feedback)
         st.session_state.log_dfs.append(tmp_df)
-
+        # add to sql
+        # Call the function  
+        alter_log_data(conn, tmp_df.loc[0,'Timestamp'], str(st.session_state.user_feedback))  
+    
+        # Close the connection  
+        conn.close() 
+        st.toast("✔️ Feedback received!")
         
     answer = ''
     # Display chat messages from history on app rerun  
