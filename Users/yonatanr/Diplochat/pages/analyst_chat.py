@@ -404,15 +404,14 @@ def run():
     for message in st.session_state.messages:  
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
-                display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback} last feedbacks {st.session_state.user_feedback_lst}" 
-                # st.markdown(message["content"])
-                st.markdown(display_txt)
+                # display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback} last feedbacks {st.session_state.user_feedback_lst}" 
+                # st.markdown(display_txt)
+                st.markdown(message["content"])
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
-                # display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback}" 
                 st.markdown(message["content"])  
-                # st.markdown(display_txt)
+
 
     log_data = []
     # data in each session: prompt,txt_content,code_lst,
