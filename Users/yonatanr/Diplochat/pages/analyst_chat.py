@@ -345,9 +345,6 @@ def run():
     if 'user_feedback' not in st.session_state:  
         st.session_state.user_feedback = 'not rated' 
 
-    if 'feedback' not in st.session_state:
-        st.session_state.feedback = []
-
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
         
@@ -356,12 +353,16 @@ def run():
     for message in st.session_state.messages:  
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
-                st.markdown(message["content"])
+                display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback}" 
+                # st.markdown(message["content"])
+                st.markdown(display_txt)
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
-                st.markdown(message["content"])  
-    
+                display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback}" 
+                # st.markdown(message["content"])  
+                st.markdown(display_txt)
+                
     log_data = []
     # data in each session: prompt,txt_content,code_lst,
     log_session = []
