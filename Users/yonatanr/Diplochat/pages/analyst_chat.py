@@ -353,9 +353,13 @@ def run():
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
         
     def handle_feedback():  
-        st.write(st.session_state.user_feedback)
         st.toast("✔️ Feedback received!")
         st.session_state.user_feedback_lst.append(st.session_state.user_feedback)
+        st.session_state.log_dfs = st.session_state.log_dfs[:-1]
+        
+        tmp_df.loc[0,'Final_Answer'] = str(st.session_state.user_feedback)
+        st.session_state.log_dfs.append(tmp_df)
+
         
     answer = ''
     # Display chat messages from history on app rerun  
