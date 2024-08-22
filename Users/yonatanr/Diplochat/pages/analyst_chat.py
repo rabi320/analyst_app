@@ -423,9 +423,6 @@ def run():
                     n_llm_api_call+=1
                     # append original gen ai content to the list
                     txt_content_lst.append(txt_content)
-
-        
-                    # st.text(txt_content)
                 
                     # Regex pattern to extract the Python code
                     pattern = r'```python(.*?)```'   
@@ -436,21 +433,11 @@ def run():
                     else:  
                         code = '\n'.join(all_code)              
                     
-                    
-                    # st.text(code)
-                    # st.text(type(code))
-                    
-                    # code = extract_code(txt_content)
-                    
+                
                     # Use re.sub to comment out any print statement  
                     code = re.sub(r"^(\s*)print\(", r"\1#print(", code, flags=re.MULTILINE)
                     # Use re.sub to comment out any import statement  
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
-
-                    # st.text(code)
-                    
-
-
                     
                     local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
                     exec(code, {}, local_context)
@@ -495,7 +482,6 @@ def run():
                                 # generate anwer for failures
             if attempts == max_attempts:
                 # replace with ai generated text
-                # answer = 'לא מצאתי תשובה, נסה לנסח מחדש בבקשה'
                 answer = generate_text(prompt, sys_error)
                 n_llm_api_call+=1
                 with st.chat_message("assistant", avatar='🤖'):
@@ -515,8 +501,6 @@ def run():
             st.session_state.messages.append({"role": "assistant", "content": answer})
 
             elapsed_time = time.time() - start_time
-            
-            
 
             # append rest of the data from the session
             
@@ -550,9 +534,6 @@ def run():
         # log_df = pd.concat(log_dfs,axis=0).reset_index(drop = True)
         log_df = pd.concat(st.session_state.log_dfs, axis=0).reset_index(drop=True)
         
-        # st.table(log_df)
-        # if len(log_df)>1:
-        #     log_df.loc[len(log_df)-2, 'Final_Answer'] = f'{st.session_state.user_feedback}'
 
         # Create an expander  
         with st.expander("Show Log DataFrame"):  
@@ -560,104 +541,3 @@ def run():
             st.dataframe(log_df)
         
         # Feedback mechanism
-
-        # st.write("### Was this response helpful?")
-        # feedback_options = ["Very Helpful", "Somewhat Helpful", "Not Helpful", "Irrelevant"]
-        # user_feedback = st.radio("Please select your feedback:", feedback_options)
-
-        # # Save the feedback in session state
-        # if user_feedback:
-        #     st.session_state.feedback.append({
-        #         "timestamp": prompt_timestamp,
-        #         "prompt": prompt,
-        #         "answer": answer,
-        #         "feedback": user_feedback
-        #     })
-        #     st.success("Thank you for your feedback!")
-
-        # # Display the feedback history if needed
-        # st.write("### Feedback History")
-        # st.write(st.session_state.feedback)
-        
-        # with st.expander("Rate me!"): 
-        #     feedback = streamlit_feedback(feedback_type="thumbs")
-        #     st.markdown(str(feedback))
-        #     # selected = st.feedback("stars")
-        #     # if selected is not None:
-        #     #     st.session_state.user_feedback = selected
-        
-
-        
-        
-
-        #     if 'clicked' not in st.session_state:
-        #         st.session_state.clicked = False
-
-        #     def click_button():
-        #         st.session_state.clicked = True
-
-        #     st.button('Rate me', on_click=click_button)
-
-        #     if st.session_state.clicked:
-        #         # The message and nested widget will remain on the page
-        #         st.write('Rate ⭐')
-        #         st.session_state.user_feedback = st.slider('Select a value',value = (1, 5))
-
-            
-
-            
-            
-                         
-    # if prompt := st.chat_input("Ask me anything"): 
-    #     response_text = "" 
-    #     st.session_state.messages.append({"role": "user", "content": prompt})  
-    #     with st.chat_message("user", avatar=user_avatar):  
-    #         st.markdown(prompt)  
-    #     with st.chat_message("assistant", avatar='🤖'):  
-    #         max_attempts = 5  
-    #         errors = []  
-    #         attempts = 0  
-    #         answer = ''  
-    #         response_placeholder = st.empty()  
-    #         response_text = ""  
-    #         with st.spinner("Thinking..."):
-    #             while attempts < max_attempts:  
-    #                 try:  
-    #                     txt = generate_text(prompt, sys_msg, st.session_state.messages)  
-    #                     code = extract_code(txt)  
-    #                     code = comment_out_lines(code, print_drop=True, data_drop=True)
-    #                     local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
-    #                     exec(code, {}, local_context)
-    #                     # st.text(code)
-    #                     # answer = local_context.get('answer', "No answer found.")    
-    #                     # Simulate streaming by breaking response into smaller parts  
-    #                     for i in range(0, len(code), 10):  # Adjust the chunk size as needed  
-    #                         chunk = code[i:i+10]  
-    #                         response_text += chunk  
-    #                         response_placeholder.markdown(response_text)  
-    #                         time.sleep(0.1)  # Adjust delay as needed  
-    #                     st.session_state.messages.append({'role': 'assistant', 'content': code})
-    #                     break  
-    #                 except Exception as e:  
-    #                     errors.append(f"Attempt {attempts + 1} failed: {e}")  
-    #                     attempts += 1  
-    #                     answer = errors[-1]
-
-    
-    #             if attempts == max_attempts:  
-                    
-    #                 answer = generate_text(sys_error, prompt, st.session_state.messages)  
-    #                 # answer = errors[-1]
-    #                 # Simulate streaming for the final response  
-    #                 response_placeholder = st.empty()  
-    #                 response_text = ""  
-    #                 for i in range(0, len(answer), 10):  # Adjust the chunk size as needed  
-    #                     chunk = answer[i:i+10]  
-    #                     response_text += chunk  
-    #                     response_placeholder.markdown(response_text)  
-    #                     time.sleep(0.1)  # Adjust delay as needed
-                
-                
-
-                          
-                        
