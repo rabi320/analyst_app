@@ -413,8 +413,9 @@ def run():
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
                 # display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback} last feedbacks {st.session_state.user_feedback_lst}" 
+                # display_txt = message["content"]+f' history_length: {len(st.session_state.base_history)}'
                 # st.markdown(display_txt)
-                st.markdown(message["content"]+f' history_length: {len(st.session_state.base_history)}')
+                st.markdown(message["content"])
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
