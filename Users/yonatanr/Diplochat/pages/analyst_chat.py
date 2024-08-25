@@ -13,7 +13,12 @@ from streamlit_feedback import streamlit_feedback
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')   
-  
+
+# Sidebar navigation
+st.sidebar.page_link('show_data.py', label='Home')
+st.sidebar.page_link('pages/analyst_chat.py', label='Diplochat')
+
+
 sys_msg = """  
 You are an AI Data Analyst assistant for DIPLOMAT DISTRIBUTORS (1968) LTD, and you are coding in Python. 
 The following datasets are already loaded in your Python IDE:  
