@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit_authenticator as stauth  
 import yaml
 from yaml.loader import SafeLoader
-# from st_pages import hide_pages
+from st_pages import hide_pages
   
 with open('config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
@@ -21,7 +21,7 @@ st.title('Diplomat LTD Analytics')
 authentication_status = authenticator.login()  
 
 
-# hide_pages(["Home", "Data Overview", "Visualizations", "Chat", "Map", 'Inner Code'])
+hide_pages([ "Map"])
 
 # Adjusted authentication status handling  
 if st.session_state['authentication_status']:  
@@ -32,7 +32,8 @@ if st.session_state['authentication_status']:
     # Sidebar for navigation  
     st.sidebar.title("Navigation")  
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map", 'Inner Code'])
-    page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map"])   
+    # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map"])
+    page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat'])      
   
     # Load the corresponding page  
     if page == "Home":  
@@ -50,9 +51,9 @@ if st.session_state['authentication_status']:
     elif page == "Analyst Chat":  
         from pages.analyst_chat import run as analyst_chat_page  
         analyst_chat_page()  
-    elif page == "Map":  
-        from pages.map import run as display_map  
-        display_map()  
+    # elif page == "Map":  
+        # from pages.map import run as display_map  
+        # display_map()  
     # elif page == "Inner Code":  
         # from pages.script_run import run as script_run  
         # script_run()  
