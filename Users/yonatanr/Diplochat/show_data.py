@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit_authenticator as stauth  
 import yaml
 from yaml.loader import SafeLoader
+from st_pages import hide_pages
   
 with open('config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
@@ -18,7 +19,10 @@ st.title('Diplomat LTD Analytics')
 
 # Login widget  
 authentication_status = authenticator.login()  
-  
+
+
+hide_pages(["Home", "Data Overview", "Visualizations", "Chat", "Map", 'Inner Code'])
+
 # Adjusted authentication status handling  
 if st.session_state['authentication_status']:  
     authenticator.logout()  # Add logout functionality  
