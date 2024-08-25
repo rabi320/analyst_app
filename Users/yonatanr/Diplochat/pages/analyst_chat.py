@@ -403,7 +403,7 @@ def run():
     # Display chat messages from history on app rerun  
     for message in st.session_state.messages:  
         if message["role"] == 'assistant':  
-            with st.chat_message(message["role"], avatar='🤖'):  
+            with st.chat_message(message["role"]+f' history_length: {len(base_history)}', avatar='🤖'):  
                 # display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback} last feedbacks {st.session_state.user_feedback_lst}" 
                 # st.markdown(display_txt)
                 st.markdown(message["content"])
@@ -432,11 +432,15 @@ def run():
         st.session_state.conv_id = f'{name_id}_{ts_id}'
 
 
-
+    m_limit = 10
+    if 'memory_limit' not in st.session_state:
+        st.session_state.memory_limit = m_limit
+        
     if prompt := st.chat_input("Ask me anything"):
         prompt_timestamp = datetime.now(israel_tz).strftime("%Y-%m-%d %H:%M:%S") 
         st.session_state.messages.append({"role": "user", "content": prompt})
         base_history.append({"role": "user", "content": prompt})
+        
         with st.chat_message("user", avatar=user_avatar):
             st.markdown(prompt)
 
