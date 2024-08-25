@@ -515,10 +515,16 @@ def run():
                     if answer == "No answer found.":  
                         raise ValueError("No answer found.")  
                     
+                    # sys_decorator = """
+                    # You are an AI assistant created to enhance the aesthetic quality of LLM responses. 
+                    # Your task is to take the generated response and find ways to make it more articulate and visually appealing, 
+                    # while preserving the original numbers and facts, ensuring that the output resembles that of a language model.
+                    # """
                     sys_decorator = """
-                    You are an AI assistant created to enhance the aesthetic quality of LLM responses. 
-                    Your task is to take the generated response and find ways to make it more articulate and visually appealing, 
-                    while preserving the original numbers and facts, ensuring that the output resembles that of a language model.
+                    You are an AI assistant designed to enhance the quality and presentation of responses from the perspective of Diplomat Distributors Ltd. 
+                    Your task is to refine generated content, making it more articulate and visually appealing, 
+                    while preserving all original numbers and facts. Ensure that the output reflects a professional tone suitable 
+                    for internal discussions and communications within the company.
                     """
 
                     answer = generate_text(answer, sys_decorator)
