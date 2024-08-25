@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit_authenticator as stauth  
 import yaml
 from yaml.loader import SafeLoader
-from st_pages import hide_pages
+# from st_pages import hide_pages
   
 with open('config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
@@ -21,7 +21,7 @@ st.title('Diplomat LTD Analytics')
 authentication_status = authenticator.login()  
 
 
-hide_pages([ "Map"])
+# hide_pages([ "Map"])
 
 # Adjusted authentication status handling  
 if st.session_state['authentication_status']:  
@@ -33,21 +33,21 @@ if st.session_state['authentication_status']:
     st.sidebar.title("Navigation")  
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map", 'Inner Code'])
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map"])
-    page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat'])      
+    page = st.sidebar.selectbox("Select a page", ["Home", 'Analyst Chat'])      
   
     # Load the corresponding page  
     if page == "Home":  
         from pages.home import run as home_page  
         home_page()  
-    elif page == "Data Overview":  
-        from pages.data_overview import run as data_overview_page  
-        data_overview_page()  
-    elif page == "Visualizations":  
-        from pages.visualizations import run as visualizations_page  
-        visualizations_page()  
-    elif page == "Chat":  
-        from pages.chat import run as chat_page  
-        chat_page()  
+    # elif page == "Data Overview":  
+    #     from pages.data_overview import run as data_overview_page  
+    #     data_overview_page()  
+    # elif page == "Visualizations":  
+    #     from pages.visualizations import run as visualizations_page  
+    #     visualizations_page()  
+    # elif page == "Chat":  
+        # from pages.chat import run as chat_page  
+        # chat_page()  
     elif page == "Analyst Chat":  
         from pages.analyst_chat import run as analyst_chat_page  
         analyst_chat_page()  
