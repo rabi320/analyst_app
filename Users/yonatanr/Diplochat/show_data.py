@@ -58,8 +58,8 @@ if st.session_state['authentication_status']:
         # script_run()  
 
     # Sidebar navigation
-    st.sidebar.page_link('show_data.py', label='Home')
-    st.sidebar.page_link('pages/analyst_chat.py', label='Diplochat')
+    # st.sidebar.page_link('show_data.py', label='Home')
+    # st.sidebar.page_link('pages/analyst_chat.py', label='Diplochat')
 
 
 

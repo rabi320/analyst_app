@@ -15,8 +15,8 @@ from streamlit_feedback import streamlit_feedback
 warnings.filterwarnings('ignore')   
 
 # Sidebar navigation
-st.sidebar.page_link('show_data.py', label='Home')
-st.sidebar.page_link('pages/analyst_chat.py', label='Diplochat')
+# st.sidebar.page_link('show_data.py', label='Home')
+# st.sidebar.page_link('pages/analyst_chat.py', label='Diplochat')
 
 
 sys_msg = """  
