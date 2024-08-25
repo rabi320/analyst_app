@@ -362,7 +362,7 @@ def run():
     )  
     MODEL = "Diplochat"  
     
-    base_history = [{"role": "system", "content": sys_msg}]+examples
+    # base_history = [{"role": "system", "content": sys_msg}]+examples
 
     # Initialize log_dfs 
     if 'log_dfs' not in st.session_state:  
@@ -379,7 +379,13 @@ def run():
 
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
-        
+
+    if "base_history" not in st.session_state:  
+        st.session_state.base_history = [{"role": "system", "content": sys_msg}]+examples
+
+
+
+
     def handle_feedback():
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                         server='diplomat-analytics-server.database.windows.net',  
@@ -400,13 +406,15 @@ def run():
         st.toast("✔️ Feedback received!")
         
     answer = ''
+
+
     # Display chat messages from history on app rerun  
     for message in st.session_state.messages:  
         if message["role"] == 'assistant':  
             with st.chat_message(message["role"], avatar='🤖'):  
                 # display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback} last feedbacks {st.session_state.user_feedback_lst}" 
                 # st.markdown(display_txt)
-                st.markdown(message["content"]+f' history_length: {len(base_history)}')
+                st.markdown(message["content"]+f' history_length: {len(st.session_state.base_history)}')
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
@@ -439,7 +447,7 @@ def run():
     if prompt := st.chat_input("Ask me anything"):
         prompt_timestamp = datetime.now(israel_tz).strftime("%Y-%m-%d %H:%M:%S") 
         st.session_state.messages.append({"role": "user", "content": prompt})
-        base_history.append({"role": "user", "content": prompt})
+        st.session_state.base_history.append({"role": "user", "content": prompt})
         
         with st.chat_message("user", avatar=user_avatar):
             st.markdown(prompt)
@@ -468,7 +476,7 @@ def run():
                         model=st.session_state["openai_model"],
                         messages=[
                             {"role": m["role"], "content": m["content"]}
-                            for m in base_history
+                            for m in st.session_state.base_history
                         ],
                         max_tokens=2000,
                         stream=False,
@@ -523,7 +531,7 @@ def run():
                             placeholder.markdown(streamed_text)  
                             time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
 
-                    base_history.append({"role": "assistant", "content": history_msg})
+                    st.session_state.base_history.append({"role": "assistant", "content": history_msg})
                     
                     # append regex formatted code with python markdown content to the list
                     code_lst.append(history_msg)
@@ -551,7 +559,7 @@ def run():
                         time.sleep(0.01)  # Adjust the sleep time to control the streaming speed
                 
                 # delete the last question from base_history
-                base_history = base_history[:-1]
+                st.session_state.base_history = st.session_state.base_history[:-1]
             
             st.session_state.messages.append({"role": "assistant", "content": answer})
 
