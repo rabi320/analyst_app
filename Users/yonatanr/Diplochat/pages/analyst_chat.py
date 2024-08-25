@@ -440,7 +440,7 @@ def run():
         st.session_state.conv_id = f'{name_id}_{ts_id}'
 
 
-    m_limit = 10
+    m_limit = 15
     if 'memory_limit' not in st.session_state:
         st.session_state.memory_limit = m_limit
         
@@ -560,8 +560,13 @@ def run():
                 
                 # delete the last question from base_history
                 st.session_state.base_history = st.session_state.base_history[:-1]
-            
+
             st.session_state.messages.append({"role": "assistant", "content": answer})
+            
+            # memory control
+            if len(st.session_state.base_history)>st.session_state.memory_limit:
+                # delete the first 2 massages after system
+                st.session_state.base_history = [st.session_state.base_history[0]]+st.session_state.base_history[3:]
 
             elapsed_time = time.time() - start_time
 
