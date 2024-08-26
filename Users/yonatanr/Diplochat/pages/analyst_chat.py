@@ -474,7 +474,7 @@ def run():
             
             max_attempts = 10
             errors = []
-            attempts = 0
+            attempts = 1
             txt_content_lst = []
             code_lst = []
             n_llm_api_call = 0
@@ -553,14 +553,13 @@ def run():
                     
                     # append regex formatted code with python markdown content to the list
                     code_lst.append(history_msg)
-                    attempts += 1
                     break
 
                 except Exception as e:  
                     errors.append(f"Attempt {attempts + 1} failed: {e}")  
                     attempts += 1
                     
-                                # generate anwer for failures
+            # generate anwer for failures
             if attempts == max_attempts:
                 # replace with ai generated text
                 answer = generate_text(prompt, sys_error)
