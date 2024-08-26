@@ -3,14 +3,15 @@ import pyodbc
 import pandas as pd  
 from datetime import datetime  
 from statsmodels.tsa.statespace.sarimax import SARIMAX
-
+import os
+db_password = os.getenv('DB_PASSWORD') 
 
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data():  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                           server='diplomat-analytics-server.database.windows.net',  
                           database='NBO-DB',  
-                          uid='analyticsadmin', pwd='Analytics12345')  
+                          uid='analyticsadmin', pwd=db_password)  
   
 
     #Define tables and queries

@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import pyodbc
+import os
+db_password = os.getenv('DB_PASSWORD') 
 
 @st.cache_resource
 def load_data():
@@ -11,7 +13,7 @@ def load_data():
                           server='diplomat-analytics-server.database.windows.net',
                           database='NBO-DB',
                           uid='analyticsadmin', 
-                          pwd='Analytics12345')
+                          pwd=db_password)
 
     query = 'SELECT * FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]'
     df = pd.read_sql_query(query, conn)
