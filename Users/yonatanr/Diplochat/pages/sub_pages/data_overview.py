@@ -5,6 +5,10 @@ import requests
 from audio_recorder_streamlit import audio_recorder
 import re
 import io
+import os
+db_password = os.getenv('DB_PASSWORD') 
+whisper_api_key = os.getenv('WHISPER_OPENAI_KEY')
+tts_api_key = os.getenv('TTS_OPENAI_KEY')
 
 @st.cache_data
 def load_data():
@@ -12,7 +16,7 @@ def load_data():
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',
                           server='diplomat-analytics-server.database.windows.net',
                           database='NBO-DB',
-                          uid='analyticsadmin', pwd='Analytics12345')
+                          uid='analyticsadmin', pwd=db_password)
 
     query = 'SELECT * FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]'
 
@@ -55,7 +59,7 @@ def run():
         # Define your endpoint and headers  
         endpoint = 'https://ai-yonatanrai434014214400.openai.azure.com/openai/deployments/whisper/audio/translations?api-version=2024-06-01'  
         headers = {  
-            "api-key": "0fc7b0a3400c46f3974efed73c38e89c",  
+            "api-key": whisper_api_key,  
         }  
     
         # Create a BytesIO object from the audio content  
@@ -109,7 +113,7 @@ def run():
         endpoint = 'https://ai-yonatanrai933120347560.openai.azure.com/openai/deployments/tts-hd/audio/speech?api-version=2024-05-01-preview'  
         headers = {  
             "Content-Type": "application/json",  
-            "api-key": "d2f7b5bf3799443e8217de45ea5ad734",  
+            "api-key": tts_api_key,  
         }  
         data = {  
             "model": "tts-hd",  
