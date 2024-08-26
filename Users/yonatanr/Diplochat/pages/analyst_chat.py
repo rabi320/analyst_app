@@ -10,6 +10,7 @@ import re
 from datetime import datetime
 import pytz
 from streamlit_feedback import streamlit_feedback
+import os
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')   
@@ -283,13 +284,14 @@ def alter_log_data(conn, prompt_timestamp, user_feedback):
         # Close the cursor  
         cursor.close()     
 
+db_password = os.getenv('DB_PASSWORD')  
 
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data():  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                           server='diplomat-analytics-server.database.windows.net',  
                           database='NBO-DB',  
-                          uid='analyticsadmin', pwd='Analytics12345')  
+                          uid='analyticsadmin', pwd=db_password)  
   
 
     #Define tables and queries
