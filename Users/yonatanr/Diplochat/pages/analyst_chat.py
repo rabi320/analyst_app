@@ -69,11 +69,12 @@ The following datasets are already loaded in your Python IDE:
 this is the code that already loaded the data to the IDE:
 
 ```python
+db_password = os.getenv('DB_PASSWORD')
 def load_data():  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                           server='diplomat-analytics-server.database.windows.net',  
                           database='NBO-DB',  
-                          uid='analyticsadmin', pwd='Analytics12345')  
+                          uid='analyticsadmin', pwd=db_password)  
   
 
     #Define tables and queries
@@ -170,9 +171,12 @@ examples = [{'role': 'user', 'content': 'מהם ניתחי השוק של מות�
   'content': '```python\nimport pandas as pd\n\n# Filter for Pringles items\npringles_items = stnx_items[stnx_items[\'Brand_Name\'] == \'פרינגלס\']\n\n# Merge sales and items dataframes\nmerged_sales = pd.merge(stnx_sales, pringles_items[[\'Barcode\', \'Brand_Name\']], on=\'Barcode\')\n\n# Group by week and calculate total sales in NIS for Pringles and total sales for the category\nmerged_sales[\'Week\'] = merged_sales[\'Day\'].dt.isocalendar().week\nweekly_sales = merged_sales.groupby([\'Week\']).agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Calculate total sales for the snacks category for each week\ntotal_weekly_sales = stnx_sales.groupby(stnx_sales[\'Day\'].dt.isocalendar().week).agg({\'Sales_NIS\': \'sum\'}).reset_index()\ntotal_weekly_sales.columns = [\'Week\', \'Total_Sales_NIS\']\n\n# Merge to calculate market share\nweekly_sales = pd.merge(weekly_sales, total_weekly_sales, on=\'Week\', suffixes=(\'_Pringles\', \'_Total\'))\nweekly_sales[\'Market_Share\'] = weekly_sales[\'Sales_NIS_Pringle\'] / weekly_sales[\'Total_Sales_NIS\']\n\n# Find the week with the highest market share for Pringles\nmax_market_share_week = weekly_sales.loc[weekly_sales[\'Market_Share\'].idxmax(), \'Week\']\n\n# Filter sales data for Pringles during that week\npringles_week_data = merged_sales[merged_sales[\'Week\'] == max_market_share_week]\n\n# Calculate the average price per unit for Pringles during that week\naverage_price = pringles_week_data[\'Price_Per_Unit\'].mean()\n\nanswer = f\'הממוצע של המחיר של פרינגלס בשבוע עם נתח השוק הגבוה ביותר הוא {average_price:.2f} ש"ח.\'\n```'}]
 
 
+db_password = os.getenv('DB_PASSWORD')  
+openai_api_key = os.getenv('OPENAI_KEY')
+
 client = AzureOpenAI(  
     azure_endpoint="https://ai-usa.openai.azure.com/",  
-    api_key='86bedc710e5e493290cb2b0ce6f16d80',  
+    api_key=openai_api_key,  
     api_version="2024-02-15-preview"  
 )  
 MODEL = "Diplochat"  
@@ -284,7 +288,7 @@ def alter_log_data(conn, prompt_timestamp, user_feedback):
         # Close the cursor  
         cursor.close()     
 
-db_password = os.getenv('DB_PASSWORD')  
+
 
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data():  
@@ -364,7 +368,7 @@ def run():
 
     client = AzureOpenAI(  
         azure_endpoint="https://ai-usa.openai.azure.com/",  
-        api_key='86bedc710e5e493290cb2b0ce6f16d80',  
+        api_key=openai_api_key,  
         api_version="2024-02-15-preview"  
     )  
     MODEL = "Diplochat"  
@@ -397,7 +401,7 @@ def run():
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                         server='diplomat-analytics-server.database.windows.net',  
                         database='NBO-DB',  
-                        uid='analyticsadmin', pwd='Analytics12345')    
+                        uid='analyticsadmin', pwd=db_password)    
         
         st.session_state.user_feedback_lst.append(st.session_state.user_feedback)
         st.session_state.log_dfs = st.session_state.log_dfs[:-1]
@@ -606,7 +610,7 @@ def run():
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                               server='diplomat-analytics-server.database.windows.net',  
                               database='NBO-DB',  
-                              uid='analyticsadmin', pwd='Analytics12345')  
+                              uid='analyticsadmin', pwd=db_password)  
         insert_log_data(conn, log_session)  
         conn.close()  
         
