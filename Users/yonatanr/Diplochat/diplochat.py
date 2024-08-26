@@ -33,7 +33,7 @@ if st.session_state['authentication_status']:
     st.sidebar.title("Navigation")  
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map", 'Inner Code'])
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map"])
-    page = st.sidebar.selectbox("Select a page", ["Home", 'Analyst Chat'])      
+    page = st.sidebar.selectbox("Select a page", ["Home", 'Analyst Chat',"Chat"])      
   
     # Load the corresponding page  
     if page == "Home":  
@@ -45,9 +45,9 @@ if st.session_state['authentication_status']:
     # elif page == "Visualizations":  
     #     from pages.visualizations import run as visualizations_page  
     #     visualizations_page()  
-    # elif page == "Chat":  
-        # from pages.chat import run as chat_page  
-        # chat_page()  
+    elif page == "Chat":  
+        from pages.chat import run as chat_page  
+        chat_page()  
     elif page == "Analyst Chat":  
         from pages.analyst_chat import run as analyst_chat_page  
         analyst_chat_page()  
