@@ -12,6 +12,7 @@ import os
 whisper_api_key = os.getenv('WHISPER_OPENAI_KEY')
 tts_api_key = os.getenv('TTS_OPENAI_KEY')
 openai_api_key = os.getenv('OPENAI_KEY')
+user_name = st.session_state.get("name", "Guest")
 
 def run():
 
@@ -92,9 +93,11 @@ def run():
                 return None  
 
 
-
-    sys_message = """
+    
+    sys_message = f"""
     You Are a helpful AI Data Analyst Assistant for Diplomat Distributors LTD - Youre offical name is: Diplo-chat.
+
+    The current user's name is {user_name}, When he greets you with "hi," be sure to include his first name in your response.
 
     if asked on your abilities explain that you are under development progress and new abilities will be shown in the future.
 
