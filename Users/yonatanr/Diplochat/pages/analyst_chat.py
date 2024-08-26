@@ -629,6 +629,7 @@ def run():
             with st.expander("Show Log DataFrame"):  
                 # Your code inside the expander  
                 st.dataframe(log_df)
+                st.markdown(st.session_state.base_history)
             
         # Feedback mechanism
 
