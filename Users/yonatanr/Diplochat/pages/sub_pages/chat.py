@@ -7,6 +7,11 @@ from audio_recorder_streamlit import audio_recorder
 import requests
 import re
 import io
+import os
+
+whisper_api_key = os.getenv('WHISPER_OPENAI_KEY')
+tts_api_key = os.getenv('TTS_OPENAI_KEY')
+openai_api_key = os.getenv('OPENAI_KEY')
 
 def run():
 
@@ -25,7 +30,7 @@ def run():
         # Define your endpoint and headers  
         endpoint = 'https://ai-yonatanrai434014214400.openai.azure.com/openai/deployments/whisper/audio/translations?api-version=2024-06-01'  
         headers = {  
-            "api-key": "0fc7b0a3400c46f3974efed73c38e89c",  
+            "api-key": whisper_api_key,  
         }  
     
         # Create a BytesIO object from the audio content  
@@ -66,7 +71,7 @@ def run():
             endpoint = 'https://ai-yonatanrai933120347560.openai.azure.com/openai/deployments/tts-hd/audio/speech?api-version=2024-05-01-preview'  
             headers = {  
                 "Content-Type": "application/json",  
-                "api-key": "d2f7b5bf3799443e8217de45ea5ad734",  
+                "api-key": tts_api_key,  
             }  
             data = {  
                 "model": "tts-hd",  
@@ -120,7 +125,7 @@ def run():
     # client = OpenAI(api_key=openai_api_key)
     client = AzureOpenAI(
     azure_endpoint = "https://ai-usa.openai.azure.com/", 
-    api_key='86bedc710e5e493290cb2b0ce6f16d80',  
+    api_key=openai_api_key,  
     api_version="2024-02-15-preview"
     )
     MODEL="Diplochat"
