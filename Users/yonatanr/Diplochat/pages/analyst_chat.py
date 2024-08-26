@@ -556,7 +556,7 @@ def run():
                     break
 
                 except Exception as e:  
-                    errors.append(f"Attempt {attempts + 1} failed: {e}")  
+                    errors.append(f"Attempt {attempts} failed: {e}")  
                     attempts += 1
                     
             # generate anwer for failures
