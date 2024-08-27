@@ -26,7 +26,7 @@ authentication_status = authenticator.login()
 # Adjusted authentication status handling  
 if st.session_state['authentication_status']:  
     
-    authenticator.logout()  # Add logout functionality  
+    authenticator.logout(location = 'sidebar')  # Add logout functionality  
     st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
     st.title('Diplomat AI')  # Replace with your actual content  
   
