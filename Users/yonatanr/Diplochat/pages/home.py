@@ -1,5 +1,5 @@
 import streamlit as st
 
 def run():
-    st.header("Welcome to the Analytics Dashboard")
-    st.write("This app showcases analytics from our database, utilizing Streamlit's unique abilities.")
+    st.header("Welcome to the Analytics Hub")
+    st.markdown('<p style="color: blue; font-size: 20px;"><strong>Committed to Your Success</strong></p>', unsafe_allow_html=True)
