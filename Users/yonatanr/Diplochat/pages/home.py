@@ -8,7 +8,7 @@ def run():
     <h1 style="text-align: center; font-size: 40px; 
         color: cyan; 
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); 
-        background: linear-gradient(90deg, #00f, #0ff);
+        background: linear-gradient(90deg, #0ff 70%, #e0f7fa);
         -webkit-background-clip: text; 
         -webkit-text-fill-color: transparent;">
         <strong>Committed to Your Success</strong>
