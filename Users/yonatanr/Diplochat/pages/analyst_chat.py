@@ -351,7 +351,7 @@ def run():
     admin_list = ['Yonatan Rabinovich']
     user_name = st.session_state.get("name", "Guest")  # Default to "Guest" if not set
 
-    st.title(f"Diplochat AI Analyst 🤖 - {user_name}")  
+    st.title(f"{user_name} Sales Copilot 🤖")  
 
     dataframes = load_data()  
     

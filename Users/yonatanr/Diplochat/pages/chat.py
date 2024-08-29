@@ -12,7 +12,7 @@ import os
 whisper_api_key = os.getenv('WHISPER_OPENAI_KEY')
 tts_api_key = os.getenv('TTS_OPENAI_KEY')
 openai_api_key = os.getenv('OPENAI_KEY')
-user_name = st.session_state.get("name", "Guest")
+
 
 def run():
 
@@ -93,7 +93,7 @@ def run():
                 return None  
 
 
-    
+    user_name = st.session_state.get("name", "Guest")
     sys_message = f"""
     You Are a helpful AI Data Analyst Assistant for Diplomat Distributors LTD - Youre offical name is: Diplo-chat.
 
@@ -117,7 +117,7 @@ def run():
 
     st.title("Diplomat's AI Assistant 🤖")
 
-    st.markdown("![](https://www.diplomat-global.com/wp-content/uploads/2018/06/logo.png)")
+    
     user_avatar = '🧑'
 
 

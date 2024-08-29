@@ -15,7 +15,7 @@ authenticator = stauth.Authenticate(
     config['pre-authorized']
 )
 
-st.title('Diplomat LTD Analytics')
+st.title('Diplomat AI')
 
 # Login widget  
 authentication_status = authenticator.login()  
@@ -26,16 +26,16 @@ authentication_status = authenticator.login()
 # Adjusted authentication status handling  
 if st.session_state['authentication_status']:  
     
+    st.sidebar.markdown("![](https://www.diplomat-global.com/wp-content/uploads/2018/06/logo.png)")
     authenticator.logout(location = 'sidebar')  # Add logout functionality  
     st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
-    st.title('Diplomat AI')  # Replace with your actual content  
   
     # Sidebar for navigation  
     st.sidebar.title("Navigation")  
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map", 'Inner Code'])
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map"])
     page = st.sidebar.selectbox("Select a page", ["Home", 'Analyst Chat',"Chat"])      
-  
+    
     # Load the corresponding page  
     if page == "Home":  
         from pages.home import run as home_page  
