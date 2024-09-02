@@ -22,25 +22,25 @@ credentials:
       failed_login_attempts: 0  
       logged_in: false  
       name: Aya Efrati  
-      password: "$2b$12$2g9Bzc2.K6PG6NHNgCbBO.P5OXe0uUBwGxM0rlpjMZPKFYW8JpEoe"  # Hash of the password  
+      password: "$2b$12$tqbOG3AtI/1LjvAgkE19D.Rb7lJtTXfR2H5ZTQmzWNxt5qCEtvpSm"  # Hash of the password  
     naorg:  
       email: naorg@diplomat-global.com  
       failed_login_attempts: 0  
       logged_in: false  
       name: Naor Gutman  
-      password: "$2b$12$4wlr6z5QaPzbkOgn5lf.XOGpryL4jH9X9Xk8vK30.0Y//XpJdOrcq"  # Hash of the password  
+      password: "$2b$12$iYczoz2ikyOFpn822niSBuqJkJaEiMmGue0jbbRsRj.qPuUMzaeOy"  # Hash of the password  
     shaiel:  
       email: shaiel@diplomat-global.com  
       failed_login_attempts: 0  
       logged_in: false  
       name: Shai Elkayam  
-      password: "$2b$12$hEF80AyNYWmINCsjLwKMbOgubK9vLhRbqcvvgtbIEauD0XwUW32Zi"  # Hash of the password  
+      password: "$2b$12$CZzJDW6l0dXAVas0Q3NqJOneQb/VfHU0q8cTOESoJQmLPEs5P48hq"  # Hash of the password  
     yahels:  
       email: yahels@diplomat-global.com  
       failed_login_attempts: 0  
       logged_in: false  
       name: Yahel Shay  
-      password: "$2b$12$AXPKtknRayYcyIrj74bTrO3nHe/cIT0xAK2EKBXH63UaM7tCKUorC"  # Hash of the password  
+      password: "$2b$12$ZLC3B6rkTb0a0L0d4y9RHuJz4fL.L6pFfYOo84hx7k5vTvr2suIci"  # Hash of the password  
 
 pre-authorized:  
   emails:  
