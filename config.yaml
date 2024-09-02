@@ -41,7 +41,12 @@ credentials:
       logged_in: false  
       name: Yahel Shay  
       password: "$2b$12$ZLC3B6rkTb0a0L0d4y9RHuJz4fL.L6pFfYOo84hx7k5vTvr2suIci"  # Hash of the password  
-
+    YairC:  
+      email: YairC@diplomat-global.com  
+      failed_login_attempts: 0  
+      logged_in: false  
+      name: Yair Cohen  
+      password: "$2b$12$X2ChTeEr6bsJGF/unaF1jupRhyskh7xJg4lrr88ZEO3f8Kt1Q36tO"  # Hash of the password  
 pre-authorized:  
   emails:  
     - ryonatan6@gmail.com  
