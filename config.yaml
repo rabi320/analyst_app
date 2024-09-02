@@ -17,7 +17,31 @@ credentials:
       logged_in: false  
       name: Avi Tuval  
       password: "$2b$12$gi7BLBNq9fRBoFCwiGkO9eDG4O4tMEZc8CEp9Ui0yPwxS7IbCT7H."  # Hash of the password  
-  
+    aya:  
+      email: aya@diplomat-global.com  
+      failed_login_attempts: 0  
+      logged_in: false  
+      name: Aya Efrati  
+      password: "$2b$12$GZP26dtG11SR8nBdikshFeNHo8g02nWO/mO2.4lgBhMSH1HogUgey"  # Hash of the password  
+    naorg:  
+      email: naorg@diplomat-global.com  
+      failed_login_attempts: 0  
+      logged_in: false  
+      name: Naor Gutman  
+      password: "$2b$12$jWHTUvB5zQxLgi3Wm7D/0.5E7gXL/OTp8GnLIupG6Iy/JsI63MDHW"  # Hash of the password  
+    shaiel:  
+      email: shaiel@diplomat-global.com  
+      failed_login_attempts: 0  
+      logged_in: false  
+      name: Shai Elkayam  
+      password: "$2b$12$mLTE1cV0rx2bllCXdN6AfOGFkZKLsvGowd8bvCbNT0Kzq1t1E.qJK"  # Hash of the password  
+    yahels:  
+      email: yahels@diplomat-global.com  
+      failed_login_attempts: 0  
+      logged_in: false  
+      name: Yahel Shay  
+      password: "$2b$12$Ma5PrdlKUGB0Mv45PjdH/e4mx.4IKrhuTAiN5FNbytAMgbsefXJhy"  # Hash of the password  
+
 pre-authorized:  
   emails:  
     - ryonatan6@gmail.com  
