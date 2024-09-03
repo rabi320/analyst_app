@@ -47,24 +47,17 @@ The following datasets are already loaded in your Python IDE:
      - `Supplier_Name`: Name of the supplier.  
    - **Note**: Filter the category to snacks ('חטיפים').  
   
-3. **DW_CHP** (`chp`)  
-   - **Description**: This fact table records daily snack prices by barcode and store, including promotions.  
-   - **Columns**:  
-     - `ITEM_DESCRIPION`: Name of the item.  
+3. **DW_CHP_AGGR** (`chp`)  
+   - **Description**: This fact table records daily snack prices by barcode and chain, including promotions.  
+   - **Columns**:
+     - `DATE`: Date (datetime).    
      - `BARCODE`: Item identifier.  
-     - `CHAIN_CODE`: Supermarket chain code.  
-     - `STORE_CODE`: Store code.  
-     - `CHAIN`: Name of the supermarket chain.  
-     - `STORE`: Name of the store.  
-     - `ADDRESS`: Street and number.  
-     - `CITY`: Name of the city.  
-     - `SELLOUT_DESCRIPTION`: Hebrew description of sales promotions.  
-     - `STORENEXT_CATEGORY`: Category name.  
-     - `SUPPLIER`: Supplier name.  
-     - `FILE_DATE`: Date (datetime).  
-     - `PRICE`: Base price.  
-     - `SELLOUT_PRICE`: Promotional price.  
-   - **Note**: Filter the category to snacks ('חטיפים') and the date range between 2024-03-01 and 2024-05-31 and only Sundays. and non-null sellout prices.  
+     - `CHAIN`: Name of the supermarket chain.
+     - `AVG_PRICE`: Base price accross the stores in the chain.
+     - `AVG_SELLOUT_PRICE`: Promotional price accross the stores in the chain, if null or missing then the no promotion is currently applies, address the current price.    
+     - `NUMBER_OF_STORES`: Number of stores in the chain that reported containing this barcode.  
+     - `SELLOUT_DESCRIPTION`: Hebrew description of sales promotions, if null or missing then the no promotion is currently applies.  
+   - **Note**: to check barcodes attributes, connect this table with stnx_items 'Barcode' and get the relevant info, data here is from '2023-12-31' to '2024-09-01'.  
 
 this is the code that already loaded the data to the IDE:
 
@@ -89,10 +82,9 @@ def load_data():
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
             WHERE Category_Name = N'חטיפים'
         \"\"\",
-        'DW_CHP': \"\"\"
-            SELECT ITEM_DESCRIPION, BARCODE, CHAIN_CODE, STORE_CODE, CHAIN, STORE, ADDRESS, CITY, SELLOUT_DESCRIPTION, STORENEXT_CATEGORY, SUPPLIER, FILE_DATE, PRICE, SELLOUT_PRICE
-            FROM [dbo].[DW_CHP]
-            WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-03-01' AND '2024-05-31' AND SELLOUT_PRICE IS NOT NULL AND DATENAME(WEEKDAY, FILE_DATE) = 'Sunday'
+        'DW_CHP_AGGR': \"\"\"
+            SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
+            FROM [dbo].[DW_CHP_AGGR]
         \"\"\"
     }
 
@@ -158,13 +150,6 @@ examples = [{'role': 'user', 'content': 'מהם ניתחי השוק של מות�
   'content': 'מתי השבוע שנתח השוק של פרינגלס היה הכי נמוך מבין השבועות של מאי 24'},
  {'role': 'assistant',
   'content': '```python\n# Merging sales data with items data\nmerged_data = stnx_sales.merge(stnx_items, on=\'Barcode\', how=\'inner\')\n\n# Filtering for Pringles brand\npringles_data = merged_data[merged_data[\'Brand_Name\'] == \'פרינגלס\']\n\n# Grouping by week and calculating total sales in NIS for Pringles\npringles_weekly_sales = pringles_data.resample(\'W-Mon\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Calculating total sales for the snacks category\ntotal_weekly_sales = merged_data.resample(\'W-Mon\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Merging to calculate market cap\nmarket_cap_data = pringles_weekly_sales.merge(total_weekly_sales, on=\'Day\', suffixes=(\'_Pringles\', \'_Total\'))\n\n# Calculating market cap percentage\nmarket_cap_data[\'Market_Cap_Percent\'] = (market_cap_data[\'Sales_NIS_Pringles\'] / market_cap_data[\'Sales_NIS_Total\']) * 100\n\n# Finding the week with the lowest market cap\nlowest_market_cap_week = market_cap_data.loc[market_cap_data[\'Market_Cap_Percent\'].idxmin()]\n\n# Formatting the answer\nanswer = f"השבוע שבו נתח השוק של פרינגלס היה הכי נמוך הוא {lowest_market_cap_week[\'Day\'].strftime(\'%d/%m/%Y\')} עם נתח שוק של {lowest_market_cap_week[\'Market_Cap_Percent\']:.2f}%."\n```'},
- {'role': 'user',
-  'content': 'תתן לי 10 דוגמאות של תיאורי המבצעים ייחודיים של המתחרים באותה תקופה כרשימה'},
- {'role': 'assistant',
-  'content': '```python\n# First, we filter the \'chp\' dataframe to find promotions from competitors.\ncompetitor_promotions = chp[chp[\'SUPPLIER\'] != \'דיפלומט\']\n\n# Then, we filter out promotions where the SELLOUT_PRICE is greater than 1.\nunique_promotions = competitor_promotions[competitor_promotions[\'SELLOUT_PRICE\'] > 1]\n\n# Now, we extract unique promotion descriptions.\npromotion_descriptions = unique_promotions[\'SELLOUT_DESCRIPTION\'].unique()[:10]\n\n# Finally, we format the output.\nanswer = f"הנה 10 תיאורים ייחודיים של מבצעים של מתחרים במהלך התקופה: {\', \'.join(promotion_descriptions)}"\n```'},
- {'role': 'user', 'content': 'באיזה רשת יש את המבצע הנמוך ביותר בתקופה הזאת?'},
- {'role': 'assistant',
-  'content': '```python\n# Filter for valid promotions\npromotions = chp[chp[\'SELLOUT_PRICE\'] > 1]\n\n# Find the chain with the lowest promotional price\nlowest_price_chain = promotions.loc[promotions[\'SELLOUT_PRICE\'].idxmin()]\n\nchain_name = lowest_price_chain[\'CHAIN\']\nlowest_price = lowest_price_chain[\'SELLOUT_PRICE\']\n\nanswer = f"הרשת עם המחיר הנמוך ביותר עבור חטיפים היא {chain_name} במחיר של {lowest_price} ש"ח."\n```'},
  {'role': 'user',
   'content': 'מה היה המחיר הממוצע של פרינגלס בשבוע עם נתח השוק הגבוה ביותר'},
  {'role': 'assistant',
@@ -321,10 +306,9 @@ def load_data():
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
             WHERE Category_Name = N'חטיפים'
         """,
-        'DW_CHP': """
-            SELECT ITEM_DESCRIPION, BARCODE, CHAIN_CODE, STORE_CODE, CHAIN, STORE, ADDRESS, CITY, SELLOUT_DESCRIPTION, STORENEXT_CATEGORY, SUPPLIER, FILE_DATE, PRICE, SELLOUT_PRICE
-            FROM [dbo].[DW_CHP]
-            WHERE STORENEXT_CATEGORY = N'חטיפים' AND FILE_DATE BETWEEN '2024-03-01' AND '2024-05-31' AND SELLOUT_PRICE IS NOT NULL AND DATENAME(WEEKDAY, FILE_DATE) = 'Sunday'
+        'DW_CHP_AGGR': """
+            SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
+            FROM [dbo].[DW_CHP_AGGR]
         """
     }
 
