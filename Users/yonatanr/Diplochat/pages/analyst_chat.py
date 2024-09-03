@@ -33,7 +33,7 @@ The following datasets are already loaded in your Python IDE:
      - `Sales_NIS`: Sales amount in NIS.  
      - `Sales_Units`: Quantity sold.  
      - `Price_Per_Unit`: Daily price per unit.  
-   - **Note**: Filter the data for the date range between 2024-03-01 and 2024-05-31.  
+   - **Note**: Filter the data for the date range between 2023-12-31 and 2024-9-1.  
   
 2. **DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS** (`stnx_items`)  
    - **Description**: This is a dimension table containing attributes of items.  
@@ -44,8 +44,7 @@ The following datasets are already loaded in your Python IDE:
      - `Sub_Category_Name`: Name of the subcategory.  
      - `Brand_Name`: Name of the brand.  
      - `Sub_Brand_Name`: Name of the sub-brand.  
-     - `Supplier_Name`: Name of the supplier.  
-   - **Note**: Filter the category to snacks ('חטיפים').  
+     - `Supplier_Name`: Name of the supplier.     
   
 3. **DW_CHP_AGGR** (`chp`)  
    - **Description**: This fact table records daily snack prices by barcode and chain, including promotions.  
@@ -75,16 +74,17 @@ def load_data():
         'DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': \"\"\"
             SELECT Day, Barcode, Format_Name, Sales_NIS, Sales_Units, Price_Per_Unit
             FROM [dbo].[DW_FACT_STORENEXT_BY_INDUSTRIES_SALES]
-            WHERE Day BETWEEN '2024-03-01' AND '2024-05-31'
+            WHERE Day BETWEEN '2023-12-31' AND '2024-09-01'
         \"\"\",
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': \"\"\"
             SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name = N'חטיפים'
+            
         \"\"\",
         'DW_CHP_AGGR': \"\"\"
             SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
             FROM [dbo].[DW_CHP_AGGR]
+            WHERE DATE BETWEEN '2023-12-31' AND '2024-09-01'
         \"\"\"
     }
 
@@ -110,11 +110,11 @@ dataframes = load_data()
 # Assigning dataframes to variables
 stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
 stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
-chp = dataframes['DW_CHP']
+chp = dataframes['DW_CHP_AGGR']
 
 # Convert date columns to datetime
 stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
-chp['FILE_DATE'] = pd.to_datetime(chp['FILE_DATE'])
+chp['DATE'] = pd.to_datetime(chp['DATE'])
 
 ```
 
@@ -126,15 +126,15 @@ For any question you provide a code in python and in the end give the the answer
 
 Context for the Questions of stakeholders:
 
->Market Cap (נתח שוק) - The Percent of total sales in NIS of a certain brand in his category - 
+>Market Cap/Share (נתח שוק) - The Percent of total sales in NIS of a certain brand in his category by default or any other field if specifically requested by the user - 
 meaning if asked about a certain brand's market cap, then you need sum that brand's sales in the chosen time frame (Can be monthly, weekly or daily, group your dataframe accordingly), and devide it by the total sales in that brand's category,
 you need to merge the stnx_sales and stnx_items dataframes to obtain all the neccesary data for that.
 
 >textual data - all the textual data here is hebrew so take that in mind while filtering dataframes.
 
->Competitors (מתחרים) - When requeting data about competitors, we are the supplier name 'דיפלומט' in the data and other supliers in the same category are the competition. 
+>Competitors (מתחרים) - When requeting data about competitors, we are the supplier name 'דיפלומט' in the data and other supliers in the same category/ requested user's field are the competition. 
 
->Promotion Sales (מבצעים) - It is an actual promotion only where the 'SELLOUT_PRICE' in the chp dataset is bigger then 1. 
+>Promotion Sales (מבצעים) - It is an actual promotion only where the 'AVG_SELLOUT_PRICE' a non-negative float number value. 
 Final reminder: ensure that the 'answer' variable resembles a genuine prompt produced by a language model in the language used to address you!
 """  
 sys_error = """  
@@ -295,20 +295,16 @@ def load_data():
         'DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': """
             SELECT Day, Barcode, Format_Name, Sales_NIS, Sales_Units, Price_Per_Unit
             FROM [dbo].[DW_FACT_STORENEXT_BY_INDUSTRIES_SALES]
-            WHERE Day BETWEEN '2024-03-01' AND '2024-05-31' AND BARCODE IN (SELECT T.BARCODE FROM (SELECT [Barcode]
-            ,[Item_Name]
-            ,[Category_Name]
-            FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name = N'חטיפים') T)
+            WHERE Day BETWEEN '2023-12-31' AND '2024-09-01'
         """,
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': """
             SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name = N'חטיפים'
         """,
         'DW_CHP_AGGR': """
             SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
             FROM [dbo].[DW_CHP_AGGR]
+            WHERE DATE BETWEEN '2023-12-31' AND '2024-09-01'
         """
     }
 
