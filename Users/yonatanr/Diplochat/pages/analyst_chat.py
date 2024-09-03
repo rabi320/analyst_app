@@ -300,7 +300,7 @@ def load_data():
             ,[Item_Name]
             ,[Category_Name]
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו') T)
+            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו') )T)
         """,
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': """
             SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
