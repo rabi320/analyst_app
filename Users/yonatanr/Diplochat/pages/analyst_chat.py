@@ -353,7 +353,7 @@ def run():
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
-    chp['FILE_DATE'] = pd.to_datetime(chp['FILE_DATE'])
+    chp['DATE'] = pd.to_datetime(chp['DATE'])
 
     user_avatar = '🧑'
 
