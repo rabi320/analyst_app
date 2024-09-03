@@ -295,11 +295,16 @@ def load_data():
         'DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': """
             SELECT Day, Barcode, Format_Name, Sales_NIS, Sales_Units, Price_Per_Unit
             FROM [dbo].[DW_FACT_STORENEXT_BY_INDUSTRIES_SALES]
-            WHERE Day BETWEEN '2023-12-31' AND '2024-09-01'
+            WHERE Day BETWEEN '2023-12-01' AND '2024-09-01' AND BARCODE IN (SELECT T.BARCODE FROM (SELECT [Barcode]
+            ,[Item_Name]
+            ,[Category_Name]
+            FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
+            WHERE Category_Name = N'חטיפים') T)
         """,
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': """
             SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
+            WHERE Category_Name = N'חטיפים'
         """,
         'DW_CHP_AGGR': """
             SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
