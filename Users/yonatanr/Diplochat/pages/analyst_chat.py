@@ -182,7 +182,7 @@ client = AzureOpenAI(
 )  
 MODEL = "Diplochat"  
   
-def generate_text(prompt, sys_msg, examples=[]):  
+def model_reponse(prompt, sys_msg, examples=[]):  
     response = client.chat.completions.create(  
         model=MODEL,  # model = "deployment_name"  
         messages=[{"role": "system", "content": sys_msg}] + examples + [{"role": "user", "content": prompt}],  
@@ -193,9 +193,10 @@ def generate_text(prompt, sys_msg, examples=[]):
         presence_penalty=0,  
         stop=None  
     )  
-    return response.choices[0].message.content.strip()  
+    return response  
   
-  
+def generate_text(response):
+    response.choices[0].message.content.strip() 
   
 def comment_out_lines(code,print_drop = True):  
     
@@ -534,8 +535,9 @@ def run():
                     for internal discussions and communications within the company.
                     reminder: ensure that the your response is in the language used by your recieved input.
                     """
-
-                    answer = generate_text(answer, sys_decorator)
+                    
+                    decorator_response = model_reponse(answer, sys_decorator)
+                    answer = generate_text(decorator_response)
                     n_llm_api_call+=1
 
                     history_msg = f"```python{code}```"
@@ -564,7 +566,8 @@ def run():
             # generate anwer for failures
             if attempts == max_attempts:
                 # replace with ai generated text
-                answer = generate_text(prompt, sys_error)
+                error_response = model_reponse(prompt, sys_error)    
+                answer = generate_text(error_response)
                 n_llm_api_call+=1
                 with st.chat_message("assistant", avatar='🤖'):
                     # Create a placeholder for streaming output  
