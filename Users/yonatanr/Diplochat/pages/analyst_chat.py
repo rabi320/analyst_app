@@ -192,12 +192,16 @@ def model_reponse(prompt, sys_msg, examples=[]):
         frequency_penalty=0,  
         presence_penalty=0,  
         stop=None  
-    )  
+    )
+
     return response  
   
-def generate_text(response):
-    response.choices[0].message.content.strip() 
-  
+# def generate_text(response):
+#     response.choices[0].message.content.strip() 
+
+def get_usage(response):
+    pass
+
 def comment_out_lines(code,print_drop = True):  
     
     
@@ -537,7 +541,8 @@ def run():
                     """
                     
                     decorator_response = model_reponse(answer, sys_decorator)
-                    answer = generate_text(decorator_response)
+                    answer = decorator_response.choices[0].message.content.strip()
+
                     n_llm_api_call+=1
 
                     history_msg = f"```python{code}```"
@@ -567,7 +572,7 @@ def run():
             if attempts == max_attempts:
                 # replace with ai generated text
                 error_response = model_reponse(prompt, sys_error)    
-                answer = generate_text(error_response)
+                answer = decorator_response.choices[0].message.content.strip()
                 n_llm_api_call+=1
                 with st.chat_message("assistant", avatar='🤖'):
                     # Create a placeholder for streaming output  
