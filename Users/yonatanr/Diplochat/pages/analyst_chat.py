@@ -250,7 +250,7 @@ def insert_log_data(conn, log_session):
             Num_LLM_Calls INT,  
             Errors NVARCHAR(MAX),  
             Total_Time FLOAT,
-            User_Ratings NVARCHAR(MAX)
+            User_Ratings NVARCHAR(MAX),
             Usage NVARCHAR(MAX)
         )  
     END  
