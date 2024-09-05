@@ -251,6 +251,7 @@ def insert_log_data(conn, log_session):
             Errors NVARCHAR(MAX),  
             Total_Time FLOAT,
             User_Ratings NVARCHAR(MAX)
+            Usage NVARCHAR(MAX)
         )  
     END  
     """  
@@ -260,8 +261,8 @@ def insert_log_data(conn, log_session):
       
     # Insert log data into the AI_LOG table  
     insert_query = """  
-    INSERT INTO AI_LOG (Conversation_ID, Timestamp, User_Name, User_Prompt, LLM_Responses, Code_Extractions, Final_Answer, Num_Attempts, Num_LLM_Calls, Errors, Total_Time, User_Ratings)  
-    VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  
+    INSERT INTO AI_LOG (Conversation_ID, Timestamp, User_Name, User_Prompt, LLM_Responses, Code_Extractions, Final_Answer, Num_Attempts, Num_LLM_Calls, Errors, Total_Time, User_Ratings, Usage)  
+    VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  
     """  
       
     cursor.execute(insert_query, log_session)  
@@ -443,7 +444,7 @@ def run():
     # data in each session: prompt,txt_content,code_lst,
     log_session = []
 
-    log_cols = ['Conversation_ID','Timestamp','User_Name','User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time','User_Ratings']
+    log_cols = ['Conversation_ID','Timestamp','User_Name','User_Prompt','LLM_Responses','Code_Extractions','Final_Answer','Num_Attempts','Num_LLM_Calls','Errors','Total_Time','User_Ratings','Usage']
     log_dfs = []
 
     israel_tz = pytz.timezone("Asia/Jerusalem")
@@ -632,6 +633,8 @@ def run():
             log_session.append(str(errors))
             log_session.append(elapsed_time)
             log_session.append(empty_rating)
+            log_session.append(str(usage_dict))
+            
             
         log_data.append(log_session)
         
