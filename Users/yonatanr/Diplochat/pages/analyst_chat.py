@@ -485,6 +485,8 @@ def run():
             code_lst = []
             n_llm_api_call = 0
 
+            usage_dict = {}
+            py_attempts_usage_lst = []
 
             while attempts < max_attempts:
                 
@@ -500,6 +502,11 @@ def run():
                         stream=False,
                     )
                     txt_content = txt.choices[0].message.content
+
+                    py_usage_dict = txt.to_dict()['usage']
+                    py_attempts_usage_lst.append(py_usage_dict)
+
+
                     
                     n_llm_api_call+=1
                     # append original gen ai content to the list
@@ -542,6 +549,9 @@ def run():
                     
                     decorator_response = model_reponse(answer, sys_decorator)
                     answer = decorator_response.choices[0].message.content.strip()
+                    
+                    decorator_usage_dict = decorator_response.to_dict()['usage']
+                    error_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
 
                     n_llm_api_call+=1
 
@@ -572,7 +582,12 @@ def run():
             if attempts == max_attempts:
                 # replace with ai generated text
                 error_response = model_reponse(prompt, sys_error)    
-                answer = decorator_response.choices[0].message.content.strip()
+                answer = error_response.choices[0].message.content.strip()
+
+                decorator_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
+                error_usage_dict = error_response.to_dict()['usage']
+                 
+
                 n_llm_api_call+=1
                 with st.chat_message("assistant", avatar='🤖'):
                     # Create a placeholder for streaming output  
@@ -590,6 +605,11 @@ def run():
 
             st.session_state.messages.append({"role": "assistant", "content": answer})
             
+            usage_dict['py_attempts_usage'] = py_attempts_usage_lst
+            usage_dict['decorator_usage'] = decorator_usage_dict
+            usage_dict['error_usage'] = error_usage_dict
+            
+
             # memory control
             if len(st.session_state.base_history)>st.session_state.memory_limit:
                 # delete the first 2 massages after system
@@ -639,6 +659,7 @@ def run():
                 # Your code inside the expander  
                 st.dataframe(log_df)
                 #st.markdown(st.session_state.base_history)# for debug
+                st.markdown(usage_dict)
             
         # Feedback mechanism
 
