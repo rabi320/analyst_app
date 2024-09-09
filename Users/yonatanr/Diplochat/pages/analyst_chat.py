@@ -79,7 +79,7 @@ def load_data():
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': \"\"\"
             SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו')
+            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו',N'מרגרינה',N'תחליפי חלב וטופו',N'חטיפי דגנים ופירות למבוגרים',N'שום מצונן\בצל מטוגן',N'תבלינים במטחנה',N'תבלינים במיכל',N'תבלינים ורטבים קפואים')
             
         \"\"\",
         'DW_CHP_AGGR': \"\"\"
@@ -314,12 +314,12 @@ def load_data():
             ,[Item_Name]
             ,[Category_Name]
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו') )T)
+            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו',N'מרגרינה',N'תחליפי חלב וטופו',N'חטיפי דגנים ופירות למבוגרים',N'שום מצונן\בצל מטוגן',N'תבלינים במטחנה',N'תבלינים במיכל',N'תבלינים ורטבים קפואים') )T)
         """,
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': """
             SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו')
+            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו',N'מרגרינה',N'תחליפי חלב וטופו',N'חטיפי דגנים ופירות למבוגרים',N'שום מצונן\בצל מטוגן',N'תבלינים במטחנה',N'תבלינים במיכל',N'תבלינים ורטבים קפואים')
         """,
         'DW_CHP_AGGR': """
             SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
