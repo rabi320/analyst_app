@@ -47,6 +47,19 @@ credentials:
       logged_in: false  
       name: Yair Cohen  
       password: "$2b$12$DdjKQdBFEMdvd7UW1mhnmOgjwhZnFfLMJdEnxXloxJOjzf4jXW8Qe"  # Hash of the password  
+    taly:
+      email: taly@diplomat-global.com  
+      failed_login_attempts: 0  
+      logged_in: false  
+      name: Tal Yefet  
+      password: "$2b$12$NTSQ4nGlq8XSUXH4xk4opOL7dRMuhZiWuOh7qDCLQ0mMFielkF2vi"  # Hash of the password  
+    alonh:
+      email: alonh@diplomat-global.com  
+      failed_login_attempts: 0  
+      logged_in: false  
+      name: Alon Hanochi  
+      password: "$2b$12$6/sT5TM2Y9fBL3s7BWuJaOfVaiNS31f4SNwod0WEjWyC3iMJB14Kq"  # Hash of the password  
+    
 pre-authorized:  
   emails:  
     - ryonatan6@gmail.com  
