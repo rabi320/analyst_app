@@ -31,13 +31,22 @@ if st.session_state['authentication_status']:
     st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
   
     # Sidebar for navigation  
-    st.sidebar.title("Navigation")  
+    st.sidebar.title("Navigation")
+    page = st.sidebar.selectbox("Select a page", ["Home", 'Analyst Chat',"Chat"])
+
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map", 'Inner Code'])
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map"])
-    page = st.sidebar.selectbox("Select a page", ["Home", 'Analyst Chat',"Chat"])      
+          
         
-    st.sidebar.header("Data Selection")
-    resulotion_type = st.sidebar.selectbox("Choose resulotion:", ["Weekly", "Monthly"])
+    # st.sidebar.header("Data Selection")
+    # resulotion_type = st.sidebar.selectbox("Choose resulotion:", ["Weekly", "Monthly"])
+
+    # Choose resolution type
+    if 'resolution_type' not in st.session_state:
+        st.session_state.resolution_type = "weekly"  # Default value
+
+    st.session_state.resolution_type = st.sidebar.selectbox("Choose resolution:", ["weekly", "monthly"], index=0 if st.session_state.resolution_type == "weekly" else 1)
+        
 
     # Load the corresponding page  
     if page == "Home":  

@@ -363,7 +363,9 @@ def run():
     admin_list = ['Yonatan Rabinovich']
     user_name = st.session_state.get("name", "Guest")  # Default to "Guest" if not set
 
-    st.title(f"{user_name} Sales Copilot 🤖")  
+    res_tp = st.session_state.get('resolution_type','general')
+
+    st.title(f"{user_name} {res_tp} Sales Copilot 🤖")  
 
     dataframes = load_data()  
     
