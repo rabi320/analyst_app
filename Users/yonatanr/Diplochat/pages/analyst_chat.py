@@ -20,8 +20,8 @@ warnings.filterwarnings('ignore')
 # st.sidebar.page_link('pages/analyst_chat.py', label='Diplochat')
 
 # Sidebar for user input
-st.sidebar.header("Data Selection")
-aggregation_type = st.sidebar.selectbox("Choose resulotion:", ["Weekly", "Monthly"])
+# st.sidebar.header("Data Selection")
+# aggregation_type = st.sidebar.selectbox("Choose resulotion:", ["Weekly", "Monthly"])
 
 sys_msg = """  
 You are an AI Data Analyst assistant for DIPLOMAT DISTRIBUTORS (1968) LTD, and you are coding in Python. 
