@@ -19,6 +19,9 @@ warnings.filterwarnings('ignore')
 # st.sidebar.page_link('show_data.py', label='Home')
 # st.sidebar.page_link('pages/analyst_chat.py', label='Diplochat')
 
+# Sidebar for user input
+st.sidebar.header("Data Selection")
+aggregation_type = st.sidebar.selectbox("Choose resulotion:", ["Weekly", "Monthly"])
 
 sys_msg = """  
 You are an AI Data Analyst assistant for DIPLOMAT DISTRIBUTORS (1968) LTD, and you are coding in Python. 
@@ -137,7 +140,9 @@ you need to merge the stnx_sales and stnx_items dataframes to obtain all the nec
 
 >Promotion Sales (מבצעים) - It is an actual promotion only where the 'AVG_SELLOUT_PRICE' a non-negative float number value. 
 Final reminder: ensure that the 'answer' variable resembles a genuine prompt produced by a language model in the language used to address you!
-"""  
+"""
+sys_msg += f'\nYour operation present date is {datetime.now()}.'
+
 sys_error = """  
 You are an assistant that informs the user when their input is unclear,  
 and you ask them to provide more details or rephrase their message in the same language they used.  
@@ -535,11 +540,6 @@ def run():
                     if answer == "No answer found.":  
                         raise ValueError("No answer found.")  
                     
-                    # sys_decorator = """
-                    # You are an AI assistant created to enhance the aesthetic quality of LLM responses. 
-                    # Your task is to take the generated response and find ways to make it more articulate and visually appealing, 
-                    # while preserving the original numbers and facts, ensuring that the output resembles that of a language model.
-                    # """
                     sys_decorator = """
                     You are an AI assistant designed to enhance the quality and presentation of responses from the perspective of Diplomat Distributors Ltd. 
                     Your task is to refine generated content, making it more articulate and visually appealing, 
