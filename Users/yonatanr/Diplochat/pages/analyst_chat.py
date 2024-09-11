@@ -308,27 +308,22 @@ def load_data():
                           server='diplomat-analytics-server.database.windows.net',  
                           database='NBO-DB',  
                           uid='analyticsadmin', pwd=db_password)  
-  
+    
+    res_tp = st.session_state.get('resolution_type','general')
 
     #Define tables and queries
     tables = {
-        'DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': """
+        f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': f"""
             SELECT Day, Barcode, Format_Name, Sales_NIS, Sales_Units, Price_Per_Unit
-            FROM [dbo].[DW_FACT_STORENEXT_BY_INDUSTRIES_SALES]
-            WHERE Day BETWEEN '2023-12-31' AND '2024-09-01' AND BARCODE IN (SELECT T.BARCODE FROM (SELECT [Barcode]
-            ,[Item_Name]
-            ,[Category_Name]
-            FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו',N'מרגרינה',N'תחליפי חלב וטופו',N'חטיפי דגנים ופירות למבוגרים',N'שום מצונן\בצל מטוגן',N'תבלינים במטחנה',N'תבלינים במיכל',N'תבלינים ורטבים קפואים') )T)
+            FROM [dbo].[AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES]
         """,
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': """
             SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
             FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו',N'מרגרינה',N'תחליפי חלב וטופו',N'חטיפי דגנים ופירות למבוגרים',N'שום מצונן\בצל מטוגן',N'תבלינים במטחנה',N'תבלינים במיכל',N'תבלינים ורטבים קפואים')
         """,
-        'DW_CHP_AGGR': """
+        f'AGGR_{res_tp.upper()}_DW_CHP': f"""
             SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
-            FROM [dbo].[DW_CHP_AGGR]
+            FROM [dbo].[AGGR_{res_tp.upper()}_DW_CHP]
             WHERE DATE BETWEEN '2023-12-31' AND '2024-09-01'
         """
     }
@@ -362,10 +357,9 @@ def run():
     
     admin_list = ['Yonatan Rabinovich']
     user_name = st.session_state.get("name", "Guest")  # Default to "Guest" if not set
-
+    
     res_tp = st.session_state.get('resolution_type','general')
-
-    st.title(f"{user_name} {res_tp} Sales Copilot 🤖")  
+    st.title(f"{user_name} {res_tp.capitalize()} Sales Copilot 🤖")  
 
     dataframes = load_data()  
     
