@@ -364,9 +364,9 @@ def run():
     dataframes = load_data()  
     
     # Assigning dataframes to variables
-    stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
+    stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
-    chp = dataframes['DW_CHP_AGGR']
+    chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
