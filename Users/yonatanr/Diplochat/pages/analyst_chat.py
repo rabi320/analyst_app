@@ -303,13 +303,12 @@ def alter_log_data(conn, prompt_timestamp, user_feedback):
 
 
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
-def load_data():  
+def load_data(resolution_type):  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                           server='diplomat-analytics-server.database.windows.net',  
                           database='NBO-DB',  
                           uid='analyticsadmin', pwd=db_password)  
-    
-    res_tp = st.session_state.get('resolution_type','general')
+    res_tp = resolution_type
 
     #Define tables and queries
     tables = {
@@ -360,8 +359,8 @@ def run():
     
     res_tp = st.session_state.get('resolution_type','general')
     st.title(f"{user_name} {res_tp.capitalize()} Sales Copilot 🤖")  
-
-    dataframes = load_data()  
+    
+    dataframes = load_data(res_tp)  
     
     # Assigning dataframes to variables
     stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
