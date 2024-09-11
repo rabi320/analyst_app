@@ -45,7 +45,7 @@ if st.session_state['authentication_status']:
     if 'resolution_type' not in st.session_state:
         st.session_state.resolution_type = "weekly"  # Default value
 
-    st.session_state.resolution_type = st.sidebar.selectbox("Choose resolution:", ["weekly", "monthly"], index=0 if st.session_state.resolution_type == "weekly" else 1)
+    st.session_state.resolution_type = st.sidebar.radio("Choose resolution:", ["weekly", "monthly"], index=0 if st.session_state.resolution_type == "weekly" else 1)
         
 
     # Load the corresponding page  
