@@ -178,6 +178,17 @@ examples = [{'role': 'user', 'content': 'מהם ניתחי השוק של מות�
   ]
 
 
+examples = [{'role': 'user', 'content': 'מהם ניתחי השוק של מותג פרינגלס בפילוח שבועי'},
+ {'role': 'assistant',
+  'content': '```python\n# Merging sales data with items data\nmerged_data = stnx_sales.merge(stnx_items, on=\'Barcode\', how=\'inner\')\n\n# Filtering for Pringles brand\npringles_data = merged_data[merged_data[\'Brand_Name\'] == \'פרינגלס\']\n\n# Grouping by week and calculating total sales in NIS for Pringles\npringles_weekly_sales = pringles_data.resample(\'W\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Get the brand category\ncategory_for_market_cap = pringles_data.Category_Name.values[0]\n\n# Filter by the brand category\nmerged_data_category = merged_data[merged_data.Category_Name==category_for_market_cap]\n\n# Calculating total sales for the category\ntotal_weekly_sales = merged_data_category.resample(\'W\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Merging to calculate market cap\nmarket_cap_data = pringles_weekly_sales.merge(total_weekly_sales, on=\'Day\', suffixes=(\'_Pringles\', \'_Total\'))\n\n# Calculating market cap percentage\nmarket_cap_data[\'Market_Cap_Percent\'] = (market_cap_data[\'Sales_NIS_Pringles\'] / market_cap_data[\'Sales_NIS_Total\']) * 100\n\n# Getting the weekly market cap values\nweekly_market_cap = market_cap_data[[\'Day\', \'Market_Cap_Percent\']]\n\nanswer = f"הנתח השוק של פרינגלס בשבועות הוא:\\n{weekly_market_cap.to_string(index=False)}"\n```'},
+ {'role': 'user','content': 'מתי השבוע שנתח השוק של פרינגלס היה הנמוך ביותר'},
+ {'role': 'assistant',
+  'content': '```python\n# Merging sales data with items data\nmerged_data = stnx_sales.merge(stnx_items, on=\'Barcode\', how=\'inner\')\n\n# Filtering for Pringles brand\npringles_data = merged_data[merged_data[\'Brand_Name\'] == \'פרינגלס\']\n\n# Grouping by week and calculating total sales in NIS for Pringles\npringles_weekly_sales = pringles_data.resample(\'W\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Get the brand category\ncategory_for_market_cap = pringles_data.Category_Name.values[0]\n\n# Filter by the brand category\nmerged_data_category = merged_data[merged_data.Category_Name==category_for_market_cap]\n\n# Calculating total sales for the category\ntotal_weekly_sales = merged_data_category.resample(\'W\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Merging to calculate market cap\nmarket_cap_data = pringles_weekly_sales.merge(total_weekly_sales, on=\'Day\', suffixes=(\'_Pringles\', \'_Total\'))\n\n# Calculating market cap percentage\nmarket_cap_data[\'Market_Cap_Percent\'] = (market_cap_data[\'Sales_NIS_Pringles\'] / market_cap_data[\'Sales_NIS_Total\']) * 100\n\n# Finding the week with the lowest market cap\nlowest_market_cap_week = market_cap_data.loc[market_cap_data[\'Market_Cap_Percent\'].idxmin()]\n\n# Formatting the answer\nanswer = f"השבוע שבו נתח השוק של פרינגלס היה הכי נמוך הוא {lowest_market_cap_week[\'Day\'].strftime(\'%d/%m/%Y\')} עם נתח שוק של {lowest_market_cap_week[\'Market_Cap_Percent\']:.2f}%."\n```'},
+ {'role': 'user','content': 'תתן לי 8 דוגמאות אקראיות של תיאורי מבצעים ייחודיים של המתחרים של מותג פרינגלס ושם המוצר שלהם באותה תקופה כרשימה'},
+ {'role': 'assistant',
+  'content': '```python\n# Filtering promotional sales only\npromotional_sales = chp[chp[\'AVG_SELLOUT_PRICE\'].notnull() & (chp[\'AVG_SELLOUT_PRICE\'] > 0)]\n\n# Merging with items data to get product names and supplier information\npromotional_data = promotional_sales.merge(stnx_items, left_on=\'BARCODE\', right_on=\'Barcode\', how=\'inner\')\n\n# Get the brand category and competition, then Filter promotional data by the competition (not diplomat) and the brand category\nbrand_category = promotional_data[promotional_data[\'Brand_Name\'] == \'פרינגלס\'].Category_Name.values[0]\npromotional_data = promotional_data[(promotional_data[\'Supplier_Name\'] != \'דיפלומט\')&(promotional_data[\'Category_Name\']==brand_category)]\n\n# Selecting unique promotional descriptions and product names\nunique_promotions = promotional_data[[\'SELLOUT_DESCRIPTION\', \'Item_Name\', \'Supplier_Name\']].drop_duplicates(subset = [\'SELLOUT_DESCRIPTION\'])\n\n# Taking random 8 unique promotions\nunique_promotions_list = unique_promotions.sample(8).to_dict(orient=\'records\')\n\n# Formatting the output\npromotion_examples = []\nfor promotion in unique_promotions_list:\n promotion_text = f"מוצר: {promotion[\'Item_Name\']} - תיאור מבצע: {promotion[\'SELLOUT_DESCRIPTION\']} (ספק: {promotion[\'Supplier_Name\']})"\n promotion_examples.append(promotion_text)\n\nanswer = "\\n".join(promotion_examples)\n```'}
+  ]
+
 
 db_password = os.getenv('DB_PASSWORD')  
 openai_api_key = os.getenv('OPENAI_KEY')
@@ -367,6 +378,64 @@ def load_data(resolution_type):
 def is_hebrew(text):
     return any('\u0590' <= char <= '\u05FF' for char in text)
 
+# similariry for dynamic examples
+# Initialize tokenizer  
+enc = tiktoken.encoding_for_model("gpt-4o-mini")  
+
+def binirizer_vectors(a, b):  
+    # Create a combined set of unique elements from both lists  
+    ab = np.array(list(set(a + b)))  
+      
+    # Create binary vectors for each input list  
+    a_binary = np.array([1 if i in a else 0 for i in ab])  
+    b_binary = np.array([1 if i in b else 0 for i in ab])  
+      
+    return a_binary, b_binary  
+  
+def cosine_similarity(a, b):  
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))  
+  
+def cosine_binarizer(a, b, encoder):
+    # encode using encoder
+    a, b = encoder.encode(a),encoder.encode(b)
+
+    # Get binary vectors for the input lists  
+    a_binary, b_binary = binirizer_vectors(a, b)  
+      
+    # Calculate and return the cosine similarity  
+    return cosine_similarity(a_binary, b_binary)  
+
+def get_top_similar_prompts(log_df, user_prompt, top_n=3, current_user='Yonatan Rabinovich', date_from = datetime(2024,9,16)):  
+    # Filter for liked examples  
+    liked_example_cond = log_df.User_Ratings.str.contains('👍')  
+  
+    # If a current user is provided, filter by user name  
+    user_cond = log_df.User_Name == current_user if current_user else True  
+    
+    date_from_cond = log_df.Timestamp>=date_from
+
+    # Combine conditions  
+    conds = liked_example_cond & user_cond  & date_from_cond
+    cond_log_df = log_df[conds].copy().reset_index(drop=True)  
+  
+    # Calculate similarities  
+    similarities = [cosine_binarizer(row['User_Prompt'], user_prompt, enc) for index, row in cond_log_df.iterrows()]  
+  
+    # Get top `top_n` similar prompts  
+    top_indices = np.argsort(similarities)[-top_n:]#[::-1]  
+    dynammic_examples = cond_log_df.loc[top_indices].copy()  
+  
+    # Prepare the list of dynamic examples  
+    dynammic_examples_lst = []  
+      
+    for _, x in dynammic_examples.iterrows():  
+        user_role = {'role': 'user', 'content': x['User_Prompt']}  
+        assistant_role = {'role': 'assistant', 'content': eval(x['Code_Extractions'])[0]}  
+        dynammic_examples_lst.append(user_role)  
+        dynammic_examples_lst.append(assistant_role)  
+  
+    return dynammic_examples_lst
+
 def run():
 
     def extract_code(txt):  
@@ -422,6 +491,7 @@ def run():
 
     if "messages" not in st.session_state:  
         st.session_state.messages = [{"role": "system", "content": sys_msg}]
+
 
     if "base_history" not in st.session_state:  
         st.session_state.base_history = [{"role": "system", "content": sys_msg}]+examples
@@ -497,10 +567,19 @@ def run():
     m_limit = 25
     if 'memory_limit' not in st.session_state:
         st.session_state.memory_limit = m_limit
+
+    n_most_similar = 3
+    if 'n_most_similar' not in st.session_state:
+        st.session_state.n_most_similar = n_most_similar
         
     if prompt := st.chat_input("Ask me anything"):
         prompt_timestamp = datetime.now(israel_tz).strftime("%Y-%m-%d %H:%M:%S") 
         st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        dynamic_examples = get_top_similar_prompts(log_df, prompt, top_n=st.session_state.n_most_similar)
+
+        
+        st.session_state.base_history[1:1+st.session_state.n_most_similar*2] = dynamic_examples
         st.session_state.base_history.append({"role": "user", "content": prompt})
         
         with st.chat_message("user", avatar=user_avatar):
