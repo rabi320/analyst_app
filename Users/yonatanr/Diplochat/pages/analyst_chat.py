@@ -11,6 +11,8 @@ from datetime import datetime
 import pytz
 from streamlit_feedback import streamlit_feedback
 import os
+import numpy as np
+import tiktoken
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')   
@@ -233,6 +235,7 @@ def comment_out_lines(code,print_drop = True):
     else:  
         code = code     
     return code 
+
 def insert_log_data(conn, log_session):  
     # Create the table if it does not exist  
     create_table_query = """  
@@ -324,6 +327,23 @@ def load_data(resolution_type):
             SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
             FROM [dbo].[AGGR_{res_tp.upper()}_DW_CHP]
             WHERE DATE BETWEEN '2023-12-31' AND '2024-09-01'
+        """,
+        'AI_LOG':"""
+        SELECT [ID]
+            ,[Conversation_ID]
+            ,[Timestamp]
+            ,[User_Name]
+            ,[User_Prompt]
+            ,[LLM_Responses]
+            ,[Code_Extractions]
+            ,[Final_Answer]
+            ,[Num_Attempts]
+            ,[Num_LLM_Calls]
+            ,[Errors]
+            ,[Total_Time]
+            ,[User_Ratings]
+            ,[Usage]
+        FROM [dbo].[AI_LOG]
         """
     }
 
@@ -370,6 +390,7 @@ def run():
     stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
     chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
+    log_df = dataframes['AI_LOG']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
