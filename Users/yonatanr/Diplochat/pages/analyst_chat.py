@@ -438,14 +438,18 @@ def run():
                 # display_txt = message["content"]+f' history_length: {len(st.session_state.base_history)}'
                 # st.markdown(display_txt)
                 if is_hebrew(message["content"]):
-                    f0string = f'<div style="direction: rtl; text-align: right;">{message["role"]}</div>'
+                    f0string = f'<div style="direction: rtl; text-align: right;">{message["content"]}</div>'
                     st.markdown(f0string, unsafe_allow_html=True)
                 else:                       
                     st.markdown(message["content"])
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
-                st.markdown(message["content"])  
+                if is_hebrew(message["content"]):
+                    f0string = f'<div style="direction: rtl; text-align: right;">{message["content"]}</div>'
+                    st.markdown(f0string, unsafe_allow_html=True)
+                else:                       
+                    st.markdown(message["content"])
 
 
     log_data = []
