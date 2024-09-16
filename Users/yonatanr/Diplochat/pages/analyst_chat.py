@@ -343,6 +343,10 @@ def load_data(resolution_type):
     conn.close()  
     return dataframes  
 
+# Function to check if the text contains Hebrew characters
+def is_hebrew(text):
+    return any('\u0590' <= char <= '\u05FF' for char in text)
+
 def run():
 
     def extract_code(txt):  
@@ -433,7 +437,11 @@ def run():
                 # display_txt = f"{message["content"]} user feedback: {st.session_state.user_feedback} last feedbacks {st.session_state.user_feedback_lst}" 
                 # display_txt = message["content"]+f' history_length: {len(st.session_state.base_history)}'
                 # st.markdown(display_txt)
-                st.markdown(message["content"])
+                if is_hebrew(message["content"]):
+                    f0string = f'<div style="direction: rtl; text-align: right;">{message["role"]}</div>'
+                    st.markdown(f0string, unsafe_allow_html=True)
+                else:                       
+                    st.markdown(message["content"])
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
