@@ -728,8 +728,9 @@ def run():
 
             # memory control
             if len(st.session_state.base_history)>st.session_state.memory_limit:
-                # delete the first 2 massages after system
-                st.session_state.base_history = [st.session_state.base_history[0]]+st.session_state.base_history[3:]
+                # delete the first 2 massages after system and dinamic samples
+                # st.session_state.base_history = [st.session_state.base_history[0]]+st.session_state.base_history[3:]
+                st.session_state.base_history = st.session_state.base_history[0:(1+st.session_state.n_most_similar*2)]+st.session_state.base_history[1+st.session_state.n_most_similar*2+2:]
 
             elapsed_time = time.time() - start_time
 
