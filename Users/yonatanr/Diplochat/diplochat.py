@@ -62,12 +62,12 @@ if st.session_state['authentication_status']:
     if selected_resolution != st.session_state.resolution_type:
         st.session_state.resolution_type = selected_resolution
         # Use a flag to clear the cache
-        st.session_state.cache_invalidated = True
-        st.rerun()  # This will rerun the whole app
+        # st.session_state.cache_invalidated = True
+        # st.rerun()  # This will rerun the whole app
 
     # Clear cached data if the cache invalidation flag is set
-    if 'cache_invalidated' in st.session_state:
-        del st.session_state.cache_invalidated  # Resetting flag
+    # if 'cache_invalidated' in st.session_state:
+    #     del st.session_state.cache_invalidated  # Resetting flag
         
 
     # Load the corresponding page  
