@@ -32,7 +32,9 @@ if st.session_state['authentication_status']:
   
     # Sidebar for navigation  
     st.sidebar.title("Navigation")
+    # page = st.sidebar.selectbox("Select a page", ["Home", 'Analyst Chat',"Chat"])
     page = st.sidebar.selectbox("Select a page", ["Home", 'Analyst Chat',"Chat"])
+    
 
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map", 'Inner Code'])
     # page = st.sidebar.selectbox("Select a page", ["Home", "Data Overview", "Visualizations", "Chat", 'Analyst Chat', "Map"])
@@ -42,10 +44,17 @@ if st.session_state['authentication_status']:
     # resulotion_type = st.sidebar.selectbox("Choose resulotion:", ["Weekly", "Monthly"])
 
     # Choose resolution type
+    # Initialize resolution type in session state if not already set
     if 'resolution_type' not in st.session_state:
-        st.session_state.resolution_type = "weekly"  # Default value
+        st.session_state.resolution_type = "weekly"  # default value
 
-    st.session_state.resolution_type = st.sidebar.radio("Choose resolution:", ["weekly", "monthly"], index=0 if st.session_state.resolution_type == "weekly" else 1)
+    # Sidebar radio button for choosing resolution type
+    selected_resolution = st.sidebar.radio("Choose resolution:", ["weekly", "monthly"], index=0 if st.session_state.resolution_type == "weekly" else 1)
+
+    # Check if the resolution type has changed and rerun if it has
+    if selected_resolution != st.session_state.resolution_type:
+        st.session_state.resolution_type = selected_resolution
+        st.rerun()  # This will rerun the whole app
         
 
     # Load the corresponding page  

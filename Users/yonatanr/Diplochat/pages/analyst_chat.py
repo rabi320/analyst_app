@@ -453,10 +453,10 @@ def run():
     res_tp = st.session_state.get('resolution_type','general')
     st.title(f"{user_name} {res_tp.capitalize()} Sales Copilot 🤖")  
     
-    # Rerun button logic in the sidebar
-    if st.sidebar.button("Reload Data"):
-        st.session_state['refresh'] = True
-        st.rerun()  # This will rerun the whole app
+    # # Rerun button logic in the sidebar
+    # if st.sidebar.button("Reload Data"):
+    #     st.session_state['refresh'] = True
+    #     st.rerun()  # This will rerun the whole app
 
     dataframes = load_data(res_tp)  
     
