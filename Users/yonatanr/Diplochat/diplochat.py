@@ -17,6 +17,12 @@ authenticator = stauth.Authenticate(
 
 st.title('Diplomat AI')
 
+# Clear the cache on app start or refresh
+if 'cache_cleared' not in st.session_state:
+    st.cache_data.clear()
+    st.session_state.cache_cleared = True
+
+
 # Login widget  
 authentication_status = authenticator.login()  
 
@@ -45,16 +51,23 @@ if st.session_state['authentication_status']:
 
     # Choose resolution type
     # Initialize resolution type in session state if not already set
+    # Initialize resolution type in session state if not already set
     if 'resolution_type' not in st.session_state:
         st.session_state.resolution_type = "weekly"  # default value
 
     # Sidebar radio button for choosing resolution type
     selected_resolution = st.sidebar.radio("Choose resolution:", ["weekly", "monthly"], index=0 if st.session_state.resolution_type == "weekly" else 1)
 
-    # Check if the resolution type has changed and rerun if it has
+    # Check if the resolution type has changed and rerun/cache if it has
     if selected_resolution != st.session_state.resolution_type:
         st.session_state.resolution_type = selected_resolution
+        # Use a flag to clear the cache
+        st.session_state.cache_invalidated = True
         st.rerun()  # This will rerun the whole app
+
+    # Clear cached data if the cache invalidation flag is set
+    if 'cache_invalidated' in st.session_state:
+        del st.session_state.cache_invalidated  # Resetting flag
         
 
     # Load the corresponding page  
