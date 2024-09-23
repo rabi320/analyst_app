@@ -320,7 +320,7 @@ def alter_log_data(conn, prompt_timestamp, user_feedback):
 def load_data(resolution_type):  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                           server='diplomat-analytics-server.database.windows.net',  
-                          database='NBO-DB',  
+                          database='Diplochat-DB',  
                           uid='analyticsadmin', pwd=db_password)  
     res_tp = resolution_type
 
