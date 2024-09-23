@@ -13,6 +13,7 @@ from streamlit_feedback import streamlit_feedback
 import os
 import numpy as np
 import tiktoken
+from pyluach import dates  
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')   
@@ -63,6 +64,15 @@ The following datasets are already loaded in your Python IDE:
      - `SELLOUT_DESCRIPTION`: Hebrew description of sales promotions, if null or missing then the no promotion is currently applies.  
    - **Note**: to check barcodes attributes, connect this table with stnx_items 'Barcode' and get the relevant info, data here is from '2023-12-31' to '2024-09-01'.  
 
+4. **DATE_HOLIAY_DATA** ('dt_df')
+   - **Description**: This fact table records daily holiday data and hebrew dates.  
+   - **Columns**:
+     - `DATE`: Date (datetime).    
+     - 'HEBREW_DATE': Hebrew date as string.
+     - 'HOLIDAY': the name of the holiday or null if no holiday is on that date (string).
+    - **Note**: this data is from a python process involving a package of hebrew dates and holidays. 
+
+     
 this is the code that already loaded the data to the IDE:
 
 ```python
@@ -112,15 +122,19 @@ def load_data():
 
 dataframes = load_data()
 
+dt_df = create_date_dataframe(start_date, end_date)
+dataframes['DATE_HOLIAY_DATA'] = dt_df
 
 # Assigning dataframes to variables
 stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
 stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
 chp = dataframes['DW_CHP_AGGR']
+dt_df = dataframes['DATE_HOLIAY_DATA']
 
 # Convert date columns to datetime
 stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
 chp['DATE'] = pd.to_datetime(chp['DATE'])
+dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
 
 ```
 
@@ -314,7 +328,22 @@ def alter_log_data(conn, prompt_timestamp, user_feedback):
         # Close the cursor  
         cursor.close()     
 
+def gregorian_to_hebrew(year, month, day):  
+    return dates.GregorianDate(year, month, day).to_heb().hebrew_date_string()  
+  
+def get_jewish_holidays(year, month, day):  
+    return dates.GregorianDate(year, month, day).festival(hebrew=True)  
+  
+def create_date_dataframe(start_date, end_date):  
+    # Create a DataFrame with the date range  
+    dt_df = pd.DataFrame({'DATE': pd.date_range(start=start_date, end=end_date)})  
+      
+    # Extract Hebrew dates and Jewish holidays  
+    dt_df['HEBREW_DATE'] = dt_df['DATE'].apply(lambda x: gregorian_to_hebrew(x.year, x.month, x.day))  
+    dt_df['HOLIDAY'] = dt_df['DATE'].apply(lambda x: get_jewish_holidays(x.year, x.month, x.day))
 
+      
+    return dt_df  
 
 @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
 def load_data(resolution_type):  
@@ -370,8 +399,13 @@ def load_data(resolution_type):
           
         df = pd.concat(chunks, ignore_index=True)  
         dataframes[table] = df  
-  
-    conn.close()  
+    
+    start_date = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']['DATE'].min()
+    end_date = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']['DATE'].max()
+    conn.close() 
+    
+    dt_df = create_date_dataframe(start_date, end_date)
+    dataframes['DATE_HOLIAY_DATA'] = dt_df
     return dataframes  
 
 # Function to check if the text contains Hebrew characters
@@ -464,11 +498,13 @@ def run():
     stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
     chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
+    dt_df = dataframes['DATE_HOLIAY_DATA']
     log_df = dataframes['AI_LOG']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
     chp['DATE'] = pd.to_datetime(chp['DATE'])
+    dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
 
     user_avatar = '🧑'
 
@@ -647,7 +683,7 @@ def run():
                     # Use re.sub to comment out any import statement  
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
                     
-                    local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'SARIMAX':SARIMAX}
+                    local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX}
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
                     
