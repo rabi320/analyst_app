@@ -399,10 +399,10 @@ def load_data(resolution_type):
           
         df = pd.concat(chunks, ignore_index=True)  
         dataframes[table] = df  
-    
-    start_date = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']['DATE'].min()
-    end_date = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']['DATE'].max()
-    conn.close() 
+    conn.close()
+
+    start_date = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']['Day'].min()
+    end_date = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']['Day'].max()
     
     dt_df = create_date_dataframe(start_date, end_date)
     dataframes['DATE_HOLIAY_DATA'] = dt_df
