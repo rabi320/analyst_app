@@ -16,4 +16,4 @@ tiktoken==0.7.0
 numpy==1.26.0  
 pyluach==2.2.0
 matplotlib==3.6.0  
-Pillow==9.1.0  
+Pillow==10.4.0  
