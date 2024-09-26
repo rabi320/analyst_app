@@ -734,7 +734,7 @@ def run():
                     > quantity - always show as an integer and round to 0 digits after the dot - 2.22222 --> 2.
                     > dates - format like this: dd/mm/yyyy - 2024-01-31 --> 31/01/2024.
 
-                    reminder: ensure that the your response is in the language used by your recieved input.
+                    finally: ensure that the your response is in the language used by your recieved input.
                     """
                     
                     decorator_response = model_reponse(answer, sys_decorator)
