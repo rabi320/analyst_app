@@ -97,7 +97,7 @@ db_password = os.getenv('DB_PASSWORD')
 def load_data():  
     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                           server='diplomat-analytics-server.database.windows.net',  
-                          database='NBO-DB',  
+                          database='Diplochat-DB',  
                           uid='analyticsadmin', pwd=db_password)  
   
 
@@ -575,7 +575,7 @@ def run():
     def handle_feedback():
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                         server='diplomat-analytics-server.database.windows.net',  
-                        database='NBO-DB',  
+                        database='Diplochat-DB',  
                         uid='analyticsadmin', pwd=db_password)    
         
         st.session_state.user_feedback_lst.append(st.session_state.user_feedback)
@@ -830,7 +830,7 @@ def run():
         # Insert log data into SQL table  
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                               server='diplomat-analytics-server.database.windows.net',  
-                              database='NBO-DB',  
+                              database='Diplochat-DB',  
                               uid='analyticsadmin', pwd=db_password)  
         insert_log_data(conn, log_session)  
         conn.close()  
