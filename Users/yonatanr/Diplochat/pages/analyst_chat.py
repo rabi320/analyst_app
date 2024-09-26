@@ -387,7 +387,7 @@ def load_data(resolution_type):
         """,
         'AGGR_WEEKLY_DW_INVOICES':
         """
-        SELECT [DATE]
+        SELECT TOP (1000) [DATE]
             ,[SALES_ORGANIZATION_CODE]
             ,[MATERIAL_CODE]
             ,[INDUSTRY_CODE]
