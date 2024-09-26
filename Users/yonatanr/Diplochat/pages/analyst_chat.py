@@ -72,6 +72,23 @@ The following datasets are already loaded in your Python IDE:
      - 'HOLIDAY': the name of the holiday or null if no holiday is on that date (string).
     - **Note**: this data is from a python process involving a package of hebrew dates and holidays. 
 
+5. **AGGR_WEEKLY_DW_INVOICES** ('inv_df'):
+    - **Description**: This fact table records Diplomat's invoice data.
+    - **Columns**:
+     - `DATE`: Date (datetime). 
+     - `SALES_ORGANIZATION_CODE`: The id of Diplomat's buisness unit.
+     - `MATERIAL_CODE`: The id of Diplomat's items.
+     - `INDUSTRY_CODE`:  The id of Diplomat's different industries that relate to their customers.
+     - 'CUSTOMER_CODE': The id of the exact customers.
+     - 'Gross': The gross sales.
+     - 'Net': The net sales.
+     - 'Net VAT': The net sales with tax.
+     - 'Gross VAT': The gross sales with tax.
+     - 'Units': the number of units.
+    - **Note**: this data relates to the sell in of diplomat and needs the material barcode from the material table to connect to external data like chp and others. 
+
+      
+
      
 this is the code that already loaded the data to the IDE:
 
@@ -92,15 +109,14 @@ def load_data():
             WHERE Day BETWEEN '2023-12-31' AND '2024-09-01'
         \"\"\",
         'DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS': \"\"\"
-            SELECT Barcode, Item_Name, Category_Name, Sub_Category_Name, Brand_Name, Sub_Brand_Name, Supplier_Name
-            FROM [dbo].[DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS]
-            WHERE Category_Name IN (N'חיתולים',N'חטיפים',N'הגיינה נשית',N'עוגיות פרימיום',N'שימורי טונה',N'טבלאות שוקולד חלב',N'חומרים לכביסה',N'שמפו',N'מרגרינה',N'תחליפי חלב וטופו',N'חטיפי דגנים ופירות למבוגרים',N'שום מצונן\בצל מטוגן',N'תבלינים במטחנה',N'תבלינים במיכל',N'תבלינים ורטבים קפואים')
-            
+        [Query]
         \"\"\",
         'DW_CHP_AGGR': \"\"\"
-            SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
-            FROM [dbo].[DW_CHP_AGGR]
-            WHERE DATE BETWEEN '2023-12-31' AND '2024-09-01'
+        [Query]
+        \"\"\"
+        ,
+        'AGGR_WEEKLY_DW_INVOICES':\"\"\"
+        [Query]
         \"\"\"
     }
 
@@ -130,12 +146,13 @@ stnx_sales = dataframes['DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
 stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
 chp = dataframes['DW_CHP_AGGR']
 dt_df = dataframes['DATE_HOLIAY_DATA']
+inv_df = dataframes['AGGR_WEEKLY_DW_INVOICES']
 
 # Convert date columns to datetime
 stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
 chp['DATE'] = pd.to_datetime(chp['DATE'])
 dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
-
+inv_df['DATE] = pd.to_datetime(inv_df['DATE'])
 ```
 
 Quesstions Convention - 
@@ -368,6 +385,20 @@ def load_data(resolution_type):
             FROM [dbo].[AGGR_{res_tp.upper()}_DW_CHP]
             WHERE DATE BETWEEN '2023-12-31' AND '2024-09-01'
         """,
+        'AGGR_WEEKLY_DW_INVOICES':
+        """
+        SELECT [DATE]
+            ,[SALES_ORGANIZATION_CODE]
+            ,[MATERIAL_CODE]
+            ,[INDUSTRY_CODE]
+            ,[CUSTOMER_CODE]
+            ,[Gross]
+            ,[Net]
+            ,[Net VAT]
+            ,[Gross VAT]
+            ,[Units]
+        FROM [dbo].[AGGR_WEEKLY_DW_INVOICES]
+        """,
         'AI_LOG':"""
         SELECT [ID]
             ,[Conversation_ID]
@@ -499,13 +530,14 @@ def run():
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
     chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
     dt_df = dataframes['DATE_HOLIAY_DATA']
+    inv_df = dataframes['AGGR_WEEKLY_DW_INVOICES']
     log_df = dataframes['AI_LOG']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
     chp['DATE'] = pd.to_datetime(chp['DATE'])
     dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
-
+    inv_df['DATE'] = pd.to_datetime(inv_df['DATE'])
     user_avatar = '🧑'
 
     client = AzureOpenAI(  
@@ -683,7 +715,7 @@ def run():
                     # Use re.sub to comment out any import statement  
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
                     
-                    local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX}
+                    local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df}
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
                     
