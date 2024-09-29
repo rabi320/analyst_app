@@ -43,10 +43,8 @@ if 'cache_cleared' not in st.session_state:
     st.cache_data.clear()
     st.session_state.cache_cleared = True
 
-
 # Login widget  
 authentication_status = authenticator.login()  
-
 
 # hide_pages([ "Map"])
 
@@ -247,7 +245,8 @@ if st.session_state['authentication_status']:
         azure_endpoint="https://ai-usa.openai.azure.com/",  
         api_key=openai_api_key,  
         api_version="2024-02-15-preview"  
-    )  
+    )
+
     MODEL = "Diplochat"  
 
 
@@ -528,7 +527,8 @@ if st.session_state['authentication_status']:
     admin_list = ['Yonatan Rabinovich']
     user_name = st.session_state.get("name", "Guest")  # Default to "Guest" if not set
     
-    res_tp = st.session_state.get('resolution_type','general')
+    # ensure weekly is default
+    res_tp = st.session_state.get('resolution_type','weekly')
     st.title(f"{user_name} {res_tp.capitalize()} Sales Copilot 🤖")  
     
     # # Rerun button logic in the sidebar
