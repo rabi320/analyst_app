@@ -855,7 +855,6 @@ def run():
             
         # Feedback mechanism
 
-
         with st.form('form'):
             streamlit_feedback(feedback_type="thumbs",
                                 optional_text_label="Enter your feedback here", 
