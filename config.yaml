@@ -66,35 +66,35 @@ credentials:
       name: Tzvika Brotman
       password: "$2b$12$h2VqCEuWTqonJYNRsF8f..3niI7Y5HSCUdzhSPlPdrzstm23eDH5O"  # Hash of the password  
     asafbr:   
-        email: asafbr@diplomat-global.com          
-        failed_login_attempts: 0          
-        logged_in: false          
-        name: Asaf Braha        
-        password: "$2b$12$58FXR9CsoZkqu26sWfjice0gr0Tf.WYAYJTcqC911n8SACGmxxOrm"  # Hash of the password    
+      email: asafbr@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Asaf Braha        
+      password: "$2b$12$58FXR9CsoZkqu26sWfjice0gr0Tf.WYAYJTcqC911n8SACGmxxOrm"  # Hash of the password    
     chenk:   
-        email: chenk@diplomat-global.com          
-        failed_login_attempts: 0          
-        logged_in: false          
-        name: Chen Kremer        
-        password: "$2b$12$Zd4jHuazXzX0pM8npDVsSuOqYSoeog6DFU4ih5IYseskW4OGuQFMy"  # Hash of the password    
+      email: chenk@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Chen Kremer        
+      password: "$2b$12$Zd4jHuazXzX0pM8npDVsSuOqYSoeog6DFU4ih5IYseskW4OGuQFMy"  # Hash of the password    
     Janal:  
-        email: Janal@diplomat-global.com          
-        failed_login_attempts: 0          
-        logged_in: false          
-        name: Jana Lefton        
-        password: "$2b$12$oO9n.xy8jmQ4wY/eN7pqOu53dwUCYUgnGYvryok6tvx/SljK16XWq"  # Hash of the password          
+      email: Janal@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Jana Lefton        
+      password: "$2b$12$oO9n.xy8jmQ4wY/eN7pqOu53dwUCYUgnGYvryok6tvx/SljK16XWq"  # Hash of the password          
     miritn:   
-        email: miritn@diplomat-global.com          
-        failed_login_attempts: 0          
-        logged_in: false          
-        name: Mirit Niv        
-        password: "$2b$12$AxwuqBWB4XY77VvtBN7smutofvbgltwDqRHroj605Duuvq7cErG8G"  # Hash of the password         
+      email: miritn@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Mirit Niv        
+      password: "$2b$12$AxwuqBWB4XY77VvtBN7smutofvbgltwDqRHroj605Duuvq7cErG8G"  # Hash of the password         
     liata:   
-        email: liata@diplomat-global.com          
-        failed_login_attempts: 0          
-        logged_in: false          
-        name: Liat Binyamin        
-        password: "$2b$12$rrcPxL0ezj3fRh.aYP/2JuYOjPNco51K6WpN.Vm5K3bDHv9hgheu."  # Hash of the password   
+      email: liata@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Liat Binyamin        
+      password: "$2b$12$rrcPxL0ezj3fRh.aYP/2JuYOjPNco51K6WpN.Vm5K3bDHv9hgheu."  # Hash of the password   
 
 
 pre-authorized:  
