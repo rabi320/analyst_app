@@ -82,7 +82,7 @@ credentials:
       failed_login_attempts: 0          
       logged_in: false          
       name: Jana Lefton        
-      password: "$2b$12$oO9n.xy8jmQ4wY/eN7pqOu53dwUCYUgnGYvryok6tvx/SljK16XWq"  # Hash of the password          
+      password: "$2b$12$kTDr5e87PqBX13ZSyKxIg.zLaFsPm.FDSdbjB/iK.bpOgL/dlu1r."  # Hash of the password          
     miritn:   
       email: miritn@diplomat-global.com          
       failed_login_attempts: 0          
