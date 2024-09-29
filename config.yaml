@@ -77,7 +77,7 @@ credentials:
       logged_in: false          
       name: Chen Kremer        
       password: "$2b$12$Zd4jHuazXzX0pM8npDVsSuOqYSoeog6DFU4ih5IYseskW4OGuQFMy"  # Hash of the password    
-    Janal:  
+    janal:  
       email: Janal@diplomat-global.com          
       failed_login_attempts: 0          
       logged_in: false          
