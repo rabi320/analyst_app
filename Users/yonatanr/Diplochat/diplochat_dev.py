@@ -60,12 +60,28 @@ if st.session_state['authentication_status']:
     if 'resolution_type' not in st.session_state:
         st.session_state.resolution_type = "weekly"  # default value
 
+    
+    
     # Sidebar radio button for choosing resolution type
     selected_resolution = st.sidebar.radio("Choose resolution:", ["weekly", "monthly"], index=0 if st.session_state.resolution_type == "weekly" else 1)
 
     # Check if the resolution type has changed and rerun/cache if it has
     if selected_resolution != st.session_state.resolution_type:
         st.session_state.resolution_type = selected_resolution
+
+
+    if 'chp_or_invoices' not in st.session_state:
+            st.session_state.chp_or_invoices = "chp"  # default value
+
+    # Sidebar radio button for choosing chp or invoices 
+    chp_or_invoices = st.sidebar.radio("Choose resolution:", ["chp", "invoices"], index=0 if st.session_state.chp_or_invoices == "chp" else 1)
+
+    # Check if the resolution type has changed and rerun/cache if it has
+    if chp_or_invoices != st.session_state.chp_or_invoices:
+        st.session_state.chp_or_invoices = chp_or_invoices
+
+
+
 
     #####################
     # diplochat analyst #
@@ -377,12 +393,13 @@ if st.session_state['authentication_status']:
         return dt_df  
 
     @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
-    def load_data(resolution_type):  
+    def load_data(resolution_type,chp_or_invoices):  
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                             server='diplomat-analytics-server.database.windows.net',  
                             database='Diplochat-DB',  
                             uid='analyticsadmin', pwd=db_password)  
         res_tp = resolution_type
+        coi = chp_or_invoices
 
         #Define tables and queries
         tables = {
@@ -432,8 +449,16 @@ if st.session_state['authentication_status']:
             """
         }
 
+        # Filter the tables based on the coi variable  
+        filtered_tables = {  
+            key: value for key, value in tables.items()   
+            if key != 'AGGR_WEEKLY_DW_INVOICES' and coi == 'chp' or  
+            key != f'AGGR_{res_tp.upper()}_DW_CHP' and coi == 'invoices'  
+        }  
+
+
         dataframes = {}  
-        for table, query in tables.items():  
+        for table, query in filtered_tables.items():  
             chunks = []  
             chunk_size = 10000  
             total_rows = pd.read_sql_query(f"SELECT COUNT(*) FROM ({query}) AS count_query", conn).iloc[0, 0]  
@@ -529,6 +554,10 @@ if st.session_state['authentication_status']:
     
     # ensure weekly is default
     res_tp = st.session_state.get('resolution_type','weekly')
+    
+    # ensure chp is default
+    coi = st.session_state.get('chp_or_invoices','chp')
+    
     st.title(f"{user_name} {res_tp.capitalize()} Sales Copilot 🤖")  
     
     # # Rerun button logic in the sidebar
