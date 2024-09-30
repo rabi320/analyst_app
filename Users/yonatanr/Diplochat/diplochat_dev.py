@@ -418,7 +418,7 @@ if st.session_state['authentication_status']:
             """,
             'AGGR_WEEKLY_DW_INVOICES':
             """
-            SELECT TOP (1000) [DATE]
+            SELECT [DATE]
                 ,[SALES_ORGANIZATION_CODE]
                 ,[MATERIAL_CODE]
                 ,[INDUSTRY_CODE]
