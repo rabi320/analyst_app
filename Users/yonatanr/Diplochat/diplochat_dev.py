@@ -575,7 +575,6 @@ if st.session_state['authentication_status']:
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
-    chp['DATE'] = pd.to_datetime(chp['DATE'])
     dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
 
     #optional data
