@@ -565,7 +565,7 @@ if st.session_state['authentication_status']:
     #     st.session_state['refresh'] = True
     #     st.rerun()  # This will rerun the whole app
 
-    dataframes = load_data(res_tp)  
+    dataframes = load_data(res_tp,coi)  
     
     # Assigning dataframes to variables
     stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
