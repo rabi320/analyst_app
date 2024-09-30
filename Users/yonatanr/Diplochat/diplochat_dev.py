@@ -429,6 +429,7 @@ if st.session_state['authentication_status']:
                 ,[Gross VAT]
                 ,[Units]
             FROM [dbo].[AGGR_WEEKLY_DW_INVOICES]
+            WHERE [DATE] BETWEEN DATEADD(DAY, -182, GETDATE()) AND GETDATE()
             """,
             'AI_LOG':"""
             SELECT [ID]
