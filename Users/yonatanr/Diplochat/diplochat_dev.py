@@ -74,7 +74,7 @@ if st.session_state['authentication_status']:
             st.session_state.chp_or_invoices = "chp"  # default value
 
     # Sidebar radio button for choosing chp or invoices 
-    chp_or_invoices = st.sidebar.radio("Choose resolution:", ["chp", "invoices"], index=0 if st.session_state.chp_or_invoices == "chp" else 1)
+    chp_or_invoices = st.sidebar.radio("Choose data source:", ["chp", "invoices"], index=0 if st.session_state.chp_or_invoices == "chp" else 1)
 
     # Check if the resolution type has changed and rerun/cache if it has
     if chp_or_invoices != st.session_state.chp_or_invoices:
@@ -570,16 +570,23 @@ if st.session_state['authentication_status']:
     # Assigning dataframes to variables
     stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
-    chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
     dt_df = dataframes['DATE_HOLIAY_DATA']
-    inv_df = dataframes['AGGR_WEEKLY_DW_INVOICES']
     log_df = dataframes['AI_LOG']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
     chp['DATE'] = pd.to_datetime(chp['DATE'])
     dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
-    inv_df['DATE'] = pd.to_datetime(inv_df['DATE'])
+
+    #optional data
+    if coi=='chp':
+        chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
+        chp['DATE'] = pd.to_datetime(chp['DATE'])
+    else:
+        inv_df = dataframes['AGGR_WEEKLY_DW_INVOICES']
+        inv_df['DATE'] = pd.to_datetime(inv_df['DATE'])    
+
+
     user_avatar = '🧑'
 
     client = AzureOpenAI(  
@@ -757,7 +764,11 @@ if st.session_state['authentication_status']:
                     # Use re.sub to comment out any import statement  
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
                     
-                    local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df}
+                    if coi=='chp':
+                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX}
+                    else:
+                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df}
+
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
                     
