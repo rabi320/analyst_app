@@ -134,7 +134,7 @@ if st.session_state['authentication_status']:
         - 'HOLIDAY': the name of the holiday or null if no holiday is on that date (string).
         - **Note**: this data is from a python process involving a package of hebrew dates and holidays. 
 
-    5. **AGGR_WEEKLY_DW_INVOICES** ('inv_df'):
+    5. **AGGR_MONTHLY_DW_INVOICES** ('inv_df'):
         - **Description**: This fact table records Diplomat's invoice data.
         - **Columns**:
         - `DATE`: Date (datetime). 
@@ -177,7 +177,7 @@ if st.session_state['authentication_status']:
             [Query]
             \"\"\"
             ,
-            'AGGR_WEEKLY_DW_INVOICES':\"\"\"
+            'AGGR_MONTHLY_DW_INVOICES':\"\"\"
             [Query]
             \"\"\"
         }
@@ -208,7 +208,7 @@ if st.session_state['authentication_status']:
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
     chp = dataframes['DW_CHP_AGGR']
     dt_df = dataframes['DATE_HOLIAY_DATA']
-    inv_df = dataframes['AGGR_WEEKLY_DW_INVOICES']
+    inv_df = dataframes['AGGR_MONTHLY_DW_INVOICES']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
@@ -452,7 +452,7 @@ if st.session_state['authentication_status']:
         # Filter the tables based on the coi variable  
         filtered_tables = {  
             key: value for key, value in tables.items()   
-            if key != 'AGGR_WEEKLY_DW_INVOICES' and coi == 'chp' or  
+            if key != 'AGGR_MONTHLY_DW_INVOICES' and coi == 'chp' or  
             key != f'AGGR_{res_tp.upper()}_DW_CHP' and coi == 'invoices'  
         }  
 
@@ -582,7 +582,7 @@ if st.session_state['authentication_status']:
         chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
         chp['DATE'] = pd.to_datetime(chp['DATE'])
     else:
-        inv_df = dataframes['AGGR_WEEKLY_DW_INVOICES']
+        inv_df = dataframes['AGGR_MONTHLY_DW_INVOICES']
         inv_df['DATE'] = pd.to_datetime(inv_df['DATE'])    
 
 
