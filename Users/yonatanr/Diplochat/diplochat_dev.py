@@ -71,10 +71,10 @@ if st.session_state['authentication_status']:
 
 
     if 'chp_or_invoices' not in st.session_state:
-            st.session_state.chp_or_invoices = "chp"  # default value
+            st.session_state.chp_or_invoices = "invoices"  # default value
 
     # Sidebar radio button for choosing chp or invoices 
-    chp_or_invoices = st.sidebar.radio("Choose data source:", ["chp", "invoices"], index=0 if st.session_state.chp_or_invoices == "chp" else 1)
+    chp_or_invoices = st.sidebar.radio("Choose data source:", ["invoices", "chp"], index=0 if st.session_state.chp_or_invoices == "invoices" else 1)
 
     # Check if the resolution type has changed and rerun/cache if it has
     if chp_or_invoices != st.session_state.chp_or_invoices:
@@ -414,9 +414,9 @@ if st.session_state['authentication_status']:
             f'AGGR_{res_tp.upper()}_DW_CHP': f"""
                 SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
                 FROM [dbo].[AGGR_{res_tp.upper()}_DW_CHP]
-                WHERE DATE BETWEEN '2023-12-31' AND '2024-09-01'
+                WHERE [DATE] BETWEEN DATEADD(DAY, -90, GETDATE()) AND GETDATE()
             """,
-            'AGGR_WEEKLY_DW_INVOICES':
+            'AGGR_MONTHLY_DW_INVOICES':
             """
             SELECT [DATE]
                 ,[SALES_ORGANIZATION_CODE]
@@ -428,8 +428,7 @@ if st.session_state['authentication_status']:
                 ,[Net VAT]
                 ,[Gross VAT]
                 ,[Units]
-            FROM [dbo].[AGGR_WEEKLY_DW_INVOICES]
-            WHERE [DATE] BETWEEN DATEADD(DAY, -182, GETDATE()) AND GETDATE()
+            FROM [dbo].[AGGR_MONTHLY_DW_INVOICES]
             """,
             'AI_LOG':"""
             SELECT [ID]
@@ -557,7 +556,7 @@ if st.session_state['authentication_status']:
     res_tp = st.session_state.get('resolution_type','weekly')
     
     # ensure chp is default
-    coi = st.session_state.get('chp_or_invoices','chp')
+    coi = st.session_state.get('chp_or_invoices','invoices')
     
     st.title(f"{user_name} {res_tp.capitalize()} Sales Copilot 🤖")  
     
