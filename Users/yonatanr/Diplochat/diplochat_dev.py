@@ -414,7 +414,7 @@ if st.session_state['authentication_status']:
             f'AGGR_{res_tp.upper()}_DW_CHP': f"""
                 SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
                 FROM [dbo].[AGGR_{res_tp.upper()}_DW_CHP]
-                WHERE [DATE] BETWEEN DATEADD(DAY, -90, GETDATE()) AND GETDATE()
+                --WHERE [DATE] BETWEEN DATEADD(DAY, -90, GETDATE()) AND GETDATE()
             """,
             'AGGR_MONTHLY_DW_INVOICES':
             """
