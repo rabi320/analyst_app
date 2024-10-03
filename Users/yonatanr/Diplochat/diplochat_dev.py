@@ -160,7 +160,11 @@ if st.session_state['authentication_status']:
             - 'CUST_LONGITUDE': Longitude coordinate of the customer.
              **Note**: this data relates to the invoices table, can merge to add the data of the invoices over the customer code.
             
-
+    7. **DW_DIM_INDUSTRIES** ('industry_df'):
+        - **Description**: The industries and their names.
+            - `INDUSTRY`:  industry name.
+            - `INDUSTRY_CODE`:  The id of Diplomat's different industries.
+        **Note**: this data relates to the invoices table, can merge to add the data of the invoices over the industry code.
             
 
 
@@ -196,8 +200,11 @@ if st.session_state['authentication_status']:
             ,
             'DW_DIM_CUSTOMERS':\"\"\"
             [Query]
+            \"\"\",
+            'DW_DIM_INDUSTRIES':
             \"\"\"
-            
+            [Query]
+            \"\"\"
         }
 
         dataframes = {}  
@@ -228,6 +235,7 @@ if st.session_state['authentication_status']:
     dt_df = dataframes['DATE_HOLIAY_DATA']
     inv_df = dataframes['AGGR_MONTHLY_DW_INVOICES']
     customer_df = dataframes['DW_DIM_CUSTOMERS']
+    industry_df = dataframes['DW_DIM_INDUSTRIES']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
@@ -447,6 +455,13 @@ if st.session_state['authentication_status']:
             WHERE CUSTOMER_CODE IN (SELECT DISTINCT CUSTOMER_CODE FROM [dbo].[AGGR_MONTHLY_DW_INVOICES])
             """
             ,
+            'DW_DIM_INDUSTRIES':
+            """
+            SELECT [INDUSTRY]
+                ,[INDUSTRY_CODE]
+            FROM [dbo].[DW_DIM_INDUSTRIES]
+            """
+            ,
             'AGGR_MONTHLY_DW_INVOICES':
             """
             SELECT [DATE]
@@ -479,13 +494,6 @@ if st.session_state['authentication_status']:
             FROM [dbo].[AI_LOG]
             """
         }
-
-            # - 'CUSTOMER_CODE': The id of the exact customers (primary key).
-            # - 'CUSTOMER':  Customer name.
-            # - 'CITY':  City of the customer.
-            # - 'CUSTOMER_ADDRESS':  Adress of the customer.
-            # - 'CUST_LATITUDE': Latitude coordinate of the customer.
-            # - 'CUST_LONGITUDE': Longitude coordinate of the customer.
 
         # Filter the tables based on the coi variable  
         filtered_tables = {  
@@ -609,12 +617,16 @@ if st.session_state['authentication_status']:
     stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
     customer_df = dataframes['DW_DIM_CUSTOMERS']
+    industry_df = dataframes['DW_DIM_INDUSTRIES']
     dt_df = dataframes['DATE_HOLIAY_DATA']
     log_df = dataframes['AI_LOG']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
     dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
+
+    # duplication drop
+    customer_df =customer_df.drop_duplicates()
 
     #optional data
     if coi=='chp':
@@ -803,9 +815,9 @@ if st.session_state['authentication_status']:
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
                     
                     if coi=='chp':
-                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'customer_df':customer_df}
+                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'customer_df':customer_df,'industry_df':industry_df}
                     else:
-                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df,'customer_df':customer_df}
+                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df,'customer_df':customer_df,'industry_df':industry_df}
 
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
