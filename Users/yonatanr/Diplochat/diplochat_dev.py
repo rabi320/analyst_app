@@ -147,7 +147,7 @@ if st.session_state['authentication_status']:
             - 'Net VAT': The net sales with tax.
             - 'Gross VAT': The gross sales with tax.
             - 'Units': the number of units.
-            - **Note**: this data relates to the sell in of diplomat and needs the material barcode from the material table to connect to external data like chp and others. 
+            - **Note**: This data relates to the sell in of diplomat and needs the material barcode from the material table to connect to external data like chp and others. 
 
         
     6. **DW_DIM_CUSTOMERS** ('customer_df'):
@@ -158,16 +158,34 @@ if st.session_state['authentication_status']:
             - 'CUSTOMER_ADDRESS':  Adress of the customer.
             - 'CUST_LATITUDE': Latitude coordinate of the customer.
             - 'CUST_LONGITUDE': Longitude coordinate of the customer.
-             **Note**: this data relates to the invoices table, can merge to add the data of the invoices over the customer code.
+             **Note**: This data relates to the invoices table, can merge to add the data of the invoices over the customer code.
             
     7. **DW_DIM_INDUSTRIES** ('industry_df'):
         - **Description**: The industries and their names.
-            - `INDUSTRY`:  industry name.
-            - `INDUSTRY_CODE`:  The id of Diplomat's different industries.
-        **Note**: this data relates to the invoices table, can merge to add the data of the invoices over the industry code.
+            - `INDUSTRY`:  Industry name.
+            - `INDUSTRY_CODE`:  The id of Diplomat's different industries  (primary key).
+        **Note**: This data relates to the invoices table, can merge to add the data of the invoices over the industry code.
             
 
-
+    8. **DW_DIM_MATERIAL** ('material_df')
+        - **Description**: The materials and their attributes.
+            - `MATERIAL_NUMBER`: The id of Diplomat's items (primary key). 
+            - `MATERIAL_EN`: Item name in english. 
+            - `MATERIAL_HE`: Item name in hebrew.
+            - `MATERIAL_DIVISION`: Type of item (mainly food ot toiletics).
+            - 'BRAND_HEB': The brand of the item in hebrew.
+            - 'BRAND_ENG': The brand of the item in english.
+            - 'SUB_BRAND_HEB': The sub brand of the item in hebrew.
+            - 'SUB_BRAND_ENG': The sub brand of the item in english.            
+            - 'CATEGORY_HEB': The category of the item in hebrew.
+            - 'CATEGORY_ENG': The category of the item in english.
+            - 'SUPPLIER_HEB': The supplier of the item in hebrew.
+            - 'SUPPLIER_ENG': The supplier of the item in english.
+            - 'BARCODE_EA': the barcode of a single item.
+            - 'SALES_UNIT': the item's sales unit.
+            - 'BOXING_SIZE': the item's number of single units being sold in the sales unit.
+        **Note**: This data relates to the invoices table, can merge to add the data of the invoices over the material code/ number.
+            
         
     this is the code that already loaded the data to the IDE:
 
@@ -204,6 +222,10 @@ if st.session_state['authentication_status']:
             'DW_DIM_INDUSTRIES':
             \"\"\"
             [Query]
+            \"\"\",
+            'DW_DIM_MATERIAL':
+            \"\"\"
+            [Query]
             \"\"\"
         }
 
@@ -236,6 +258,7 @@ if st.session_state['authentication_status']:
     inv_df = dataframes['AGGR_MONTHLY_DW_INVOICES']
     customer_df = dataframes['DW_DIM_CUSTOMERS']
     industry_df = dataframes['DW_DIM_INDUSTRIES']
+    material_df = dataframes['DW_DIM_MATERIAL']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
@@ -462,6 +485,25 @@ if st.session_state['authentication_status']:
             FROM [dbo].[DW_DIM_INDUSTRIES]
             """
             ,
+            'DW_DIM_MATERIAL':
+            """
+            SELECT [MATERIAL_NUMBER]
+                ,[MATERIAL_EN]
+                ,[MATERIAL_HE]
+                ,[MATERIAL_DIVISION]
+                ,[BRAND_HEB]
+                ,[BRAND_ENG]
+                ,[SUB_BRAND_HEB]
+                ,[SUB_BRAND_ENG]
+                ,[CATEGORY_HEB]
+                ,[CATEGORY_ENG]
+                ,[BARCODE_EA]
+	            ,[SALES_UNIT]
+	            ,[BOXING_SIZE]
+            FROM [dbo].[DW_DIM_MATERIAL] 
+            WHERE MATERIAL_NUMBER IN (SELECT DISTINCT MATERIAL_CODE FROM [dbo].[AGGR_MONTHLY_DW_INVOICES])
+            """
+            ,
             'AGGR_MONTHLY_DW_INVOICES':
             """
             SELECT [DATE]
@@ -618,6 +660,7 @@ if st.session_state['authentication_status']:
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
     customer_df = dataframes['DW_DIM_CUSTOMERS']
     industry_df = dataframes['DW_DIM_INDUSTRIES']
+    material_df = dataframes['DW_DIM_MATERIAL']
     dt_df = dataframes['DATE_HOLIAY_DATA']
     log_df = dataframes['AI_LOG']
 
@@ -815,9 +858,9 @@ if st.session_state['authentication_status']:
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
                     
                     if coi=='chp':
-                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'customer_df':customer_df,'industry_df':industry_df}
+                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df}
                     else:
-                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df,'customer_df':customer_df,'industry_df':industry_df}
+                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df}
 
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
