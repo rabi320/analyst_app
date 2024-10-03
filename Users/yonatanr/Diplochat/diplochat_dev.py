@@ -137,19 +137,32 @@ if st.session_state['authentication_status']:
     5. **AGGR_MONTHLY_DW_INVOICES** ('inv_df'):
         - **Description**: This fact table records Diplomat's invoice data.
         - **Columns**:
-        - `DATE`: Date (datetime). 
-        - `SALES_ORGANIZATION_CODE`: The id of Diplomat's buisness unit.
-        - `MATERIAL_CODE`: The id of Diplomat's items.
-        - `INDUSTRY_CODE`:  The id of Diplomat's different industries that relate to their customers.
-        - 'CUSTOMER_CODE': The id of the exact customers.
-        - 'Gross': The gross sales.
-        - 'Net': The net sales.
-        - 'Net VAT': The net sales with tax.
-        - 'Gross VAT': The gross sales with tax.
-        - 'Units': the number of units.
-        - **Note**: this data relates to the sell in of diplomat and needs the material barcode from the material table to connect to external data like chp and others. 
+            - `DATE`: Date (datetime). 
+            - `SALES_ORGANIZATION_CODE`: The id of Diplomat's buisness unit.
+            - `MATERIAL_CODE`: The id of Diplomat's items.
+            - `INDUSTRY_CODE`:  The id of Diplomat's different industries that relate to their customers.
+            - 'CUSTOMER_CODE': The id of the exact customers.
+            - 'Gross': The gross sales.
+            - 'Net': The net sales.
+            - 'Net VAT': The net sales with tax.
+            - 'Gross VAT': The gross sales with tax.
+            - 'Units': the number of units.
+            - **Note**: this data relates to the sell in of diplomat and needs the material barcode from the material table to connect to external data like chp and others. 
 
         
+    6. **DW_DIM_CUSTOMERS** ('customer_df'):
+        - **Description**: The customers's information.
+            - 'CUSTOMER_CODE': The id of the exact customers (primary key).
+            - 'CUSTOMER':  Customer name.
+            - 'CITY':  City of the customer.
+            - 'CUSTOMER_ADDRESS':  Adress of the customer.
+            - 'CUST_LATITUDE': Latitude coordinate of the customer.
+            - 'CUST_LONGITUDE': Longitude coordinate of the customer.
+             **Note**: this data relates to the invoices table, can merge to add the data of the invoices over the customer code.
+            
+
+            
+
 
         
     this is the code that already loaded the data to the IDE:
@@ -180,6 +193,11 @@ if st.session_state['authentication_status']:
             'AGGR_MONTHLY_DW_INVOICES':\"\"\"
             [Query]
             \"\"\"
+            ,
+            'DW_DIM_CUSTOMERS':\"\"\"
+            [Query]
+            \"\"\"
+            
         }
 
         dataframes = {}  
@@ -209,6 +227,7 @@ if st.session_state['authentication_status']:
     chp = dataframes['DW_CHP_AGGR']
     dt_df = dataframes['DATE_HOLIAY_DATA']
     inv_df = dataframes['AGGR_MONTHLY_DW_INVOICES']
+    customer_df = dataframes['DW_DIM_CUSTOMERS']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
@@ -416,6 +435,18 @@ if st.session_state['authentication_status']:
                 FROM [dbo].[AGGR_{res_tp.upper()}_DW_CHP]
                 --WHERE [DATE] BETWEEN DATEADD(DAY, -90, GETDATE()) AND GETDATE()
             """,
+            'DW_DIM_CUSTOMERS':
+            """
+            SELECT [CUSTOMER_CODE],
+            [CUSTOMER],
+            [CITY],
+            [CUSTOMER_ADDRESS],
+            [CUST_LATITUDE],
+            [CUST_LONGITUDE]
+            FROM [dbo].[DW_DIM_CUSTOMERS]
+            WHERE CUSTOMER_CODE IN (SELECT DISTINCT CUSTOMER_CODE FROM [dbo].[AGGR_MONTHLY_DW_INVOICES])
+            """
+            ,
             'AGGR_MONTHLY_DW_INVOICES':
             """
             SELECT [DATE]
@@ -448,6 +479,13 @@ if st.session_state['authentication_status']:
             FROM [dbo].[AI_LOG]
             """
         }
+
+            # - 'CUSTOMER_CODE': The id of the exact customers (primary key).
+            # - 'CUSTOMER':  Customer name.
+            # - 'CITY':  City of the customer.
+            # - 'CUSTOMER_ADDRESS':  Adress of the customer.
+            # - 'CUST_LATITUDE': Latitude coordinate of the customer.
+            # - 'CUST_LONGITUDE': Longitude coordinate of the customer.
 
         # Filter the tables based on the coi variable  
         filtered_tables = {  
@@ -570,6 +608,7 @@ if st.session_state['authentication_status']:
     # Assigning dataframes to variables
     stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
+    customer_df = dataframes['DW_DIM_CUSTOMERS']
     dt_df = dataframes['DATE_HOLIAY_DATA']
     log_df = dataframes['AI_LOG']
 
@@ -764,9 +803,9 @@ if st.session_state['authentication_status']:
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
                     
                     if coi=='chp':
-                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX}
+                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'customer_df':customer_df}
                     else:
-                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df}
+                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df,'customer_df':customer_df}
 
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
@@ -785,7 +824,7 @@ if st.session_state['authentication_status']:
                     > quantity - always show as an integer and round to 0 digits after the dot - 2.22222 --> 2.
                     > dates - format like this: dd/mm/yyyy - 2024-01-31 --> 31/01/2024.
 
-                    finally: ensure that the your response is in the language used by your recieved input.
+                    finally: ensure that the your response is in the language used by your recieved input, and is presenting information and insights to the user.
                     """
                     
                     decorator_response = model_reponse(answer, sys_decorator)
