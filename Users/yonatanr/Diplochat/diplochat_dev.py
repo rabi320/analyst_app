@@ -669,7 +669,8 @@ if st.session_state['authentication_status']:
     dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
 
     # duplication drop
-    customer_df =customer_df.drop_duplicates()
+    customer_df = customer_df.drop_duplicates(subset = ['CUSTOMER_CODE'])
+    material_df = material_df.drop_duplicates(subset = ['MATERIAL_NUMBER'])
 
     #optional data
     if coi=='chp':
