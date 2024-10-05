@@ -13,7 +13,9 @@ import time
 import re
 from datetime import datetime
 import pytz
-
+import base64
+from io import BytesIO
+import matplotlib.pyplot as plt
 import os
 import numpy as np
 import tiktoken
@@ -859,9 +861,9 @@ if st.session_state['authentication_status']:
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
                     
                     if coi=='chp':
-                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df}
+                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df,'base64':base64,'BytesIO':BytesIO,'plt':plt}
                     else:
-                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df}
+                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df,'base64':base64,'BytesIO':BytesIO,'plt':plt}
 
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
