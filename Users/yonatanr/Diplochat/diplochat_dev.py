@@ -927,7 +927,8 @@ if st.session_state['authentication_status']:
                                 # Check if streamed_text endswith ('<img src=')
                                 if streamed_text.endswith('<img src='):
                                     # Display the remainder of the answer starting from the current position
-                                    placeholder.markdown(answer[len(streamed_text):])
+                                    streamed_text+=answer[len(streamed_text):]
+                                    placeholder.markdown(streamed_text)
                                     break
                                 time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
 
