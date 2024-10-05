@@ -924,7 +924,7 @@ if st.session_state['authentication_status']:
                                 streamed_text += char
                                 placeholder.markdown(streamed_text)
 
-                                # Check if streamed_text ends with ('<img src=')
+                                # Check if streamed_text endswith ('<img src=')
                                 if streamed_text.endswith('<img src='):
                                     # Display the remainder of the answer starting from the current position
                                     placeholder.markdown(answer[len(streamed_text):])
