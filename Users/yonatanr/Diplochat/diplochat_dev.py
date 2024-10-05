@@ -887,14 +887,18 @@ if st.session_state['authentication_status']:
                     
                     answer_has_plot = 'data:image/png;base64' in answer
 
+                    if not answer_has_plot:
+                        decorator_response = model_reponse(answer, sys_decorator)
+                        answer = decorator_response.choices[0].message.content.strip()
+                        
+                        decorator_usage_dict = decorator_response.to_dict()['usage']
+                        error_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
+                        
+                        n_llm_api_call+=1
 
-                    decorator_response = model_reponse(answer, sys_decorator)
-                    answer = decorator_response.choices[0].message.content.strip()
-                    
-                    decorator_usage_dict = decorator_response.to_dict()['usage']
-                    error_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
-
-                    n_llm_api_call+=1
+                    else:
+                        decorator_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
+                        error_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
 
                     history_msg = f"```python{code}```"
 
