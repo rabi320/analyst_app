@@ -751,7 +751,7 @@ if st.session_state['authentication_status']:
                 #     f0string = f'<div style="direction: rtl; text-align: right;">{message["content"]}</div>'
                 #     st.markdown(f0string, unsafe_allow_html=True)
                 # else:                       
-                st.markdown(message["content"])
+                st.markdown(message["content"], unsafe_allow_html=True)
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
