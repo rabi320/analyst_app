@@ -885,6 +885,9 @@ if st.session_state['authentication_status']:
                     finally: ensure that the your response is in the language used by your recieved input, and is presenting information and insights to the user.
                     """
                     
+                    answer_has_plot = 'data:image/png;base64' in answer
+
+
                     decorator_response = model_reponse(answer, sys_decorator)
                     answer = decorator_response.choices[0].message.content.strip()
                     
@@ -896,15 +899,33 @@ if st.session_state['authentication_status']:
                     history_msg = f"```python{code}```"
 
                     with st.chat_message("assistant", avatar='🤖'):
-                        # Create a placeholder for streaming output  
-                        placeholder = st.empty()  
-                        streamed_text = ""  
-                        
-                        # Stream the answer output  
-                        for char in answer:  
-                            streamed_text += char  
-                            placeholder.markdown(streamed_text)  
-                            time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
+                    
+                        if not answer_has_plot:
+                            # Create a placeholder for streaming output 
+                            placeholder = st.empty()  
+                            streamed_text = ""  
+
+                            # Stream the answer output  
+                            for char in answer:  
+                                streamed_text += char  
+                                placeholder.markdown(streamed_text)  
+                                time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
+                        else:
+                            # Create a placeholder for streaming output 
+                            placeholder = st.empty()  
+                            streamed_text = ""  
+
+                            # Stream the answer output  
+                            for char in answer:
+                                streamed_text += char
+                                placeholder.markdown(streamed_text)
+
+                                # Check if streamed_text ends with (': \n')
+                                if streamed_text.endswith(': \n'):
+                                    # Display the remainder of the answer starting from the current position
+                                    placeholder.markdown(answer[len(streamed_text):])
+                                    break
+                                time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
 
                     st.session_state.base_history.append({"role": "assistant", "content": history_msg})
                     
