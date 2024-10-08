@@ -38,7 +38,7 @@ authenticator = stauth.Authenticate(
     config['pre-authorized']
 )
 
-st.title('Diplomat AI')
+st.title('Diplochat')
 
 # Clear the cache on app start or refresh
 if 'cache_cleared' not in st.session_state:
@@ -53,19 +53,19 @@ authentication_status = authenticator.login()
 # Adjusted authentication status handling  
 if st.session_state['authentication_status']:  
     
-    st.sidebar.markdown("![](https://www.diplomat-global.com/wp-content/uploads/2018/06/logo.png)")
+    #st.sidebar.markdown("![](https://www.diplomat-global.com/wp-content/uploads/2018/06/logo.png)")
     authenticator.logout(location = 'sidebar')  # Add logout functionality  
     st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
 
 
 
     if 'resolution_type' not in st.session_state:
-        st.session_state.resolution_type = "weekly"  # default value
+        st.session_state.resolution_type = "monthly"  # default value
 
     
     
     # Sidebar radio button for choosing resolution type
-    selected_resolution = st.sidebar.radio("Choose resolution:", ["weekly", "monthly"], index=0 if st.session_state.resolution_type == "weekly" else 1)
+    selected_resolution = st.sidebar.radio("Choose resolution:", ["monthly", "weekly"], index=0 if st.session_state.resolution_type == "monthly" else 1)
 
     # Check if the resolution type has changed and rerun/cache if it has
     if selected_resolution != st.session_state.resolution_type:
@@ -269,6 +269,9 @@ if st.session_state['authentication_status']:
     inv_df['DATE] = pd.to_datetime(inv_df['DATE'])
     ```
 
+    The names of the brands of diplomat-
+        אולוויז, אולדייז, פנטן, סאקלה, פמפרס, טמפקס, אריאל, Fairy, אוראל בי, הד&שולדרס, קוטדור, לוטוס, טייד, לנור, קראפט, מילקה, LU, סקיני טינס, קולמנס, גולדן בריק, HP, אוראו, וולה, אוריינטל פוד, דורסל, Skippy, פרינגלס, קיקומן, גילט, קולסטון נטורלס, הרבל אסנס, Walkers, ג'השאן , בראון, קולסטון קיט, אוזי, בונזו, שזיר, סטארקיסט, הלטי בוי, רומו, Lazaro, ביונד מיט, לור, נוטרילון, גיקובס, מזולה, סופר קאט, היינץ, לחם יין, קלוגס, לה קט, Lo Salt, SUPREME, ויוה קולור, נטורלה, רג'יה, קרסט, אולד ספייס, קולסטון-2000, ויולייף, דרפורד, טובלרון, מקסוול, אל ארז, דקורה, ביאסק, ריין דיז'ון,  - לא ידוע-1, וולהפלקס, יונה, פרופה, אורגניק אינדיה, נון, הרמזית, All In, קוסקא, Mission, יורוקיטי, דורות, נסיך הים, סיקרט, לה ניוקריה, סופר קט, יוניבר, פראוד, פטי, לגונה, קרם קולור, מנישביץ, מאיר את בייגל, קדבורי, גקובזי, דורו, מסטמכר, בארני, פנדה, קולסטון רוט, Arifoglu, בלובנד, מילוטל, פלנטרס, לוריאל, סופט קולור, OXO, מרום את קונפינו, 7 Days, קולסטון אינטנס, ציריו, וולה דלוקס, ויטקראפט, פורטוס, א. קנטינה, אופיסר, לאב דוג, משק ווילר, סוויטאנגו, איליי, אונלי, קאפוטו, אינאבה, סינגה
+    
     Quesstions Convention - 
 
     For any question you provide a code in python and in the end give the the answer in a python text variable named 'answer' after making the needed analysis.
@@ -283,7 +286,7 @@ if st.session_state['authentication_status']:
 
     >textual data - all the textual data here is hebrew so take that in mind while filtering dataframes.
 
-    >Competitors (מתחרים) - When requeting data about competitors, we are the supplier name 'דיפלומט' in the data and other supliers in the same category/ requested user's field are the competition. 
+    >Competitors (מתחרים) - When requesting data about competitors, we are the supplier name 'דיפלומט' in the data and other supliers in the same category/ requested user's field are the competition. 
 
     >Promotion Sales (מבצעים) - It is an actual promotion only where the 'AVG_SELLOUT_PRICE' a non-negative float number value. 
     Final reminder: ensure that the 'answer' variable resembles a genuine prompt produced by a language model in the language used to address you!
