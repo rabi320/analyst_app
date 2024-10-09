@@ -809,10 +809,10 @@ if st.session_state['authentication_status']:
         dynamic_examples_lst = get_top_similar_prompts(log_df, prompt, top_n=st.session_state.n_most_similar)
 
         # base history
-        # st.session_state.base_history[1:1+st.session_state.n_most_similar*2] = dynamic_examples_lst
+        st.session_state.base_history[1:1+st.session_state.n_most_similar*2] = dynamic_examples_lst
         
         # training base history - premade examples
-        st.session_state.base_history[1:1+st.session_state.n_most_similar*2] = examples
+        # st.session_state.base_history[1:1+st.session_state.n_most_similar*2] = examples
 
         st.session_state.base_history.append({"role": "user", "content": prompt})
         
