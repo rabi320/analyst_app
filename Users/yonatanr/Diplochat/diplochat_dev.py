@@ -140,7 +140,7 @@ if st.session_state['authentication_status']:
         - **Description**: This fact table records Diplomat's invoice data.
         - **Columns**:
             - `DATE`: Date (datetime). 
-            - `SALES_ORGANIZATION_CODE`: The id of Diplomat's buisness unit.
+            - `SALES_ORGANIZATION_CODE`: The id of Diplomat's buisness unit, values: '1000' - Israel, '5000' - Georgia, '8000' - South Africa, 'NZ00' - New Zeeland.
             - `MATERIAL_CODE`: The id of Diplomat's items.
             - `INDUSTRY_CODE`:  The id of Diplomat's different industries that relate to their customers.
             - 'CUSTOMER_CODE': The id of the exact customers.
