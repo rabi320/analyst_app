@@ -54,7 +54,7 @@ authentication_status = authenticator.login()
 if st.session_state['authentication_status']:  
     
     # st.sidebar.markdown("![](logo_2.png)")
-    st.sidebar.image("logo_2.png", use_column_width=True)
+    # st.sidebar.image("logo_2.png", use_column_width=True)
     authenticator.logout(location = 'sidebar')  # Add logout functionality  
     st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
 
