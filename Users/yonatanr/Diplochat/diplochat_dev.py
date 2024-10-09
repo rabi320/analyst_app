@@ -53,7 +53,7 @@ authentication_status = authenticator.login()
 # Adjusted authentication status handling  
 if st.session_state['authentication_status']:  
     
-    #st.sidebar.markdown("![](https://www.diplomat-global.com/wp-content/uploads/2018/06/logo.png)")
+    st.sidebar.markdown("![](logo_2.png)")
     authenticator.logout(location = 'sidebar')  # Add logout functionality  
     st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
 
