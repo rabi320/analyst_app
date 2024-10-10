@@ -55,6 +55,7 @@ if st.session_state['authentication_status']:
     
     # st.sidebar.markdown("![](logo_2.png)")
     # st.sidebar.image("logo_2.png", use_column_width=True)
+    st.sidebar.markdown("![](https://projects.telem-hit.net/2022/Diplomania_OfirShachar/about/styles/diplomatlogo.png)")
     authenticator.logout(location = 'sidebar')  # Add logout functionality  
     st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
 
