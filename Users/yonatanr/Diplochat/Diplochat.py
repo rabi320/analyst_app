@@ -13,7 +13,9 @@ import time
 import re
 from datetime import datetime
 import pytz
-
+import base64
+from io import BytesIO
+import matplotlib.pyplot as plt
 import os
 import numpy as np
 import tiktoken
@@ -36,7 +38,7 @@ authenticator = stauth.Authenticate(
     config['pre-authorized']
 )
 
-st.title('Diplomat AI')
+st.title('Diplochat')
 
 # Clear the cache on app start or refresh
 if 'cache_cleared' not in st.session_state:
@@ -51,21 +53,39 @@ authentication_status = authenticator.login()
 # Adjusted authentication status handling  
 if st.session_state['authentication_status']:  
     
-    st.sidebar.markdown("![](https://www.diplomat-global.com/wp-content/uploads/2018/06/logo.png)")
+    # st.sidebar.markdown("![](logo_2.png)")
+    # st.sidebar.image("logo_2.png", use_column_width=True)
+    st.sidebar.markdown("![](https://projects.telem-hit.net/2022/Diplomania_OfirShachar/about/styles/diplomatlogo.png)")
     authenticator.logout(location = 'sidebar')  # Add logout functionality  
     st.write(f'Welcome *{st.session_state["name"]}*')  # Display welcome message  
 
 
 
     if 'resolution_type' not in st.session_state:
-        st.session_state.resolution_type = "weekly"  # default value
+        st.session_state.resolution_type = "monthly"  # default value
 
+    
+    
     # Sidebar radio button for choosing resolution type
-    selected_resolution = st.sidebar.radio("Choose resolution:", ["weekly", "monthly"], index=0 if st.session_state.resolution_type == "weekly" else 1)
+    selected_resolution = st.sidebar.radio("Choose resolution:", ["monthly", "weekly"], index=0 if st.session_state.resolution_type == "monthly" else 1)
 
     # Check if the resolution type has changed and rerun/cache if it has
     if selected_resolution != st.session_state.resolution_type:
         st.session_state.resolution_type = selected_resolution
+
+
+    if 'chp_or_invoices' not in st.session_state:
+            st.session_state.chp_or_invoices = "invoices"  # default value
+
+    # Sidebar radio button for choosing chp or invoices 
+    chp_or_invoices = st.sidebar.radio("Choose data source:", ["invoices", "chp"], index=0 if st.session_state.chp_or_invoices == "invoices" else 1)
+
+    # Check if the resolution type has changed and rerun/cache if it has
+    if chp_or_invoices != st.session_state.chp_or_invoices:
+        st.session_state.chp_or_invoices = chp_or_invoices
+
+
+
 
     #####################
     # diplochat analyst #
@@ -118,23 +138,58 @@ if st.session_state['authentication_status']:
         - 'HOLIDAY': the name of the holiday or null if no holiday is on that date (string).
         - **Note**: this data is from a python process involving a package of hebrew dates and holidays. 
 
-    5. **AGGR_WEEKLY_DW_INVOICES** ('inv_df'):
+    5. **AGGR_MONTHLY_DW_INVOICES** ('inv_df'):
         - **Description**: This fact table records Diplomat's invoice data.
         - **Columns**:
-        - `DATE`: Date (datetime). 
-        - `SALES_ORGANIZATION_CODE`: The id of Diplomat's buisness unit.
-        - `MATERIAL_CODE`: The id of Diplomat's items.
-        - `INDUSTRY_CODE`:  The id of Diplomat's different industries that relate to their customers.
-        - 'CUSTOMER_CODE': The id of the exact customers.
-        - 'Gross': The gross sales.
-        - 'Net': The net sales.
-        - 'Net VAT': The net sales with tax.
-        - 'Gross VAT': The gross sales with tax.
-        - 'Units': the number of units.
-        - **Note**: this data relates to the sell in of diplomat and needs the material barcode from the material table to connect to external data like chp and others. 
+            - `DATE`: Date (datetime). 
+            - `SALES_ORGANIZATION_CODE`: The id of Diplomat's buisness unit, values: '1000' - Israel, '5000' - Georgia, '8000' - South Africa, 'NZ00' - New Zeeland.
+            - `MATERIAL_CODE`: The id of Diplomat's items.
+            - `INDUSTRY_CODE`:  The id of Diplomat's different industries that relate to their customers.
+            - 'CUSTOMER_CODE': The id of the exact customers.
+            - 'Gross': The gross sales.
+            - 'Net': The net sales.
+            - 'Net VAT': The net sales with tax.
+            - 'Gross VAT': The gross sales with tax.
+            - 'Units': the number of units.
+            - **Note**: This data relates to the sell in of diplomat and needs the material barcode from the material table to connect to external data like chp and others. 
 
         
+    6. **DW_DIM_CUSTOMERS** ('customer_df'):
+        - **Description**: The customers's information.
+            - 'CUSTOMER_CODE': The id of the exact customers (primary key).
+            - 'CUSTOMER':  Customer name.
+            - 'CITY':  City of the customer.
+            - 'CUSTOMER_ADDRESS':  Adress of the customer.
+            - 'CUST_LATITUDE': Latitude coordinate of the customer.
+            - 'CUST_LONGITUDE': Longitude coordinate of the customer.
+             **Note**: This data relates to the invoices table, can merge to add the data of the invoices over the customer code.
+            
+    7. **DW_DIM_INDUSTRIES** ('industry_df'):
+        - **Description**: The industries and their names.
+            - `INDUSTRY`:  Industry name.
+            - `INDUSTRY_CODE`:  The id of Diplomat's different industries  (primary key).
+        **Note**: This data relates to the invoices table, can merge to add the data of the invoices over the industry code.
+            
 
+    8. **DW_DIM_MATERIAL** ('material_df')
+        - **Description**: The materials and their attributes.
+            - `MATERIAL_NUMBER`: The id of Diplomat's items (primary key). 
+            - `MATERIAL_EN`: Item name in english. 
+            - `MATERIAL_HE`: Item name in hebrew.
+            - `MATERIAL_DIVISION`: Type of item (mainly food ot toiletics).
+            - 'BRAND_HEB': The brand of the item in hebrew.
+            - 'BRAND_ENG': The brand of the item in english.
+            - 'SUB_BRAND_HEB': The sub brand of the item in hebrew.
+            - 'SUB_BRAND_ENG': The sub brand of the item in english.            
+            - 'CATEGORY_HEB': The category of the item in hebrew.
+            - 'CATEGORY_ENG': The category of the item in english.
+            - 'SUPPLIER_HEB': The supplier of the item in hebrew.
+            - 'SUPPLIER_ENG': The supplier of the item in english.
+            - 'BARCODE_EA': the barcode of a single item.
+            - 'SALES_UNIT': the item's sales unit.
+            - 'BOXING_SIZE': the item's number of single units being sold in the sales unit.
+        **Note**: This data relates to the invoices table, can merge to add the data of the invoices over the material code/ number.
+            
         
     this is the code that already loaded the data to the IDE:
 
@@ -161,7 +216,19 @@ if st.session_state['authentication_status']:
             [Query]
             \"\"\"
             ,
-            'AGGR_WEEKLY_DW_INVOICES':\"\"\"
+            'AGGR_MONTHLY_DW_INVOICES':\"\"\"
+            [Query]
+            \"\"\"
+            ,
+            'DW_DIM_CUSTOMERS':\"\"\"
+            [Query]
+            \"\"\",
+            'DW_DIM_INDUSTRIES':
+            \"\"\"
+            [Query]
+            \"\"\",
+            'DW_DIM_MATERIAL':
+            \"\"\"
             [Query]
             \"\"\"
         }
@@ -192,7 +259,10 @@ if st.session_state['authentication_status']:
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
     chp = dataframes['DW_CHP_AGGR']
     dt_df = dataframes['DATE_HOLIAY_DATA']
-    inv_df = dataframes['AGGR_WEEKLY_DW_INVOICES']
+    inv_df = dataframes['AGGR_MONTHLY_DW_INVOICES']
+    customer_df = dataframes['DW_DIM_CUSTOMERS']
+    industry_df = dataframes['DW_DIM_INDUSTRIES']
+    material_df = dataframes['DW_DIM_MATERIAL']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
@@ -200,6 +270,14 @@ if st.session_state['authentication_status']:
     dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
     inv_df['DATE] = pd.to_datetime(inv_df['DATE'])
     ```
+
+    The names of the brands of diplomat in storenext (stnx_items)-
+        אולוויז, אולדייז, פנטן, סאקלה, פמפרס, טמפקס, אריאל, Fairy, אוראל בי, הד&שולדרס, קוטדור, לוטוס, טייד, לנור, קראפט, מילקה, LU, סקיני טינס, קולמנס, גולדן בריק, HP, אוראו, וולה, אוריינטל פוד, דורסל, Skippy, פרינגלס, קיקומן, גילט, קולסטון נטורלס, הרבל אסנס, Walkers, ג'השאן , בראון, קולסטון קיט, אוזי, בונזו, שזיר, סטארקיסט, הלטי בוי, רומו, Lazaro, ביונד מיט, לור, נוטרילון, גיקובס, מזולה, סופר קאט, היינץ, לחם יין, קלוגס, לה קט, Lo Salt, SUPREME, ויוה קולור, נטורלה, רג'יה, קרסט, אולד ספייס, קולסטון-2000, ויולייף, דרפורד, טובלרון, מקסוול, אל ארז, דקורה, ביאסק, ריין דיז'ון,  - לא ידוע-1, וולהפלקס, יונה, פרופה, אורגניק אינדיה, נון, הרמזית, All In, קוסקא, Mission, יורוקיטי, דורות, נסיך הים, סיקרט, לה ניוקריה, סופר קט, יוניבר, פראוד, פטי, לגונה, קרם קולור, מנישביץ, מאיר את בייגל, קדבורי, גקובזי, דורו, מסטמכר, בארני, פנדה, קולסטון רוט, Arifoglu, בלובנד, מילוטל, פלנטרס, לוריאל, סופט קולור, OXO, מרום את קונפינו, 7 Days, קולסטון אינטנס, ציריו, וולה דלוקס, ויטקראפט, פורטוס, א. קנטינה, אופיסר, לאב דוג, משק ווילר, סוויטאנגו, איליי, אונלי, קאפוטו, אינאבה, סינגה
+    
+    The names of the categories (brand equivalent in stnx_items ) of diplomat in the sell-in data (material_df)-    
+        Hermes, Gillette, Oral-B, Ketchup, Mustard, Mayonnaise, Personal Diagnostc, Batteries, Starkist, Yona, Cats Sand, La Cat, Reine De Dijon Mustard, Mestemacher, Losalt, Balsamic Vinegar F.S, Sauces, Fem Care, Hair Care, Reine De Dijon Mustard F.S, Biscuit, APDO, Bonzo, ORAL-B, Chocolate, S.Aids P&G, Coty, Red Bull, Vinegar, Biscuits, Mashes, Preserves, Alcohol, Spices, Powders, Coatings & Dry Foods, Rice, Kikkoman, Accessoris, Liquids, Noodles, Jams & Bakery products, Braun, Laundry Cleaning, Spread, Seaweeds, Snacks, BABY CARE, FEMCARE, HAIR CARE, HEALTHCARE, SHAVECARE, PERSONAL CARE, ORAL CARE, LAUNDRY, Oriental Retail, Soy Sauce, Kellogg's Coranflakes, HOT BEVERAGES, COFFEE, ASSORTMENTS, COUNTLINES, TABLETS, GROCERY, CHEWING GUM, CANDY, BUBBLE GUM, Nutrilon Premium, Sweet spreads, Balsamic Vinegar, Spices, Flour, Pasta, Delicatessen, Tomato products, Fairy, Pringlesoperational organization, Badagoni, Health, Personal Care, Oral Care, Wellaflex, Shave Care, Duracell, Kaija, Henrys Kitchen, Blu, Sukrazit, Infant Formula, Growing-Up Milk, Infant Cereals, Glavproduct, Coffee SD, Coffee FD, Coffee Mixes, Cocoa, Tablets, Count lines, Confetti, Other Retail Chocolate, Sugar, Culinary, Cereals, Darling, Pro Plan, Baby Care, Meals and Drinks, Pringles, Fabric Care, Home Care, Friskies, Ace, Jacobs, Felix, Bars, Crumbs, BISCUITS, Wellaton, Beans, Feminine care, Lor, Gurieli, Comet, Golden Brake, Tumin Portos, Bistroff, Lenor Fabric Care, Private Label, Super Cat, Food pallets, Gomi, Takeaway, PILCHARDS, Beyond Meat, Illy, Londacolor, Clean World, Tortilla New, Face Care, PHILIPS BATTERIES, Kula, Bear, Cheese Subtitute, Violife-NA, Vegan, S-A JDE, Lotus, Dugladze, HEINZ, HP, L&P, Appliances, Cream, Proud, Canned Fish, Margarine, BOXD WATER, SAUCES, LEMON JUICE, SPICES, Oil, Wella Pro, Kadus, S-A Duracell, TOMATO, Nescafe Big pack Coffee, All In, CULINARY, GRAIN, BABY, HPC, SNACKS AND TREATS, INGWE RANGE, WUPPERTHAL, NATURAL FOODS, NA, Italian Food, Allin, Cherie, Local Accessories, LOTUS BISCOFF, BEVERAGES, HOMECARE, Chipta, Blue Frog, PERSONAL HEALTH CARE, Purina One, Loacker, Dog Chow, Cat Chow, Elchim, Vaporia, Wella Deluxe, Mincos, Sweetango, Milotal, Panda, Kellogg's Children Cereals, Soft Color, S-A Meditrend, Starkist Pallets, Barebells, Preserved, S-A Mondelez, SNACKS, MasterChef, SOYA MINCE, Mondelez, Re Export, S-A Lotus, Asian Food, PAPA JOHNS, Retail, Color Perfect, Ritter Sport, Kiddylicious, Local, Sea Food, Twinings, Jarrah, Hard Cheese, Garlic, Herbs, Seasoning, Sauce, MEN DEO, WOMAN DEO, READY-TO-DRINK, Grenade, מתנות חברה, ROYCO, Blue Band - NA, Others, Spirits, PIO -S-A, Starkist F.S., Kellogg's, S-A Wella Professional, Hot Chocolate, Greek, P&G Pallets, Industrial, Horeca Equipment
+
+    important industries (industry_df) - Supersal, Rami Levi, Beitan, Victory, 4Ch - Others 17, SuperPharm, Osher ad/Merav mazon, Yochananof, Hazi Hinam, Platinum.
 
     Quesstions Convention - 
 
@@ -215,7 +293,7 @@ if st.session_state['authentication_status']:
 
     >textual data - all the textual data here is hebrew so take that in mind while filtering dataframes.
 
-    >Competitors (מתחרים) - When requeting data about competitors, we are the supplier name 'דיפלומט' in the data and other supliers in the same category/ requested user's field are the competition. 
+    >Competitors (מתחרים) - When requesting data about competitors, we are the supplier name 'דיפלומט' in the data and other supliers in the same category/ requested user's field are the competition. 
 
     >Promotion Sales (מבצעים) - It is an actual promotion only where the 'AVG_SELLOUT_PRICE' a non-negative float number value. 
     Final reminder: ensure that the 'answer' variable resembles a genuine prompt produced by a language model in the language used to address you!
@@ -227,16 +305,16 @@ if st.session_state['authentication_status']:
     and you ask them to provide more details or rephrase their message in the same language they used.  
     """  
 
-    examples = [{'role': 'user', 'content': 'מהם ניתחי השוק של מותג פרינגלס בפילוח שבועי'},
-    {'role': 'assistant',
-    'content': '```python\n# Merging sales data with items data\nmerged_data = stnx_sales.merge(stnx_items, on=\'Barcode\', how=\'inner\')\n\n# Filtering for Pringles brand\npringles_data = merged_data[merged_data[\'Brand_Name\'] == \'פרינגלס\']\n\n# Grouping by week and calculating total sales in NIS for Pringles\npringles_weekly_sales = pringles_data.resample(\'W\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Get the brand category\ncategory_for_market_cap = pringles_data.Category_Name.values[0]\n\n# Filter by the brand category\nmerged_data_category = merged_data[merged_data.Category_Name==category_for_market_cap]\n\n# Calculating total sales for the category\ntotal_weekly_sales = merged_data_category.resample(\'W\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Merging to calculate market cap\nmarket_cap_data = pringles_weekly_sales.merge(total_weekly_sales, on=\'Day\', suffixes=(\'_Pringles\', \'_Total\'))\n\n# Calculating market cap percentage\nmarket_cap_data[\'Market_Cap_Percent\'] = (market_cap_data[\'Sales_NIS_Pringles\'] / market_cap_data[\'Sales_NIS_Total\']) * 100\n\n# Getting the weekly market cap values\nweekly_market_cap = market_cap_data[[\'Day\', \'Market_Cap_Percent\']]\n\nanswer = f"הנתח השוק של פרינגלס בשבועות הוא:\\n{weekly_market_cap.to_string(index=False)}"\n```'},
-    {'role': 'user','content': 'מתי השבוע שנתח השוק של פרינגלס היה הנמוך ביותר'},
-    {'role': 'assistant',
-    'content': '```python\n# Merging sales data with items data\nmerged_data = stnx_sales.merge(stnx_items, on=\'Barcode\', how=\'inner\')\n\n# Filtering for Pringles brand\npringles_data = merged_data[merged_data[\'Brand_Name\'] == \'פרינגלס\']\n\n# Grouping by week and calculating total sales in NIS for Pringles\npringles_weekly_sales = pringles_data.resample(\'W\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Get the brand category\ncategory_for_market_cap = pringles_data.Category_Name.values[0]\n\n# Filter by the brand category\nmerged_data_category = merged_data[merged_data.Category_Name==category_for_market_cap]\n\n# Calculating total sales for the category\ntotal_weekly_sales = merged_data_category.resample(\'W\', on=\'Day\').agg({\'Sales_NIS\': \'sum\'}).reset_index()\n\n# Merging to calculate market cap\nmarket_cap_data = pringles_weekly_sales.merge(total_weekly_sales, on=\'Day\', suffixes=(\'_Pringles\', \'_Total\'))\n\n# Calculating market cap percentage\nmarket_cap_data[\'Market_Cap_Percent\'] = (market_cap_data[\'Sales_NIS_Pringles\'] / market_cap_data[\'Sales_NIS_Total\']) * 100\n\n# Finding the week with the lowest market cap\nlowest_market_cap_week = market_cap_data.loc[market_cap_data[\'Market_Cap_Percent\'].idxmin()]\n\n# Formatting the answer\nanswer = f"השבוע שבו נתח השוק של פרינגלס היה הכי נמוך הוא {lowest_market_cap_week[\'Day\'].strftime(\'%d/%m/%Y\')} עם נתח שוק של {lowest_market_cap_week[\'Market_Cap_Percent\']:.2f}%."\n```'},
-    {'role': 'user','content': 'תתן לי 8 דוגמאות אקראיות של תיאורי מבצעים ייחודיים של המתחרים של מותג פרינגלס ושם המוצר שלהם באותה תקופה כרשימה'},
-    {'role': 'assistant',
-    'content': '```python\n# Filtering promotional sales only\npromotional_sales = chp[chp[\'AVG_SELLOUT_PRICE\'].notnull() & (chp[\'AVG_SELLOUT_PRICE\'] > 0)]\n\n# Merging with items data to get product names and supplier information\npromotional_data = promotional_sales.merge(stnx_items, left_on=\'BARCODE\', right_on=\'Barcode\', how=\'inner\')\n\n# Get the brand category and competition, then Filter promotional data by the competition (not diplomat) and the brand category\nbrand_category = promotional_data[promotional_data[\'Brand_Name\'] == \'פרינגלס\'].Category_Name.values[0]\npromotional_data = promotional_data[(promotional_data[\'Supplier_Name\'] != \'דיפלומט\')&(promotional_data[\'Category_Name\']==brand_category)]\n\n# Selecting unique promotional descriptions and product names\nunique_promotions = promotional_data[[\'SELLOUT_DESCRIPTION\', \'Item_Name\', \'Supplier_Name\']].drop_duplicates(subset = [\'SELLOUT_DESCRIPTION\'])\n\n# Taking random 8 unique promotions\nunique_promotions_list = unique_promotions.sample(8).to_dict(orient=\'records\')\n\n# Formatting the output\npromotion_examples = []\nfor promotion in unique_promotions_list:\n promotion_text = f"מוצר: {promotion[\'Item_Name\']} - תיאור מבצע: {promotion[\'SELLOUT_DESCRIPTION\']} (ספק: {promotion[\'Supplier_Name\']})"\n promotion_examples.append(promotion_text)\n\nanswer = "\\n".join(promotion_examples)\n```'}
-    ]
+    examples = [{'role':'user','content':"Who is the smallest customer in 4 chain?"},
+        {'role': 'assistant',
+        'content': "```python\nindustry = '4Ch - Others 17'  \nindustry_code = industry_df[industry_df.INDUSTRY == industry].INDUSTRY_CODE.values[0]\n\ninv_df[inv_df.INDUSTRY_CODE == industry].groupby('CUSTOMER_CODE').agg({'Gross':'sum'})\n\ncust_inv_grp_df = inv_df[inv_df.INDUSTRY_CODE == industry_code].groupby('CUSTOMER_CODE').agg({'Gross':'sum'}).reset_index()\ncust_inv_grp_df = cust_inv_grp_df.merge(customer_df[['CUSTOMER_CODE','CUSTOMER']],how = 'left').sort_values('Gross')\ncust_inv_grp_df = cust_inv_grp_df[cust_inv_grp_df.Gross>0]\nsmallest_4ch_customer = cust_inv_grp_df.CUSTOMER.values[0]\nsmallest_4ch_money = cust_inv_grp_df.Gross.values[0]\n\nanswer = f'The smallest customer among 4 chain is {smallest_4ch_customer} with a total of just {smallest_4ch_money}'\n```\n"},
+        {'role':'user','content':"Show me how well oreo is doing in this customer"},
+        {'role': 'assistant',
+        'content': '```python\n# Define the brand and category to check  \nbrand_to_check = \'Oreo\'    \ncategory_to_check = brand_to_check  # You can change this if needed  \n  \n# Filter materials for the specified brand and category  \nfiltered_materials = material_df[  \n    (material_df.CATEGORY_ENG.str.contains(category_to_check, na=False)) |  \n    (material_df.BRAND_ENG.str.contains(brand_to_check, na=False))  \n]  \n  \n# Identify the industry and its corresponding code  \nindustry = \'4Ch - Others 17\'    \nindustry_code = industry_df[industry_df.INDUSTRY == industry].INDUSTRY_CODE.values[0]  \n  \n# Group invoice data by customer code for the specified industry  \ncust_inv_grp_df = inv_df[inv_df.INDUSTRY_CODE == industry_code].groupby(\'CUSTOMER_CODE\').agg({\'Gross\': \'sum\'}).reset_index()  \n  \n# Merge with customer data and filter for positive gross sales  \ncust_inv_grp_df = cust_inv_grp_df.merge(customer_df[[\'CUSTOMER_CODE\', \'CUSTOMER\']], how=\'left\').sort_values(\'Gross\')  \ncust_inv_grp_df = cust_inv_grp_df[cust_inv_grp_df.Gross > 0]  \n  \n# Identify the smallest customer in the 4Ch category  \nsmallest_4ch_customer_code = cust_inv_grp_df.CUSTOMER_CODE.values[0]  \nsmallest_4ch_customer = cust_inv_grp_df.CUSTOMER.values[0]  \n  \n# Get unique material numbers from filtered materials  \nmaterial_numbers = filtered_materials.MATERIAL_NUMBER.unique()  \n  \n# Filter invoice data for the smallest customer and selected materials  \nbrand_inv_df = inv_df[  \n    (inv_df.CUSTOMER_CODE == smallest_4ch_customer_code) &  \n    (inv_df.MATERIAL_CODE.isin(material_numbers))  \n]  \n  \n# Calculate monthly sales, resampling the data  \nmonthly_sales = brand_inv_df.resample(\'M\', on=\'DATE\').agg({\'Gross\': \'sum\'}).reset_index()  \n  \n# Add a column to indicate increase or decrease in sales  \nmonthly_sales[\'Change\'] = monthly_sales[\'Gross\'].diff()  \nmonthly_sales[\'Trend\'] = monthly_sales[\'Change\'].apply(lambda x: \'Increase\' if x > 0 else (\'Decrease\' if x < 0 else \'No previous data\'))  \n  \n# Prepare the output message  \nsales_summary = []  \nfor index, row in monthly_sales.iterrows():  \n    month = row[\'DATE\'].strftime(\'%Y-%m\')  # Formatting the date  \n    gross_sales = row[\'Gross\']  \n    trend = row[\'Trend\']  \n    sales_summary.append(f"Month: {month}, Sales: {gross_sales:.2f}, Trend: {trend}")  \n  \nanswer = f"Here are the monthly sales for {brand_to_check} in {smallest_4ch_customer}:\n" + "\n".join(sales_summary)  \n```\n'},
+        {'role':'user','content':"I saw that September is low on sales, show me competitor promotions in that period"},
+        {'role': 'assistant',
+        'content': '```python\nbrand_to_check = \'Oreo\'  \nbrand_to_check_stnx = \'אוראו\'  \nchain_name = \'סופר יודה\'\nmonth = 9  \n  \n# Initialize an empty list to collect results  \ncompetitor_promotions = []  \n  \ncategories = stnx_items[(stnx_items.Brand_Name == brand_to_check_stnx) & (stnx_items.Supplier_Name == \'דיפלומט\')].Category_Name.unique().tolist()  \n  \nfor category in categories:  \n    barcode_lst = stnx_items[(stnx_items.Category_Name == category) & (stnx_items.Supplier_Name != \'דיפלומט\')].Barcode.unique().tolist()  \n    chp_competitor = chp[(chp.BARCODE.isin(barcode_lst)) & (chp.DATE.dt.month == month) & (chp.SELLOUT_DESCRIPTION != \'\')& (chp.CHAIN.str.contains(chain_name))]  \n  \n    if len(chp_competitor) > 5:  \n        # Merge to include the Item_Name and Supplier_Name  \n        chp_competitor = chp_competitor.merge(stnx_items[[\'Barcode\', \'Item_Name\', \'Supplier_Name\']], left_on=\'BARCODE\', right_on=\'Barcode\', how=\'left\')  \n          \n        # Collect the relevant information  \n        sampled_data = chp_competitor[[\'Barcode\', \'Item_Name\', \'Supplier_Name\', \'SELLOUT_DESCRIPTION\']].sample(5).reset_index(drop = True)  \n          \n        # Append to the list  \n        for index, row in sampled_data.iterrows():\n            promo_txt = f"Barcode: {row[\'Barcode\']}, Item: {row[\'Item_Name\']}, Supplier: {row[\'Supplier_Name\']}, Description: {row[\'SELLOUT_DESCRIPTION\']}"\n            if index==0:\n                promo_txt = f"In {category}:\n{promo_txt}"\n            else:\n                pass\n            competitor_promotions.append(promo_txt)  \n          \n# Create the answer variable  \nanswer = f"{brand_to_check}\'s competitors promotions this period in {chain_name}:\n" + "\n".join(competitor_promotions)  \n```\n'},
+        ]
 
     db_password = os.getenv('DB_PASSWORD')  
     openai_api_key = os.getenv('OPENAI_KEY')
@@ -377,12 +455,13 @@ if st.session_state['authentication_status']:
         return dt_df  
 
     @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
-    def load_data(resolution_type):  
+    def load_data(resolution_type,chp_or_invoices):  
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                             server='diplomat-analytics-server.database.windows.net',  
                             database='Diplochat-DB',  
                             uid='analyticsadmin', pwd=db_password)  
         res_tp = resolution_type
+        coi = chp_or_invoices
 
         #Define tables and queries
         tables = {
@@ -397,11 +476,49 @@ if st.session_state['authentication_status']:
             f'AGGR_{res_tp.upper()}_DW_CHP': f"""
                 SELECT DATE,BARCODE,CHAIN,AVG_PRICE,AVG_SELLOUT_PRICE,SELLOUT_DESCRIPTION,NUMBER_OF_STORES
                 FROM [dbo].[AGGR_{res_tp.upper()}_DW_CHP]
-                WHERE DATE BETWEEN '2023-12-31' AND '2024-09-01'
+                --WHERE [DATE] BETWEEN DATEADD(DAY, -90, GETDATE()) AND GETDATE()
             """,
-            'AGGR_WEEKLY_DW_INVOICES':
+            'DW_DIM_CUSTOMERS':
             """
-            SELECT TOP (1000) [DATE]
+            SELECT [CUSTOMER_CODE],
+            [CUSTOMER],
+            [CITY],
+            [CUSTOMER_ADDRESS],
+            [CUST_LATITUDE],
+            [CUST_LONGITUDE]
+            FROM [dbo].[DW_DIM_CUSTOMERS]
+            WHERE CUSTOMER_CODE IN (SELECT DISTINCT CUSTOMER_CODE FROM [dbo].[AGGR_MONTHLY_DW_INVOICES])
+            """
+            ,
+            'DW_DIM_INDUSTRIES':
+            """
+            SELECT [INDUSTRY]
+                ,[INDUSTRY_CODE]
+            FROM [dbo].[DW_DIM_INDUSTRIES]
+            """
+            ,
+            'DW_DIM_MATERIAL':
+            """
+            SELECT [MATERIAL_NUMBER]
+                ,[MATERIAL_EN]
+                ,[MATERIAL_HE]
+                ,[MATERIAL_DIVISION]
+                ,[BRAND_HEB]
+                ,[BRAND_ENG]
+                ,[SUB_BRAND_HEB]
+                ,[SUB_BRAND_ENG]
+                ,[CATEGORY_HEB]
+                ,[CATEGORY_ENG]
+                ,[BARCODE_EA]
+	            ,[SALES_UNIT]
+	            ,[BOXING_SIZE]
+            FROM [dbo].[DW_DIM_MATERIAL] 
+            WHERE MATERIAL_NUMBER IN (SELECT DISTINCT MATERIAL_CODE FROM [dbo].[AGGR_MONTHLY_DW_INVOICES])
+            """
+            ,
+            'AGGR_MONTHLY_DW_INVOICES':
+            """
+            SELECT [DATE]
                 ,[SALES_ORGANIZATION_CODE]
                 ,[MATERIAL_CODE]
                 ,[INDUSTRY_CODE]
@@ -411,7 +528,7 @@ if st.session_state['authentication_status']:
                 ,[Net VAT]
                 ,[Gross VAT]
                 ,[Units]
-            FROM [dbo].[AGGR_WEEKLY_DW_INVOICES]
+            FROM [dbo].[AGGR_MONTHLY_DW_INVOICES]
             """,
             'AI_LOG':"""
             SELECT [ID]
@@ -432,8 +549,16 @@ if st.session_state['authentication_status']:
             """
         }
 
+        # Filter the tables based on the coi variable  
+        filtered_tables = {  
+            key: value for key, value in tables.items()   
+            if key != 'AGGR_MONTHLY_DW_INVOICES' and coi == 'chp' or  
+            key != f'AGGR_{res_tp.upper()}_DW_CHP' and coi == 'invoices'  
+        }  
+
+
         dataframes = {}  
-        for table, query in tables.items():  
+        for table, query in filtered_tables.items():  
             chunks = []  
             chunk_size = 10000  
             total_rows = pd.read_sql_query(f"SELECT COUNT(*) FROM ({query}) AS count_query", conn).iloc[0, 0]  
@@ -485,8 +610,11 @@ if st.session_state['authentication_status']:
         return cosine_similarity(a_binary, b_binary)  
 
     def get_top_similar_prompts(log_df, user_prompt, top_n=3, current_user='Yonatan Rabinovich', date_from = datetime(2024,9,16)):  
-        # Filter for liked examples  
-        liked_example_cond = log_df.User_Ratings.str.contains('👍')  
+        # Filter for liked examples
+        # text_or_regex  = '👍'
+        text_or_regex  = r'(?=.*👍)(?=.*מצוין עבור הנהלת הקבוצה)'  
+        
+        liked_example_cond = log_df.User_Ratings.str.contains(text_or_regex, regex=True)  
     
         # If a current user is provided, filter by user name  
         user_cond = log_df.User_Name == current_user if current_user else True  
@@ -529,6 +657,10 @@ if st.session_state['authentication_status']:
     
     # ensure weekly is default
     res_tp = st.session_state.get('resolution_type','weekly')
+    
+    # ensure chp is default
+    coi = st.session_state.get('chp_or_invoices','invoices')
+    
     st.title(f"{user_name} {res_tp.capitalize()} Sales Copilot 🤖")  
     
     # # Rerun button logic in the sidebar
@@ -536,21 +668,34 @@ if st.session_state['authentication_status']:
     #     st.session_state['refresh'] = True
     #     st.rerun()  # This will rerun the whole app
 
-    dataframes = load_data(res_tp)  
+    dataframes = load_data(res_tp,coi)  
     
     # Assigning dataframes to variables
     stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
     stnx_items = dataframes['DW_DIM_STORENEXT_BY_INDUSTRIES_ITEMS']
-    chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
+    customer_df = dataframes['DW_DIM_CUSTOMERS']
+    industry_df = dataframes['DW_DIM_INDUSTRIES']
+    material_df = dataframes['DW_DIM_MATERIAL']
     dt_df = dataframes['DATE_HOLIAY_DATA']
-    inv_df = dataframes['AGGR_WEEKLY_DW_INVOICES']
     log_df = dataframes['AI_LOG']
 
     # Convert date columns to datetime
     stnx_sales['Day'] = pd.to_datetime(stnx_sales['Day'])
-    chp['DATE'] = pd.to_datetime(chp['DATE'])
     dt_df['DATE'] = pd.to_datetime(dt_df['DATE'])
-    inv_df['DATE'] = pd.to_datetime(inv_df['DATE'])
+
+    # duplication drop
+    customer_df = customer_df.drop_duplicates(subset = ['CUSTOMER_CODE'])
+    material_df = material_df.drop_duplicates(subset = ['MATERIAL_NUMBER'])
+
+    #optional data
+    if coi=='chp':
+        chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
+        chp['DATE'] = pd.to_datetime(chp['DATE'])
+    else:
+        inv_df = dataframes['AGGR_MONTHLY_DW_INVOICES']
+        inv_df['DATE'] = pd.to_datetime(inv_df['DATE'])    
+
+
     user_avatar = '🧑'
 
     client = AzureOpenAI(  
@@ -619,7 +764,7 @@ if st.session_state['authentication_status']:
                 #     f0string = f'<div style="direction: rtl; text-align: right;">{message["content"]}</div>'
                 #     st.markdown(f0string, unsafe_allow_html=True)
                 # else:                       
-                st.markdown(message["content"])
+                st.markdown(message["content"], unsafe_allow_html=True)
 
         elif message["role"] == 'user':  
             with st.chat_message(message["role"], avatar=user_avatar):  
@@ -664,8 +809,12 @@ if st.session_state['authentication_status']:
         
         dynamic_examples_lst = get_top_similar_prompts(log_df, prompt, top_n=st.session_state.n_most_similar)
 
-        
+        # base history
         st.session_state.base_history[1:1+st.session_state.n_most_similar*2] = dynamic_examples_lst
+        
+        # training base history - premade examples
+        # st.session_state.base_history[1:1+st.session_state.n_most_similar*2] = examples
+
         st.session_state.base_history.append({"role": "user", "content": prompt})
         
         with st.chat_message("user", avatar=user_avatar):
@@ -728,7 +877,11 @@ if st.session_state['authentication_status']:
                     # Use re.sub to comment out any import statement  
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
                     
-                    local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df}
+                    if coi=='chp':
+                        local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df,'base64':base64,'BytesIO':BytesIO,'plt':plt}
+                    else:
+                        local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df,'base64':base64,'BytesIO':BytesIO,'plt':plt}
+
                     exec(code, {}, local_context)
                     answer = local_context.get('answer', "No answer found.") 
                     
@@ -746,29 +899,55 @@ if st.session_state['authentication_status']:
                     > quantity - always show as an integer and round to 0 digits after the dot - 2.22222 --> 2.
                     > dates - format like this: dd/mm/yyyy - 2024-01-31 --> 31/01/2024.
 
-                    finally: ensure that the your response is in the language used by your recieved input.
+                    finally: ensure that the your response is in the language used by your recieved input, and is presenting information and insights to the user.
                     """
                     
-                    decorator_response = model_reponse(answer, sys_decorator)
-                    answer = decorator_response.choices[0].message.content.strip()
-                    
-                    decorator_usage_dict = decorator_response.to_dict()['usage']
-                    error_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
+                    answer_has_plot = 'data:image/png;base64' in answer
 
-                    n_llm_api_call+=1
+                    if not answer_has_plot:
+                        decorator_response = model_reponse(answer, sys_decorator)
+                        answer = decorator_response.choices[0].message.content.strip()
+                        
+                        decorator_usage_dict = decorator_response.to_dict()['usage']
+                        error_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
+                        
+                        n_llm_api_call+=1
+
+                    else:
+                        decorator_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
+                        error_usage_dict = {'completion_tokens': 0, 'prompt_tokens': 0, 'total_tokens': 0}
 
                     history_msg = f"```python{code}```"
 
                     with st.chat_message("assistant", avatar='🤖'):
-                        # Create a placeholder for streaming output  
-                        placeholder = st.empty()  
-                        streamed_text = ""  
-                        
-                        # Stream the answer output  
-                        for char in answer:  
-                            streamed_text += char  
-                            placeholder.markdown(streamed_text)  
-                            time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
+                    
+                        if not answer_has_plot:
+                            # Create a placeholder for streaming output 
+                            placeholder = st.empty()  
+                            streamed_text = ""  
+
+                            # Stream the answer output  
+                            for char in answer:  
+                                streamed_text += char  
+                                placeholder.markdown(streamed_text)  
+                                time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
+                        else:
+                            # Create a placeholder for streaming output 
+                            placeholder = st.empty()  
+                            streamed_text = ""  
+
+                            # Stream the answer output  
+                            for char in answer:
+                                streamed_text += char
+                                placeholder.markdown(streamed_text)
+
+                                # Check if streamed_text endswith ('<img src=')
+                                if streamed_text.endswith('<img src='):
+                                    # Display the remainder of the answer starting from the current position
+                                    streamed_text+=answer[len(streamed_text):]
+                                    placeholder.markdown(streamed_text,unsafe_allow_html=True)
+                                    break
+                                time.sleep(0.01)  # Adjust the sleep time to control the streaming speed 
 
                     st.session_state.base_history.append({"role": "assistant", "content": history_msg})
                     
