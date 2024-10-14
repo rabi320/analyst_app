@@ -611,8 +611,8 @@ if st.session_state['authentication_status']:
 
     def get_top_similar_prompts(log_df, user_prompt, top_n=3, current_user='Yonatan Rabinovich', date_from = datetime(2024,9,16)):  
         # Filter for liked examples
-        # text_or_regex  = '👍'
-        text_or_regex  = r'(?=.*👍)(?=.*מצוין עבור הנהלת הקבוצה)'  
+        text_or_regex  = '👍'
+        # text_or_regex  = r'(?=.*👍)(?=.*מצוין עבור הנהלת הקבוצה)'  
         
         liked_example_cond = log_df.User_Ratings.str.contains(text_or_regex, regex=True)  
     
