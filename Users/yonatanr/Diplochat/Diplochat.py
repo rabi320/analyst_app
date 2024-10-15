@@ -84,8 +84,10 @@ if st.session_state['authentication_status']:
     if chp_or_invoices != st.session_state.chp_or_invoices:
         st.session_state.chp_or_invoices = chp_or_invoices
 
-
-    # Initialize the selected option in session state
+    # Add a subtitle in the sidebar
+    st.sidebar.subheader("Select a Sales Organization")
+    
+    # Initialize the selected sales organization in session state
     if 'selected_sales_org' not in st.session_state:
         st.session_state.selected_sales_org = None
 
@@ -95,22 +97,34 @@ if st.session_state['authentication_status']:
     option_8000 = st.sidebar.checkbox("8000", value=(st.session_state.selected_sales_org == "8000"))
     option_nz00 = st.sidebar.checkbox("NZ00", value=(st.session_state.selected_sales_org == "NZ00"))
 
-    # Logic to ensure only one checkbox can be selected at a time
+
+    # Logic to ensure that only one checkbox can be selected at a time
     if option_1000 and st.session_state.selected_sales_org != "1000":
         st.session_state.selected_sales_org = "1000"
         option_5000, option_8000, option_nz00 = False, False, False
 
-    if option_5000 and st.session_state.selected_sales_org != "5000":
+    elif option_5000 and st.session_state.selected_sales_org != "5000":
         st.session_state.selected_sales_org = "5000"
         option_1000, option_8000, option_nz00 = False, False, False
 
-    if option_8000 and st.session_state.selected_sales_org != "8000":
+    elif option_8000 and st.session_state.selected_sales_org != "8000":
         st.session_state.selected_sales_org = "8000"
         option_1000, option_5000, option_nz00 = False, False, False
 
-    if option_nz00 and st.session_state.selected_sales_org != "NZ00":
+    elif option_nz00 and st.session_state.selected_sales_org != "NZ00":
         st.session_state.selected_sales_org = "NZ00"
         option_1000, option_5000, option_8000 = False, False, False
+
+    # Update the checkboxes based on the current selection
+    if st.session_state.selected_sales_org == "1000":
+        option_1000 = True
+    elif st.session_state.selected_sales_org == "5000":
+        option_5000 = True
+    elif st.session_state.selected_sales_org == "8000":
+        option_8000 = True
+    elif st.session_state.selected_sales_org == "NZ00":
+        option_nz00 = True
+
 
     #####################
     # diplochat analyst #
