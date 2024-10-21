@@ -84,6 +84,21 @@ if st.session_state['authentication_status']:
     if chp_or_invoices != st.session_state.chp_or_invoices:
         st.session_state.chp_or_invoices = chp_or_invoices
 
+    # sales org
+    if 'sales_org' not in st.session_state:
+            st.session_state.sales_org = "1000"  # default value
+
+    sales_org = st.sidebar.radio(
+        "Choose Sales Organization:", 
+        ["1000", "5000", "8000", "NZ00"], 
+        index=0 if st.session_state.sales_org == "1000" else 1 if st.session_state.sales_org == "5000" else 2 if st.session_state.sales_org == "8000" else 3
+    )    
+
+    # Check if the resolution type has changed and rerun/cache if it has
+    if sales_org != st.session_state.sales_org:
+        st.session_state.sales_org = sales_org
+
+
     # # Add a subtitle in the sidebar
     # st.sidebar.subheader("Select a Sales Organization")
     
