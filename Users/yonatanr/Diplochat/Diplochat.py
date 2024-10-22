@@ -86,12 +86,12 @@ if st.session_state['authentication_status']:
 
     # sales org
     if 'sales_org' not in st.session_state:
-            st.session_state.sales_org = "1000"  # default value
+            st.session_state.sales_org = "DIL"  # default value
 
     sales_org = st.sidebar.radio(
         "Choose Sales Organization:", 
-        ["1000", "5000", "8000", "NZ00"], 
-        index=0 if st.session_state.sales_org == "1000" else 1 if st.session_state.sales_org == "5000" else 2 if st.session_state.sales_org == "8000" else 3
+        ["DIL", "DGE", "DSA", "DNZ", "DDC"], 
+        index=0 if st.session_state.sales_org == "DIL" else 1 if st.session_state.sales_org == "DGE" else 2 if st.session_state.sales_org == "DSA" else 3 if st.session_state.sales_org == "DNZ" else 4
     )    
 
     # Check if the resolution type has changed and rerun/cache if it has
