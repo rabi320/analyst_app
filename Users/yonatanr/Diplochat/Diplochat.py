@@ -86,7 +86,7 @@ if st.session_state['authentication_status']:
 
     # sales org
     if 'sales_org' not in st.session_state:
-            st.session_state.sales_org = "DIL"  # default value
+            st.session_state.sales_org = "1000"  # default value
 
     sales_org = st.sidebar.radio(
         "Choose Sales Organization:", 
