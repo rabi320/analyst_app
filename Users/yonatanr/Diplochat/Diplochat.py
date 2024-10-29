@@ -94,9 +94,11 @@ if st.session_state['authentication_status']:
         index=0 if st.session_state.sales_org == "DIL" else 1 if st.session_state.sales_org == "DGE" else 2 if st.session_state.sales_org == "DSA" else 3 if st.session_state.sales_org == "DNZ" else 4
     )    
 
+    so_dict = dict(zip(["DIL", "DGE", "DSA", "DNZ", "DDC"],["1000","5000","8000","NZ00","DDC"]))
+
     # Check if the resolution type has changed and rerun/cache if it has
     if sales_org != st.session_state.sales_org:
-        st.session_state.sales_org = sales_org
+        st.session_state.sales_org = so_dict[sales_org]
 
 
     # # Add a subtitle in the sidebar
@@ -509,14 +511,14 @@ if st.session_state['authentication_status']:
         return dt_df  
 
     @st.cache_data(show_spinner="Loading data.. this can take a few minutes, feel free to grab a coffee ☕") 
-    def load_data(resolution_type,chp_or_invoices):  
+    def load_data(resolution_type,chp_or_invoices,sales_org):  
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                             server='diplomat-analytics-server.database.windows.net',  
                             database='Diplochat-DB',  
                             uid='analyticsadmin', pwd=db_password)  
         res_tp = resolution_type
         coi = chp_or_invoices
-
+        so = sales_org
         #Define tables and queries
         tables = {
             f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': f"""
@@ -552,7 +554,7 @@ if st.session_state['authentication_status']:
             """
             ,
             'DW_DIM_MATERIAL':
-            """
+            f"""
             SELECT [MATERIAL_NUMBER]
                 ,[MATERIAL_EN]
                 ,[MATERIAL_HE]
@@ -567,11 +569,11 @@ if st.session_state['authentication_status']:
 	            ,[SALES_UNIT]
 	            ,[BOXING_SIZE]
             FROM [dbo].[DW_DIM_MATERIAL] 
-            WHERE MATERIAL_NUMBER IN (SELECT DISTINCT MATERIAL_CODE FROM [dbo].[AGGR_MONTHLY_DW_INVOICES])
+            WHERE MATERIAL_NUMBER IN (SELECT DISTINCT MATERIAL_CODE FROM [dbo].[AGGR_MONTHLY_DW_INVOICES] WHERE [SALES_ORGANIZATION_CODE] = '{so}')
             """
             ,
             'AGGR_MONTHLY_DW_INVOICES':
-            """
+            f"""
             SELECT [DATE]
                 ,[SALES_ORGANIZATION_CODE]
                 ,[MATERIAL_CODE]
@@ -583,6 +585,7 @@ if st.session_state['authentication_status']:
                 ,[Gross VAT]
                 ,[Units]
             FROM [dbo].[AGGR_MONTHLY_DW_INVOICES]
+            WHERE [SALES_ORGANIZATION_CODE] = '{so}'
             """,
             'AI_LOG':"""
             SELECT [ID]
@@ -714,6 +717,8 @@ if st.session_state['authentication_status']:
     
     # ensure chp is default
     coi = st.session_state.get('chp_or_invoices','invoices')
+
+    so = st.session_state.get('chp_or_invoices','sales_org')
     
     st.title(f"{user_name} {res_tp.capitalize()} Sales Copilot 🤖")  
     
@@ -722,7 +727,7 @@ if st.session_state['authentication_status']:
     #     st.session_state['refresh'] = True
     #     st.rerun()  # This will rerun the whole app
 
-    dataframes = load_data(res_tp,coi)  
+    dataframes = load_data(res_tp,coi,so)  
     
     # Assigning dataframes to variables
     stnx_sales = dataframes[f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES']
