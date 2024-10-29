@@ -86,7 +86,7 @@ if st.session_state['authentication_status']:
 
     # sales org
     if 'sales_org' not in st.session_state:
-            st.session_state.sales_org = "1000"  # default value
+            st.session_state.sales_org = "DIL"  # default value
 
     sales_org = st.sidebar.radio(
         "Choose Sales Organization:", 
@@ -98,7 +98,7 @@ if st.session_state['authentication_status']:
 
     # Check if the resolution type has changed and rerun/cache if it has
     if sales_org != st.session_state.sales_org:
-        st.session_state.sales_org = so_dict[sales_org]
+        st.session_state.sales_org = sales_org
 
 
     # # Add a subtitle in the sidebar
@@ -518,7 +518,7 @@ if st.session_state['authentication_status']:
                             uid='analyticsadmin', pwd=db_password)  
         res_tp = resolution_type
         coi = chp_or_invoices
-        so = sales_org
+        so = so_dict[sales_org]
         #Define tables and queries
         tables = {
             f'AGGR_{res_tp.upper()}_DW_FACT_STORENEXT_BY_INDUSTRIES_SALES': f"""
@@ -569,7 +569,7 @@ if st.session_state['authentication_status']:
 	            ,[SALES_UNIT]
 	            ,[BOXING_SIZE]
             FROM [dbo].[DW_DIM_MATERIAL] 
-            WHERE MATERIAL_NUMBER IN (SELECT DISTINCT MATERIAL_CODE FROM [dbo].[AGGR_MONTHLY_DW_INVOICES] WHERE [SALES_ORGANIZATION_CODE] = '{so}')
+            WHERE MATERIAL_NUMBER IN (SELECT DISTINCT MATERIAL_CODE FROM [dbo].[AGGR_MONTHLY_DW_INVOICES])
             """
             ,
             'AGGR_MONTHLY_DW_INVOICES':
