@@ -718,7 +718,7 @@ if st.session_state['authentication_status']:
     # ensure chp is default
     coi = st.session_state.get('chp_or_invoices','invoices')
 
-    so = st.session_state.get('chp_or_invoices','sales_org')
+    so = st.session_state.get('sales_org','1000')
     
     st.title(f"{user_name} {res_tp.capitalize()} Sales Copilot 🤖")  
     
