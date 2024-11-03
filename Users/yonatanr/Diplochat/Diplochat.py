@@ -79,12 +79,12 @@ if st.session_state['authentication_status']:
 
     # weekly/ monthly
     if 'resolution_type' not in st.session_state:
-        st.session_state.resolution_type = "monthly"  # default value
+        st.session_state.resolution_type = "Monthly"  # default value
 
     
     
     # Sidebar radio button for choosing resolution type
-    selected_resolution = st.sidebar.radio("Choose resolution:", ["monthly", "weekly"], index=0 if st.session_state.resolution_type == "monthly" else 1)
+    selected_resolution = st.sidebar.radio("Choose resolution:", ["Monthly", "Weekly"], index=0 if st.session_state.resolution_type == "Monthly" else 1)
 
     # Check if the resolution type has changed and rerun/cache if it has
     if selected_resolution != st.session_state.resolution_type:
@@ -92,10 +92,10 @@ if st.session_state['authentication_status']:
 
 
     if 'chp_or_invoices' not in st.session_state:
-            st.session_state.chp_or_invoices = "invoices"  # default value
+            st.session_state.chp_or_invoices = "Invoices"  # default value
 
     # Sidebar radio button for choosing chp or invoices 
-    chp_or_invoices = st.sidebar.radio("Choose data source:", ["invoices", "chp"], index=0 if st.session_state.chp_or_invoices == "invoices" else 1)
+    chp_or_invoices = st.sidebar.radio("Choose data source:", ["Invoices", "CHP"], index=0 if st.session_state.chp_or_invoices == "Invoices" else 1)
 
     # Check if the resolution type has changed and rerun/cache if it has
     if chp_or_invoices != st.session_state.chp_or_invoices:
@@ -611,8 +611,8 @@ if st.session_state['authentication_status']:
         # Filter the tables based on the coi variable  
         filtered_tables = {  
             key: value for key, value in tables.items()   
-            if key != 'AGGR_MONTHLY_DW_INVOICES' and coi == 'chp' or  
-            key != f'AGGR_{res_tp.upper()}_DW_CHP' and coi == 'invoices'  
+            if key != 'AGGR_MONTHLY_DW_INVOICES' and coi == 'CHP' or  
+            key != f'AGGR_{res_tp.upper()}_DW_CHP' and coi == 'Invoices'  
         }  
 
 
