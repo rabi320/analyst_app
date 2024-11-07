@@ -749,7 +749,7 @@ if st.session_state['authentication_status']:
     material_df = material_df.drop_duplicates(subset = ['MATERIAL_NUMBER'])
 
     #optional data
-    if coi=='chp':
+    if coi=='CHP':
         chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
         chp['DATE'] = pd.to_datetime(chp['DATE'])
     else:
