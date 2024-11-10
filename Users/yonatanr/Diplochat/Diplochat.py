@@ -748,6 +748,7 @@ if st.session_state['authentication_status']:
     customer_df = customer_df.drop_duplicates(subset = ['CUSTOMER_CODE'])
     material_df = material_df.drop_duplicates(subset = ['MATERIAL_NUMBER'])
 
+
     #optional data
     if coi=='CHP':
         chp = dataframes[f'AGGR_{res_tp.upper()}_DW_CHP']
