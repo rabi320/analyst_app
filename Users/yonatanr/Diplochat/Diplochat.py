@@ -939,7 +939,7 @@ if st.session_state['authentication_status']:
                     # Use re.sub to comment out any import statement  
                     code = re.sub(r"^(\s*)import\s", r"\1#import ", code, flags=re.MULTILINE)  
                     
-                    if coi=='chp':
+                    if coi=='CHP':
                         local_context = {'chp':chp,'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df,'base64':base64,'BytesIO':BytesIO,'plt':plt}
                     else:
                         local_context = {'stnx_sales':stnx_sales,'stnx_items':stnx_items,'pd':pd,'np':np,'dt_df':dt_df,'SARIMAX':SARIMAX,'inv_df':inv_df,'customer_df':customer_df,'industry_df':industry_df,'material_df':material_df,'base64':base64,'BytesIO':BytesIO,'plt':plt}
