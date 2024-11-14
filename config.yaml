@@ -95,7 +95,18 @@ credentials:
       logged_in: false          
       name: Liat Binyamin        
       password: "$2b$12$rrcPxL0ezj3fRh.aYP/2JuYOjPNco51K6WpN.Vm5K3bDHv9hgheu."  # Hash of the password   
-
+    giorgima:   
+      email: giorgima@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Giorgi Margalitadze        
+      password: "$2b$12$ZOl0rG5HXqycgdyEgS6fpeYd2EFRS8QgfUdEnps7JEqfRsBMrVPCy"  # Hash of the password   
+    ashavdatuashvili:   
+      email: a.shavdatuashvili@diplomat.ge          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Anri Shavdatuashvili        
+      password: "$2b$12$NUDmk.4hNrPtilVe70.vW.3XxjdAXbxahWuo/gGue/4Y75KlKFPPu"  # Hash of the password   
 
 pre-authorized:  
   emails:  
