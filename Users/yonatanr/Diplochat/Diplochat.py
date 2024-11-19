@@ -950,7 +950,7 @@ if st.session_state['authentication_status']:
                     if answer == "No answer found.":  
                         raise ValueError("No answer found.")  
                     
-                    sys_decorator = """
+                    sys_decorator = f"""
                     You are an AI assistant designed to enhance the quality and presentation of responses from the perspective of Diplomat Distributors Ltd. 
                     Your task is to refine generated content, making it more articulate and visually appealing, 
                     while preserving all original numbers and facts. Ensure that the output reflects a professional tone suitable
@@ -960,6 +960,9 @@ if st.session_state['authentication_status']:
                     > money - make the ILS currency symbol, round to the second digit after the dot - 1332.22222 --> 1,332.22₪.
                     > quantity - always show as an integer and round to 0 digits after the dot - 2.22222 --> 2.
                     > dates - format like this: dd/mm/yyyy - 2024-01-31 --> 31/01/2024.
+
+                    Another key point: If the user includes a greeting or farewell message, address them by their first name. For instance, if my username is Jake Paul, respond with [greeting in the user's language] and Jake.
+                    This user's name is {user_name}
 
                     finally: ensure that the your response is in the language used by your recieved input, and is presenting information and insights to the user.
                     """
@@ -1024,6 +1027,10 @@ if st.session_state['authentication_status']:
             # generate anwer for failures
             if attempts == max_attempts:
                 # replace with ai generated text
+                prompt = f"""The user, {user_name}, has asked: "{prompt}", please clarify that their request is not clear to you and make sure to include their first name in your response. 
+                unless it is a hello or goodbye greeting in which case respond normally with their first name.
+                For instance, if my username is Jake Paul, respond with [greeting in the user's language] and Jake."""
+
                 error_response = model_reponse(prompt, sys_error)    
                 answer = error_response.choices[0].message.content.strip()
 
