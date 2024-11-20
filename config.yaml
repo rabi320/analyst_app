@@ -106,7 +106,38 @@ credentials:
       failed_login_attempts: 0          
       logged_in: false          
       name: Anri Shavdatuashvili        
-      password: "$2b$12$NUDmk.4hNrPtilVe70.vW.3XxjdAXbxahWuo/gGue/4Y75KlKFPPu"  # Hash of the password   
+      password: "$2b$12$NUDmk.4hNrPtilVe70.vW.3XxjdAXbxahWuo/gGue/4Y75KlKFPPu"  # Hash of the password
+    yosih:   
+      email: yosih@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Yosi Horev        
+      password: "$2b$12$i5vmgBo7Z01qHJxih1RoDefCwUVLEGaqusi17wyyybDfQkg5p.vNO"  # Hash of the password
+    omer:   
+      email: omer@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Omer Danenberg        
+      password: "$2b$12$zOEUBcPor9KZYhYF1wrWeO26vPGmtWd1Joj6dOpQKotGpbAxbGaRi"  # Hash of the password
+    gtal:   
+      email: gtal@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Guy Tal       
+      password: "$2b$12$4GepB02QsQEyYv38veT7gekwmlkSI8vklLaIt2Ejv4xo9fWx0IomW"  # Hash of the password
+    michalmar:   
+      email: michalmar@diplomat-global.com          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Michal Mark-sominsky        
+      password: "$2b$12$QnSlqH.wlhiHobyPixBH8ugqxBYfVxBKlwsHSZJfPq3dLsoyTQGJK"  # Hash of the password
+    assi:   
+      email: a.shavdatuashvili@diplomat.ge          
+      failed_login_attempts: 0          
+      logged_in: false          
+      name: Assi Haskor        
+      password: "$2b$12$xkJ9O1uozP2jPlqWm/G2l.oSFyRnhahrPVkOAc.W8gkyseKvtWtQu"  # Hash of the password
+    
 
 pre-authorized:  
   emails:  
