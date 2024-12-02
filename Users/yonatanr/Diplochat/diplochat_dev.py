@@ -28,7 +28,9 @@ def get_token_from_code(code):
 st.title("MSAL Authentication with Streamlit")
 
 # Check for the authorization code in the URL
-code = st.experimental_get_query_params().get('code', [None])[0]
+# code = st.experimental_get_query_params().get('code', [None])[0]
+code = st.query_params.get('code', [None])[0]  
+
 
 if code:
     # User has authenticated
