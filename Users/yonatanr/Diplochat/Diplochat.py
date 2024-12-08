@@ -49,7 +49,7 @@ if 'cache_cleared' not in st.session_state:
 authentication_status = authenticator.login()  
 
 # Button to show the form
-if st.button("Show Form"):
+if st.button("Sign Up"):
     # Create a form for user input
     with st.form(key='signup_form'):
         email = st.text_input("Email Address")
