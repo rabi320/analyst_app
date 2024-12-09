@@ -167,13 +167,15 @@ if st.session_state['authentication_status']:
                 # Create a form for user input in the sidebar
                 with st.form(key='signup_form'):
                     email = st.text_input("Email Address")
+                    st.markdown(email)
                     if email != st.session_state.email:
                         st.session_state.email = email
                     full_name = st.text_input("Full Name")
+                    st.markdown(full_name)
                     if full_name != st.session_state.full_name:
                         st.session_state.full_name = full_name
                     # Submit button, passing user's full name to the signup function
-                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(st.session_state.full_name,st.session_state.email))
+                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
 
 
 
