@@ -171,6 +171,7 @@ if st.session_state['authentication_status']:
                 email = st.text_input("Email Address")
                 full_name = st.text_area("Full Name")
                 if st.button('Sign Up'):
+                    user_signup(full_name,email)
                     st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
 
                     # Submit button, passing user's full name to the signup function
