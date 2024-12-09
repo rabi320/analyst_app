@@ -124,95 +124,58 @@ if st.session_state['authentication_status']:
 
     admin_list = ['Yonatan Rabinovich','Avi Tuval']
     # admin_list = ['Yonatan Rabinovich']
-    
+   
+    # Initialize session state email
+    if 'email' not in st.session_state:
+        st.session_state.email = "" 
+    # Initialize session state name
+    if 'full_name' not in st.session_state:
+        st.session_state.full_name = "" 
 
-    # def user_signup(full_name,email):
-    #     conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
-    #             server='diplomat-analytics-server.database.windows.net',  
-    #             database='Diplochat-DB',  
-    #             uid='analyticsadmin', pwd=db_password) 
-    #     # Insert log data into the AI_LOG table  
-    #     insert_query = """  
-    #     INSERT INTO DW_DIM_USERS (username, email, failed_login_attempts, logged_in, name, password)  
-    #     VALUES (?, ?, ?, ?, ?, ?)  
-    #     """  
-
-    #     # username
-    #     username = email.split('@')[0]
-    #     password = email.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
-    #     password = password.capitalize()
-    #     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
-        
-    #     log_session = [username,email,0,0,full_name,hashed_password.decode('utf-8')]
-
-    #     cursor = conn.cursor()
-    #     cursor.execute(insert_query, log_session)
-
-    #     conn.commit()  
-    #     cursor.close()
-    #     st.toast(f"✔️ User {full_name} signed up successfully with email: {email}! password: {hashed_password.decode('utf-8')}")
-
-    # # Check if the current user is an admin
-    # if st.session_state.get("name") in admin_list:
-    #     # Sidebar for sign-up
-    #     with st.sidebar:
-    #         # Button to show the form
-    #         if st.button("Sign Up"):
-    #             # Create a form for user input in the sidebar
-    #             with st.form(key='signup_form'):
-    #                 st.session_state.email = st.text_input("Email Address")
-    #                 st.session_state.full_name = st.text_input("Full Name")
-
-    #                 # Submit button, passing user's full name to the signup function
-    #                 submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(st.session_state.full_name,st.session_state.email))
-
-    def user_signup(full_name, email):
-        if not email or not full_name:
-            st.error("Email and full name cannot be empty.")
-            return
-
-        conn = pyodbc.connect(driver='{odbc driver 17 for sql server}',  
-                            server='diplomat-analytics-server.database.windows.net',  
-                            database='diplochat-db',  
-                            uid='analyticsadmin', pwd=db_password)
-
+    def user_signup(full_name,email):
+        conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
+                server='diplomat-analytics-server.database.windows.net',  
+                database='Diplochat-DB',  
+                uid='analyticsadmin', pwd=db_password) 
+        # Insert log data into the AI_LOG table  
         insert_query = """  
-        INSERT INTO dw_dim_users (username, email, failed_login_attempts, logged_in, name, password)  
+        INSERT INTO DW_DIM_USERS (username, email, failed_login_attempts, logged_in, name, password)  
         VALUES (?, ?, ?, ?, ?, ?)  
-        """
+        """  
 
-        username = email.split('@')[0]  # Generate username
-        password = username + ''.join(str(i + 1) for i in range(len(username))) + '!'  # Generate password
+        # username
+        username = email.split('@')[0]
+        password = email.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
         password = password.capitalize()
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
-
-        log_session = [username, email, 0, 0, full_name, hashed_password.decode('utf-8')]
+        
+        log_session = [username,email,0,0,full_name,hashed_password.decode('utf-8')]
 
         cursor = conn.cursor()
         cursor.execute(insert_query, log_session)
+
         conn.commit()  
         cursor.close()
-
-        st.toast(f"✔️ User {full_name} signed up successfully with email: {email}! Password: {hashed_password.decode('utf-8')}")
+        st.toast(f"✔️ User {full_name} signed up successfully with email: {email}! password: {hashed_password.decode('utf-8')}")
 
     # Check if the current user is an admin
     if st.session_state.get("name") in admin_list:
         # Sidebar for sign-up
         with st.sidebar:
             # Button to show the form
-            if st.button("sign up"):
+            if st.button("Sign Up"):
                 # Create a form for user input in the sidebar
                 with st.form(key='signup_form'):
-                    # Read inputs from the form
-                    email = st.text_input("Email address")
-                    full_name = st.text_input("Full name")
+                    email = st.text_input("Email Address")
+                    if email != st.session_state.email:
+                        st.session_state.email = email
+                    full_name = st.text_input("Full Name")
+                    if full_name != st.session_state.full_name:
+                        st.session_state.full_name = full_name
+                    # Submit button, passing user's full name to the signup function
+                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(st.session_state.full_name,st.session_state.email))
 
-                    # Submit button, passing user's full name and email to the signup function
-                    submit_button = st.form_submit_button(label='Sign Up')
 
-                    # Call user_signup only if the form is submitted
-                    if submit_button:
-                        user_signup(full_name, email)  # Call the function with direct inputs from the form
 
     #####################
     # diplochat analyst #
