@@ -146,8 +146,8 @@ if st.session_state['authentication_status']:
         """  
 
         # username
-        username = st.session_state.email.split('@')[0]
-        password = st.session_state.email.split('@')[0]+''.join(str(i+1) for i in range(len(st.session_state.email.split('@')[0])))+'!'
+        username = email.split('@')[0]
+        password = email.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
         password = password.capitalize()
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
         
@@ -158,7 +158,7 @@ if st.session_state['authentication_status']:
 
         conn.commit()  
         cursor.close()
-        st.toast(f"✔️ User {full_name} signed up successfully with email: {email}! password: {hashed_password.decode('utf-8')}")
+        st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
 
     # Check if the current user is an admin
     if st.session_state.get("name") in admin_list:
@@ -172,7 +172,7 @@ if st.session_state['authentication_status']:
                 full_name = st.text_area("Full Name")
                 if st.button('Sign Up'):
                     user_signup(full_name,email)
-                    st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
+                    # st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
 
                     # Submit button, passing user's full name to the signup function
                     # submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
