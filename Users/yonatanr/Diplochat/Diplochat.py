@@ -99,27 +99,6 @@ if st.session_state['authentication_status']:
     if 'resolution_type' not in st.session_state:
         st.session_state.resolution_type = "Monthly"  # default value
 
-    # admin_list = ['Yonatan Rabinovich','Avi Tuval']
-    admin_list = ['Yonatan Rabinovich']
-    
-    # signup form for admins
-    if st.session_state["name"] in admin_list:
-        # Sidebar for sign-up
-        with st.sidebar:
-            # Button to show the form
-            if st.button("Sign Up"):
-                # Create a form for user input in the sidebar
-                with st.form(key='signup_form'):
-                    email = st.text_input("Email Address")
-                    full_name = st.text_input("Full Name")
-
-                    submit_button = st.form_submit_button(label='Sign Up')
-
-                    if submit_button:
-                        # Display the entered information
-                        st.success("You have signed up successfully!")
-                        st.write("Email Address:", email)
-                        st.write("Full Name:", full_name)
 
     
     
@@ -141,48 +120,26 @@ if st.session_state['authentication_status']:
     if chp_or_invoices != st.session_state.chp_or_invoices:
         st.session_state.chp_or_invoices = chp_or_invoices
 
-
-
-    # # Add a subtitle in the sidebar
-    # st.sidebar.subheader("Select a Sales Organization")
+    # admin_list = ['Yonatan Rabinovich','Avi Tuval']
+    admin_list = ['Yonatan Rabinovich']
     
-    # # Initialize the selected sales organization in session state
-    # if 'selected_sales_org' not in st.session_state:
-    #     st.session_state.selected_sales_org = None
+    # signup form for admins
+    if st.session_state["name"] in admin_list:
+        # Sidebar for sign-up
+        with st.sidebar:
+            # Button to show the form
+            if st.button("Sign Up"):
+                # Create a form for user input in the sidebar
+                with st.form(key='signup_form'):
+                    email = st.text_input("Email Address")
+                    full_name = st.text_input("Full Name")
 
-    # # Sidebar checkboxes for the four options
-    # option_1000 = st.sidebar.checkbox("1000", value=(st.session_state.selected_sales_org == "1000"))
-    # option_5000 = st.sidebar.checkbox("5000", value=(st.session_state.selected_sales_org == "5000"))
-    # option_8000 = st.sidebar.checkbox("8000", value=(st.session_state.selected_sales_org == "8000"))
-    # option_nz00 = st.sidebar.checkbox("NZ00", value=(st.session_state.selected_sales_org == "NZ00"))
+                    submit_button = st.form_submit_button(label='Sign Up')
 
+                    if submit_button:
+                        # Display the entered information
+                        st.toast(f"{full_name} Signed up successfully!")
 
-    # # Logic to ensure that only one checkbox can be selected at a time
-    # if option_1000 and st.session_state.selected_sales_org != "1000":
-    #     st.session_state.selected_sales_org = "1000"
-    #     option_5000, option_8000, option_nz00 = False, False, False
-
-    # elif option_5000 and st.session_state.selected_sales_org != "5000":
-    #     st.session_state.selected_sales_org = "5000"
-    #     option_1000, option_8000, option_nz00 = False, False, False
-
-    # elif option_8000 and st.session_state.selected_sales_org != "8000":
-    #     st.session_state.selected_sales_org = "8000"
-    #     option_1000, option_5000, option_nz00 = False, False, False
-
-    # elif option_nz00 and st.session_state.selected_sales_org != "NZ00":
-    #     st.session_state.selected_sales_org = "NZ00"
-    #     option_1000, option_5000, option_8000 = False, False, False
-
-    # # Update the checkboxes based on the current selection
-    # if st.session_state.selected_sales_org == "1000":
-    #     option_1000 = True
-    # elif st.session_state.selected_sales_org == "5000":
-    #     option_5000 = True
-    # elif st.session_state.selected_sales_org == "8000":
-    #     option_8000 = True
-    # elif st.session_state.selected_sales_org == "NZ00":
-    #     option_nz00 = True
 
 
     #####################
