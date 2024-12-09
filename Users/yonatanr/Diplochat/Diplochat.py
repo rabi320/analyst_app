@@ -69,6 +69,7 @@ authentication_status = authenticator.login()
 
 # Adjusted authentication status handling  
 if st.session_state['authentication_status']:  
+
     
     # st.sidebar.markdown("![](logo_2.png)")
     # st.sidebar.image("logo_2.png", use_column_width=True)
@@ -97,6 +98,28 @@ if st.session_state['authentication_status']:
     # weekly/ monthly
     if 'resolution_type' not in st.session_state:
         st.session_state.resolution_type = "Monthly"  # default value
+
+    # admin_list = ['Yonatan Rabinovich','Avi Tuval']
+    admin_list = ['Yonatan Rabinovich']
+    
+    # signup form for admins
+    if st.session_state["name"] in admin_list:
+        # Sidebar for sign-up
+        with st.sidebar:
+            # Button to show the form
+            if st.button("Sign Up"):
+                # Create a form for user input in the sidebar
+                with st.form(key='signup_form'):
+                    email = st.text_input("Email Address")
+                    full_name = st.text_input("Full Name")
+
+                    submit_button = st.form_submit_button(label='Sign Up')
+
+                    if submit_button:
+                        # Display the entered information
+                        st.success("You have signed up successfully!")
+                        st.write("Email Address:", email)
+                        st.write("Full Name:", full_name)
 
     
     
@@ -728,7 +751,7 @@ if st.session_state['authentication_status']:
             final_code = '\n'.join(all_code)  
         return final_code
     
-    admin_list = ['Yonatan Rabinovich']
+    
     user_name = st.session_state.get("name", "Guest")  # Default to "Guest" if not set
     
     # ensure weekly is default
