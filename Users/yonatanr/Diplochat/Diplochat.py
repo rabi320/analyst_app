@@ -132,7 +132,9 @@ if st.session_state['authentication_status']:
     if 'full_name' not in st.session_state:
         st.session_state.full_name = "" 
 
-    def user_signup(full_name,email):
+    # def user_signup(full_name,email):
+    def user_signup():
+
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                 server='diplomat-analytics-server.database.windows.net',  
                 database='Diplochat-DB',  
@@ -144,19 +146,19 @@ if st.session_state['authentication_status']:
         """  
 
         # username
-        username = email.split('@')[0]
-        password = email.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
+        username = st.session_state.email.split('@')[0]
+        password = st.session_state.email.split('@')[0]+''.join(str(i+1) for i in range(len(st.session_state.email.split('@')[0])))+'!'
         password = password.capitalize()
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
         
-        log_session = [username,email,0,0,full_name,hashed_password.decode('utf-8')]
+        log_session = [username,st.session_state.email,0,0,st.session_state.full_name,hashed_password.decode('utf-8')]
 
         cursor = conn.cursor()
         cursor.execute(insert_query, log_session)
 
         conn.commit()  
         cursor.close()
-        st.toast(f"✔️ User {full_name} signed up successfully with email: {email}! password: {hashed_password.decode('utf-8')}")
+        st.toast(f"✔️ User {st.session_state.full_name} signed up successfully with email: {st.session_state.email}! password: {hashed_password.decode('utf-8')}")
 
     # Check if the current user is an admin
     if st.session_state.get("name") in admin_list:
@@ -167,17 +169,16 @@ if st.session_state['authentication_status']:
                 # Create a form for user input in the sidebar
                 with st.form(key='signup_form'):
                     email = st.text_input("Email Address")
-                    st.markdown(email)
                     if email != st.session_state.email:
                         st.session_state.email = email
                     full_name = st.text_input("Full Name")
-                    st.markdown(full_name)
                     if full_name != st.session_state.full_name:
                         st.session_state.full_name = full_name
                     # Submit button, passing user's full name to the signup function
-                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
+                    # submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
+                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup)
 
-
+    
 
     #####################
     # diplochat analyst #
