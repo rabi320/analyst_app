@@ -132,8 +132,8 @@ if st.session_state['authentication_status']:
     if 'full_name' not in st.session_state:
         st.session_state.full_name = "" 
 
-    # def user_signup(full_name,email):
-    def user_signup():
+    def user_signup(full_name,email):
+    # def user_signup():
 
         conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
                 server='diplomat-analytics-server.database.windows.net',  
@@ -151,32 +151,28 @@ if st.session_state['authentication_status']:
         password = password.capitalize()
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
         
-        log_session = [username,st.session_state.email,0,0,st.session_state.full_name,hashed_password.decode('utf-8')]
+        log_session = [username,email,0,0,full_name,hashed_password.decode('utf-8')]
 
         cursor = conn.cursor()
         cursor.execute(insert_query, log_session)
 
         conn.commit()  
         cursor.close()
-        st.toast(f"✔️ User {st.session_state.full_name} signed up successfully with email: {st.session_state.email}! password: {hashed_password.decode('utf-8')}")
+        st.toast(f"✔️ User {full_name} signed up successfully with email: {email}! password: {hashed_password.decode('utf-8')}")
 
     # Check if the current user is an admin
     if st.session_state.get("name") in admin_list:
         # Sidebar for sign-up
         with st.sidebar:
             # Button to show the form
-            if st.button("Sign Up"):
+            with st.expander('Sign Up Form'):
                 # Create a form for user input in the sidebar
                 with st.form(key='signup_form'):
                     email = st.text_input("Email Address")
-                    if email != st.session_state.email:
-                        st.session_state.email = email
                     full_name = st.text_input("Full Name")
-                    if full_name != st.session_state.full_name:
-                        st.session_state.full_name = full_name
                     # Submit button, passing user's full name to the signup function
-                    # submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
-                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup)
+                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
+                    # submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup)
 
     
 
