@@ -143,13 +143,13 @@ if st.session_state['authentication_status']:
         password = password.capitalize()
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
         
-        # log_session = [username,email,0,0,full_name,hashed_password]
+        log_session = [username,email,0,0,full_name,hashed_password]
 
-        # cursor = conn.cursor()
-        # cursor.execute(insert_query, log_session)
+        cursor = conn.cursor()
+        cursor.execute(insert_query, log_session)
 
-        # conn.commit()  
-        # cursor.close()
+        conn.commit()  
+        cursor.close()
         st.toast(f"✔️ User {full_name} signed up successfully with email: {email}! password: {hashed_password.decode('utf-8')}")
 
     # Check if the current user is an admin
