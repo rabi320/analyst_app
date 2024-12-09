@@ -120,12 +120,34 @@ if st.session_state['authentication_status']:
     if chp_or_invoices != st.session_state.chp_or_invoices:
         st.session_state.chp_or_invoices = chp_or_invoices
 
-    # admin_list = ['Yonatan Rabinovich','Avi Tuval']
-    admin_list = ['Yonatan Rabinovich']
+    db_password = os.getenv('DB_PASSWORD')
+
+    admin_list = ['Yonatan Rabinovich','Avi Tuval']
+    # admin_list = ['Yonatan Rabinovich']
     
 
-    def user_signup(full_name):
-        st.toast(f"✔️ User {full_name} signed up successfully!")
+    def user_signup(full_name,email):
+        conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
+                server='diplomat-analytics-server.database.windows.net',  
+                database='Diplochat-DB',  
+                uid='analyticsadmin', pwd=db_password) 
+        # Insert log data into the AI_LOG table  
+        insert_query = """  
+        INSERT INTO DW_DIM_USERS (username, email, failed_login_attempts, logged_in, name, password)  
+        VALUES (?, ?, ?, ?, ?)  
+        """  
+
+        # username
+        username = email.split('@')[0]
+        password = email.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
+        password = password.capitalize()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
+        
+        # log_session = [username,email,0,0,full_name,hashed_password]
+
+        # cursor = conn.cursor()
+        # cursor.execute(insert_query, log_session)
+        st.toast(f"✔️ User {full_name} signed up successfully with email: {email}! password: {hashed_password.decode('utf-8')}")
 
     # Check if the current user is an admin
     if st.session_state.get("name") in admin_list:
@@ -372,7 +394,7 @@ if st.session_state['authentication_status']:
         'content': '```python\nbrand_to_check = \'Oreo\'  \nbrand_to_check_stnx = \'אוראו\'  \nchain_name = \'סופר יודה\'\nmonth = 9  \n  \n# Initialize an empty list to collect results  \ncompetitor_promotions = []  \n  \ncategories = stnx_items[(stnx_items.Brand_Name == brand_to_check_stnx) & (stnx_items.Supplier_Name == \'דיפלומט\')].Category_Name.unique().tolist()  \n  \nfor category in categories:  \n    barcode_lst = stnx_items[(stnx_items.Category_Name == category) & (stnx_items.Supplier_Name != \'דיפלומט\')].Barcode.unique().tolist()  \n    chp_competitor = chp[(chp.BARCODE.isin(barcode_lst)) & (chp.DATE.dt.month == month) & (chp.SELLOUT_DESCRIPTION != \'\')& (chp.CHAIN.str.contains(chain_name))]  \n  \n    if len(chp_competitor) > 5:  \n        # Merge to include the Item_Name and Supplier_Name  \n        chp_competitor = chp_competitor.merge(stnx_items[[\'Barcode\', \'Item_Name\', \'Supplier_Name\']], left_on=\'BARCODE\', right_on=\'Barcode\', how=\'left\')  \n          \n        # Collect the relevant information  \n        sampled_data = chp_competitor[[\'Barcode\', \'Item_Name\', \'Supplier_Name\', \'SELLOUT_DESCRIPTION\']].sample(5).reset_index(drop = True)  \n          \n        # Append to the list  \n        for index, row in sampled_data.iterrows():\n            promo_txt = f"Barcode: {row[\'Barcode\']}, Item: {row[\'Item_Name\']}, Supplier: {row[\'Supplier_Name\']}, Description: {row[\'SELLOUT_DESCRIPTION\']}"\n            if index==0:\n                promo_txt = f"In {category}:\n{promo_txt}"\n            else:\n                pass\n            competitor_promotions.append(promo_txt)  \n          \n# Create the answer variable  \nanswer = f"{brand_to_check}\'s competitors promotions this period in {chain_name}:\n" + "\n".join(competitor_promotions)  \n```\n'},
         ]
 
-    db_password = os.getenv('DB_PASSWORD')  
+      
     openai_api_key = os.getenv('OPENAI_KEY')
 
     client = AzureOpenAI(  
