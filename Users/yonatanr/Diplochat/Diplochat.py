@@ -167,11 +167,14 @@ if st.session_state['authentication_status']:
             # Button to show the form
             with st.expander('Sign Up Form'):
                 # Create a form for user input in the sidebar
-                with st.form(key='signup_form'):
-                    email = st.text_input("Email Address")
-                    full_name = st.text_input("Full Name")
+                # with st.form(key='signup_form'):
+                email = st.text_input("Email Address")
+                full_name = st.text_input("Full Name")
+                if st.button('Sign Up'):
+                    st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
+
                     # Submit button, passing user's full name to the signup function
-                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
+                    # submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
                     # submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup)
 
     
