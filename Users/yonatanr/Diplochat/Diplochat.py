@@ -123,8 +123,12 @@ if st.session_state['authentication_status']:
     # admin_list = ['Yonatan Rabinovich','Avi Tuval']
     admin_list = ['Yonatan Rabinovich']
     
-    # signup form for admins
-    if st.session_state["name"] in admin_list:
+
+    def user_signup(full_name):
+        st.toast(f"✔️ User {full_name} signed up successfully!")
+
+    # Check if the current user is an admin
+    if st.session_state.get("name") in admin_list:
         # Sidebar for sign-up
         with st.sidebar:
             # Button to show the form
@@ -134,11 +138,8 @@ if st.session_state['authentication_status']:
                     email = st.text_input("Email Address")
                     full_name = st.text_input("Full Name")
 
-                    submit_button = st.form_submit_button(label='Sign Up')
-
-                    if submit_button:
-                        # Display the entered information
-                        st.toast(f"{full_name} Signed up successfully!")
+                    # Submit button, passing user's full name to the signup function
+                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,))
 
 
 
