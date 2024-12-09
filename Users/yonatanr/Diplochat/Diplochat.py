@@ -143,7 +143,7 @@ if st.session_state['authentication_status']:
         password = password.capitalize()
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
         
-        log_session = [username,email,0,0,full_name,hashed_password]
+        log_session = [username,email,0,0,full_name,hashed_password.decode('utf-8')]
 
         cursor = conn.cursor()
         cursor.execute(insert_query, log_session)
@@ -160,11 +160,11 @@ if st.session_state['authentication_status']:
             if st.button("Sign Up"):
                 # Create a form for user input in the sidebar
                 with st.form(key='signup_form'):
-                    email = st.text_input("Email Address")
-                    full_name = st.text_input("Full Name")
+                    st.session_state.email = st.text_input("Email Address")
+                    st.session_state.full_name = st.text_input("Full Name")
 
                     # Submit button, passing user's full name to the signup function
-                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
+                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(st.session_state.full_name,st.session_state.email))
 
 
 
