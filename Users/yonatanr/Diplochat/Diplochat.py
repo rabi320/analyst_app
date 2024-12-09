@@ -20,7 +20,7 @@ import os
 import numpy as np
 import tiktoken
 from pyluach import dates  
-
+import bcrypt  
 
 # Suppress all warnings  
 warnings.filterwarnings('ignore')   
