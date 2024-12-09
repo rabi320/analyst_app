@@ -134,7 +134,7 @@ if st.session_state['authentication_status']:
         # Insert log data into the AI_LOG table  
         insert_query = """  
         INSERT INTO DW_DIM_USERS (username, email, failed_login_attempts, logged_in, name, password)  
-        VALUES (?, ?, ?, ?, ?)  
+        VALUES (?, ?, ?, ?, ?, ?)  
         """  
 
         # username
@@ -147,6 +147,9 @@ if st.session_state['authentication_status']:
 
         # cursor = conn.cursor()
         # cursor.execute(insert_query, log_session)
+
+        # conn.commit()  
+        # cursor.close()
         st.toast(f"✔️ User {full_name} signed up successfully with email: {email}! password: {hashed_password.decode('utf-8')}")
 
     # Check if the current user is an admin
@@ -161,7 +164,7 @@ if st.session_state['authentication_status']:
                     full_name = st.text_input("Full Name")
 
                     # Submit button, passing user's full name to the signup function
-                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,))
+                    submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup, args=(full_name,email))
 
 
 
