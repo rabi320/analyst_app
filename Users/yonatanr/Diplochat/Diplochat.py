@@ -169,7 +169,7 @@ if st.session_state['authentication_status']:
                 # Create a form for user input in the sidebar
                 # with st.form(key='signup_form'):
                 email = st.text_input("Email Address")
-                full_name = st.text_input("Full Name")
+                full_name = st.text_area("Full Name")
                 if st.button('Sign Up'):
                     st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
 
