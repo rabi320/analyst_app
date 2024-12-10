@@ -176,28 +176,6 @@ if st.session_state['authentication_status']:
     if 'full_name' not in st.session_state:
         st.session_state.full_name = "" 
 
-    # Constants for your repository and configuration file
-    GITHUB_BRANCH = 'main'  # or 'master', based on your repo setup
-    GITHUB_URL = "https://github.com/rabi320/analyst_app.git"
-    YAML_FILE_PATH = os.path.expanduser('~/cloudfiles/code/config.yaml')
-
-    def save_yaml(file_path, data):
-        """Save data to a YAML file."""
-        with open(file_path, 'w') as file:
-            yaml.dump(data, file)
-
-    def push_to_github(file_path, message):
-        """Push the changes to GitHub."""
-        repo_dir = os.path.dirname(file_path)  # Get the directory of the YAML file
-        os.chdir(repo_dir)  # Change to the repository directory
-        try:
-            subprocess.run(['git', 'add', os.path.basename(file_path)], check=True)
-            subprocess.run(['git', 'commit', '-m', message], check=True)
-            subprocess.run(['git', 'push', GITHUB_URL, GITHUB_BRANCH], check=True)
-            st.success("Changes pushed to GitHub successfully!")
-        except subprocess.CalledProcessError as e:
-            st.error("Error occurred while pushing to GitHub: " + str(e))
-
     def user_signup(full_name,email):
     # def user_signup():
 
@@ -226,10 +204,6 @@ if st.session_state['authentication_status']:
 
         conn.commit()  
         cursor.close()
-        # Save the modified YAML file
-        # save_yaml(YAML_FILE_PATH, data)
-        # Push changes to GitHub
-        # push_to_github(YAML_FILE_PATH, commit_message)
         st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
 
     # Check if the current user is an admin
@@ -251,7 +225,19 @@ if st.session_state['authentication_status']:
                     # submit_button = st.form_submit_button(label='Sign Up', on_click=user_signup)
 
     
+        # Create an expander in the sidebar
+        with st.sidebar.expander("What's the psd?"):
+            # Use the text_area to take input from the user
+            user_input = st.text_area("Enter email:")
 
+        # Check if the user has entered any text
+        if user_input:
+            password = user_input.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
+            password = password.capitalize()
+            # Display a message incorporating the user input
+            st.write(f"The psd is: {password}")
+        else:
+            st.write("Please enter A user email")
     #####################
     # diplochat analyst #
     #####################
