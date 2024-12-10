@@ -230,14 +230,14 @@ if st.session_state['authentication_status']:
             # Use the text_area to take input from the user
             user_input = st.text_area("Enter email:")
 
-        # Check if the user has entered any text
-        if user_input:
-            password = user_input.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
-            password = password.capitalize()
-            # Display a message incorporating the user input
-            st.write(f"The psd is: {password}")
-        else:
-            st.write("Please enter A user email")
+            # Check if the user has entered any text
+            if user_input:
+                password = user_input.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
+                password = password.capitalize()
+                # Display a message incorporating the user input
+                st.write(f"The psd is: {password}")
+            else:
+                st.write("Please enter A user email")
     #####################
     # diplochat analyst #
     #####################
