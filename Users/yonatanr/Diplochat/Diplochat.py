@@ -232,7 +232,7 @@ if st.session_state['authentication_status']:
 
             # Check if the user has entered any text
             if user_input:
-                password = user_input.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
+                password = user_input.split('@')[0]+''.join(str(i+1) for i in range(len(user_input.split('@')[0])))+'!'
                 password = password.capitalize()
                 # Display a message incorporating the user input
                 st.sidebar.write(f"The psd is: {password}")
