@@ -27,9 +27,51 @@ import subprocess
 warnings.filterwarnings('ignore')   
 
 # from st_pages import hide_pages
-  
+
 with open('config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
+
+
+db_password = os.getenv('DB_PASSWORD')
+
+conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
+                server='diplomat-analytics-server.database.windows.net',  
+                database='Diplochat-DB',  
+                uid='analyticsadmin', pwd=db_password)  
+
+user_query = """SELECT * FROM [dbo].[DW_DIM_USERS]"""
+user_df = pd.read_sql_query(user_query, conn)
+
+# Initialize the YAML structure  
+yaml_data = {  
+    'cookie': {  
+        'expiry_days': 30,  
+        'key': "some_signature_key",  # Replace with your actual signature key  
+        'name': "auth_cookie"  # Replace with your desired cookie name  
+    },  
+    'credentials': {  
+        'usernames': {}  # Initialize usernames as an empty dictionary  
+    },  
+    'pre-authorized': {  
+        'emails': [  
+            'ryonatan6@gmail.com'  # Add more emails as needed  
+        ]  
+    }  
+}   
+  
+# Populate the usernames in the YAML structure from the DataFrame  
+for index, row in user_df.iterrows():  
+    username = row['username']  
+    yaml_data['credentials']['usernames'][username] = {  
+        "email": row['email'],  
+        "failed_login_attempts": row['failed_login_attempts'],  
+        "logged_in": row['logged_in'],  
+        "name": row['name'],  
+        "password": row['password']  # Ensure you handle the passwords securely  
+    }  
+  
+# Convert the dictionary to YAML  
+config = yaml.dump(yaml_data, sort_keys=False)  
 
 authenticator = stauth.Authenticate(
     config['credentials'],
@@ -121,7 +163,7 @@ if st.session_state['authentication_status']:
     if chp_or_invoices != st.session_state.chp_or_invoices:
         st.session_state.chp_or_invoices = chp_or_invoices
 
-    db_password = os.getenv('DB_PASSWORD')
+    
 
     admin_list = ['Yonatan Rabinovich','Avi Tuval']
     # admin_list = ['Yonatan Rabinovich']
