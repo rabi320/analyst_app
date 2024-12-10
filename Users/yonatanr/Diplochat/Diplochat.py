@@ -71,7 +71,8 @@ for index, row in user_df.iterrows():
     }  
   
 # Convert the dictionary to YAML  
-config = yaml.dump(yaml_data, sort_keys=False)  
+# config = yaml.dump(yaml_data, sort_keys=False)  
+config = yaml_data
 
 authenticator = stauth.Authenticate(
     config['credentials'],
