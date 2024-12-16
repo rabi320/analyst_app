@@ -1,51 +1,21 @@
 import streamlit as st
-import msal
-import os
 
-# Configuration
-CLIENT_ID = os.getenv('CLIENT_ID')
-CLIENT_SECRET = os.getenv('CLIENT_SECRET')
-TENANT = os.getenv('TENANT')
-AUTHORITY = f'https://login.microsoftonline.com/{TENANT}'
-REDIRECT_URI = 'http://localhost:8501/'
-SCOPE = ['User.Read']
+# Title of the app
+st.title("Sign Up Page")
 
-# Initialize the MSAL confidential client
-app = msal.ConfidentialClientApplication(
-    CLIENT_ID,
-    authority=AUTHORITY,
-    client_credential=CLIENT_SECRET,
-)
+# Create a form for user input
+with st.form(key='signup_form'):
+    email = st.text_input("Email Address")
+    full_name = st.text_input("Full Name")
+    password = st.text_input("Password", type='password')
 
-def get_auth_url():
-    return app.get_authorization_request_url(SCOPE, redirect_uri=REDIRECT_URI)
+    submit_button = st.form_submit_button(label='Sign Up')
 
-def get_token_from_code(code):
-    result = app.acquire_token_by_authorization_code(code, scope=SCOPE, redirect_uri=REDIRECT_URI)
-    return result
-
-# Streamlit App
-st.title("MSAL Authentication with Streamlit")
-
-# Check for the authorization code in the URL
-# code = st.experimental_get_query_params().get('code', [None])[0]
-code = st.query_params.get('code', [None])[0]  
-
-
-if code:
-    # User has authenticated
-    token_response = get_token_from_code(code)
-    if 'access_token' in token_response:
-        st.success("Successfully authenticated!")
-        st.write("Access Token:")
-        st.code(token_response['access_token'])
-    else:
-        st.error("Authentication failed.")
-        st.write(token_response.get("error"), token_response.get("error_description"))
-else:
-    # If no code, redirect the user to the login page
-    auth_url = get_auth_url()
-    st.markdown(f"[Login with Microsoft]({auth_url})")
-
-# Additional content
-st.write("This is a basic template for using MSAL with Streamlit.")
+    if submit_button:
+        # Display the entered information
+        st.success("You have signed up successfully!")
+        st.write("Email Address:", email)
+        st.write("Full Name:", full_name)
+        
+        # It's not a good practice to display passwords, but for the sake of this example:
+        st.write("Password:", password)
