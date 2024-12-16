@@ -20,3 +20,4 @@ with st.form(key='signup_form'):
 
         # It's not a good practice to display passwords, but for the sake of this example:
         st.write("Password:", password)
+        
