@@ -3,6 +3,7 @@ import streamlit as st
 # Title of the app
 st.title("Sign Up Page")
 
+
 # Create a form for user input
 with st.form(key='signup_form'):
     email = st.text_input("Email Address")
