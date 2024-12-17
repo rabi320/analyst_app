@@ -209,7 +209,7 @@ if st.session_state['authentication_status']:
 
 
     def user_signup(full_name,email):
-        if email in user_df.eamil.values:
+        if email in user_df.email.values:
             st.toast(f"❌ User {full_name} already in the system with mail: {email}!")
         elif '@' not in email or '.co' not in email:
             st.toast(f"❌ {email} not a valid email!")
