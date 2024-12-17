@@ -206,6 +206,36 @@ if st.session_state['authentication_status']:
         cursor.close()
         st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
 
+    def user_signup(full_name,email):
+    	if email in user_df.eamil.values:
+            st.toast(f"❌ User {full_name} already in the system with mail: {email}!")
+        elif '@' not in email or '.co' not in email:
+            st.toast(f"❌ {email} not a valid email!")
+        else:
+            conn = pyodbc.connect(driver='{ODBC Driver 17 for SQL Server}',  
+                    server='diplomat-analytics-server.database.windows.net',  
+                    database='Diplochat-DB',  
+                    uid='analyticsadmin', pwd=db_password) 
+            # Insert log data into the AI_LOG table  
+            insert_query = """  
+            INSERT INTO DW_DIM_USERS (username, email, failed_login_attempts, logged_in, name, password)  
+            VALUES (?, ?, ?, ?, ?, ?)  
+            """	
+            # username
+            username = email.split('@')[0]
+            password = email.split('@')[0]+''.join(str(i+1) for i in range(len(email.split('@')[0])))+'!'
+            password = password.capitalize()
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()) 
+        
+            log_session = [username,email,0,0,full_name,hashed_password.decode('utf-8')]
+
+            cursor = conn.cursor()
+            cursor.execute(insert_query, log_session)
+        
+            conn.commit()  
+            cursor.close()
+            st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
+
     # Check if the current user is an admin
     if st.session_state.get("name") in admin_list:
         # Sidebar for sign-up
@@ -218,6 +248,7 @@ if st.session_state['authentication_status']:
                 full_name = st.text_area("Full Name")
                 if st.button('Sign Up'):
                     user_signup(full_name,email)
+
                     # st.toast(f"✔️ User {full_name} signed up successfully with email: {email}!")
 
                     # Submit button, passing user's full name to the signup function
